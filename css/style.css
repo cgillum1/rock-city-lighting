@@ -932,6 +932,7 @@ h3 { font-size: 1.1rem; letter-spacing: 0.01em; }
 }
 .contact-info h2 { margin-bottom: 20px; }
 .contact-info h2 em { color: var(--copper); font-style: italic; }
+.quote-word { color: var(--copper); font-style: normal; font-family: var(--font-serif); }
 .contact-info p {
   font-size: 0.88rem;
   color: var(--sand);
