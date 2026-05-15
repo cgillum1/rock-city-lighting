@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quote Builder — Rock City Lighting</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <style>
+    :root {
+      --navy:  #0f1f38;
+      --copper:#b87338;
+      --cream: #f5f0e8;
+      --gold:  #d4a853;
+      --dark:  #080f1c;
+      --font-serif: 'Georgia', serif;
+      --font-sans:  'Arial', sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* ── PASSWORD GATE ── */
+    #gate {
+      position: fixed; inset: 0;
+      background: var(--navy);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      z-index: 999;
+    }
+    #gate img { width: 80px; margin-bottom: 24px; opacity: 0.85; }
+    #gate h2 { color: var(--cream); font-family: var(--font-serif); font-size: 1.3rem; margin-bottom: 20px; letter-spacing: 0.05em; }
+    #gate input {
+      padding: 12px 20px; border: 1px solid var(--copper);
+      background: rgba(255,255,255,0.07); color: var(--cream);
+      border-radius: 4px; font-size: 1rem; width: 260px;
+      text-align: center; letter-spacing: 0.1em;
+      outline: none;
+    }
+    #gate input::placeholder { color: rgba(245,240,232,0.35); letter-spacing: 0; }
+    #gate button {
+      margin-top: 14px; padding: 12px 32px;
+      background: var(--copper); color: white;
+      border: none; border-radius: 4px;
+      font-family: var(--font-sans); font-size: 0.9rem;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      cursor: pointer; width: 260px;
+    }
+    #gate button:hover { background: var(--gold); }
+    #gate .err { color: #e07070; font-size: 0.85rem; margin-top: 10px; min-height: 18px; }
+
+    /* ── APP LAYOUT ── */
+    body { background: #eee; font-family: var(--font-sans); }
+    #app { display: none; min-height: 100vh; }
+
+    .builder-header {
+      background: var(--navy); color: var(--cream);
+      padding: 16px 32px; display: flex; align-items: center; gap: 16px;
+    }
+    .builder-header img { width: 40px; opacity: 0.9; }
+    .builder-header h1 { font-family: var(--font-serif); font-size: 1.2rem; letter-spacing: 0.06em; }
+    .builder-header span { margin-left: auto; color: var(--copper); font-size: 0.8rem; letter-spacing: 0.06em; }
+
+    .workspace { display: grid; grid-template-columns: 420px 1fr; min-height: calc(100vh - 58px); }
+
+    /* ── FORM PANEL ── */
+    .form-panel {
+      background: white; padding: 28px 24px;
+      border-right: 1px solid #ddd;
+      overflow-y: auto; max-height: calc(100vh - 58px);
+    }
+    .form-panel h3 { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--copper); margin-bottom: 14px; margin-top: 24px; }
+    .form-panel h3:first-child { margin-top: 0; }
+
+    .field { margin-bottom: 14px; }
+    .field label { display: block; font-size: 0.78rem; color: #555; margin-bottom: 5px; }
+    .field input, .field select, .field textarea {
+      width: 100%; padding: 9px 12px;
+      border: 1px solid #ddd; border-radius: 4px;
+      font-size: 0.9rem; font-family: var(--font-sans);
+      color: #222; outline: none;
+      transition: border 0.2s;
+    }
+    .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--copper); }
+    .field textarea { resize: vertical; min-height: 70px; }
+
+    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+    /* zones */
+    .zones { display: flex; flex-direction: column; gap: 10px; }
+    .zone-item { border: 1px solid #e5e5e5; border-radius: 6px; overflow: hidden; }
+    .zone-header {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 14px; background: #f9f9f9;
+      cursor: pointer; user-select: none;
+    }
+    .zone-header input[type=checkbox] { accent-color: var(--copper); width: 16px; height: 16px; cursor: pointer; }
+    .zone-header label { font-size: 0.88rem; font-weight: 600; color: #333; cursor: pointer; flex: 1; }
+    .zone-body { padding: 10px 14px; display: none; border-top: 1px solid #e5e5e5; }
+    .zone-body.open { display: block; }
+    .zone-body textarea { min-height: 55px; font-size: 0.83rem; }
+    .zone-body .field { margin-bottom: 8px; }
+    .zone-body label { font-size: 0.76rem; }
+
+    .price-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; align-items: end; }
+    .price-row .field input { font-size: 1.1rem; font-weight: 700; color: var(--navy); }
+
+    .generate-btn {
+      margin-top: 24px; width: 100%; padding: 14px;
+      background: var(--navy); color: var(--cream);
+      border: none; border-radius: 6px;
+      font-size: 0.9rem; letter-spacing: 0.08em;
+      text-transform: uppercase; cursor: pointer;
+      font-family: var(--font-sans);
+      transition: background 0.2s;
+    }
+    .generate-btn:hover { background: var(--copper); }
+
+    .pdf-btn {
+      margin-top: 10px; width: 100%; padding: 12px;
+      background: var(--copper); color: white;
+      border: none; border-radius: 6px;
+      font-size: 0.85rem; letter-spacing: 0.08em;
+      text-transform: uppercase; cursor: pointer;
+      font-family: var(--font-sans);
+      transition: background 0.2s;
+    }
+    .pdf-btn:hover { background: var(--gold); }
+
+    /* ── PREVIEW PANEL ── */
+    .preview-panel {
+      padding: 32px; overflow-y: auto;
+      max-height: calc(100vh - 58px);
+      background: #d8d8d8;
+      display: flex; flex-direction: column; align-items: center;
+    }
+    .preview-panel .hint {
+      color: #999; font-size: 0.9rem; margin: auto;
+      text-align: center; line-height: 1.8;
+    }
+
+    /* ── QUOTE DOCUMENT ── */
+    #quote-doc {
+      width: 800px;
+      background: white;
+      box-shadow: 0 4px 40px rgba(0,0,0,0.18);
+      font-family: var(--font-sans);
+    }
+
+    .q-header {
+      background: var(--navy); padding: 40px 48px 32px;
+      display: flex; justify-content: space-between; align-items: flex-start;
+    }
+    .q-header-left img { width: 56px; margin-bottom: 12px; display: block; }
+    .q-header-left .brand-name {
+      font-family: var(--font-serif); color: var(--cream);
+      font-size: 1.5rem; letter-spacing: 0.08em;
+    }
+    .q-header-left .brand-sub {
+      color: var(--copper); font-size: 0.72rem; letter-spacing: 0.18em;
+      text-transform: uppercase; margin-top: 3px;
+    }
+    .q-header-right { text-align: right; }
+    .q-header-right .quote-label {
+      color: var(--copper); font-size: 0.68rem; letter-spacing: 0.2em;
+      text-transform: uppercase; margin-bottom: 6px;
+    }
+    .q-header-right .quote-num {
+      color: var(--cream); font-family: var(--font-serif);
+      font-size: 1.6rem; letter-spacing: 0.05em;
+    }
+    .q-header-right .quote-date {
+      color: rgba(245,240,232,0.55); font-size: 0.78rem; margin-top: 6px;
+    }
+
+    .q-copper-bar { height: 4px; background: var(--copper); }
+
+    .q-body { padding: 40px 48px; }
+
+    .q-client-block {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 32px; margin-bottom: 36px;
+      padding-bottom: 32px; border-bottom: 1px solid #e8e2d8;
+    }
+    .q-block-label {
+      font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.18em;
+      color: var(--copper); margin-bottom: 8px;
+    }
+    .q-block-value { font-size: 0.92rem; color: #222; line-height: 1.7; }
+    .q-block-value strong { font-size: 1rem; color: var(--navy); }
+
+    .q-section-title {
+      font-family: var(--font-serif); font-size: 1.1rem;
+      color: var(--navy); margin-bottom: 12px;
+      padding-bottom: 8px; border-bottom: 1px solid #e8e2d8;
+    }
+
+    .q-narrative {
+      font-size: 0.88rem; color: #444; line-height: 1.8;
+      margin-bottom: 36px;
+    }
+
+    .q-zones { margin-bottom: 36px; }
+    .q-zone {
+      margin-bottom: 20px; padding: 18px 20px;
+      background: #faf8f5; border-left: 3px solid var(--copper);
+      border-radius: 0 4px 4px 0;
+    }
+    .q-zone-name {
+      font-weight: 700; font-size: 0.88rem; color: var(--navy);
+      text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px;
+    }
+    .q-zone-desc { font-size: 0.83rem; color: #555; line-height: 1.7; }
+    .q-zone-fixtures { font-size: 0.78rem; color: var(--copper); margin-top: 6px; font-style: italic; }
+
+    .q-pricing {
+      background: var(--navy); border-radius: 6px;
+      padding: 24px 28px; margin-bottom: 36px;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .q-pricing-left .label { color: rgba(245,240,232,0.55); font-size: 0.72rem; letter-spacing: 0.15em; text-transform: uppercase; }
+    .q-pricing-left .includes { color: rgba(245,240,232,0.7); font-size: 0.8rem; margin-top: 8px; line-height: 1.6; }
+    .q-pricing-right .total-label { color: var(--copper); font-size: 0.72rem; letter-spacing: 0.15em; text-transform: uppercase; text-align: right; }
+    .q-pricing-right .total-amount { color: var(--cream); font-family: var(--font-serif); font-size: 2.2rem; text-align: right; margin-top: 4px; }
+
+    .q-guarantee {
+      display: flex; gap: 16px; align-items: flex-start;
+      padding: 18px 20px; background: #f9f5ee;
+      border: 1px solid #e8dcc8; border-radius: 6px; margin-bottom: 36px;
+    }
+    .q-guarantee-icon { color: var(--copper); font-size: 1.5rem; flex-shrink: 0; }
+    .q-guarantee-text strong { display: block; font-size: 0.85rem; color: var(--navy); margin-bottom: 4px; }
+    .q-guarantee-text p { font-size: 0.8rem; color: #666; line-height: 1.6; }
+
+    .q-sig {
+      border-top: 1px solid #e8e2d8; padding-top: 32px;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 48px;
+    }
+    .q-sig-block .sig-line {
+      border-bottom: 1px solid #aaa; height: 40px; margin-bottom: 6px;
+    }
+    .q-sig-block .sig-label { font-size: 0.72rem; color: #888; letter-spacing: 0.06em; }
+
+    .q-footer {
+      background: #f5f0e8; padding: 18px 48px;
+      display: flex; justify-content: space-between; align-items: center;
+      border-top: 1px solid #e8e2d8;
+    }
+    .q-footer .contact { font-size: 0.75rem; color: #888; line-height: 1.7; }
+    .q-footer .website { font-size: 0.8rem; color: var(--copper); font-weight: 600; }
+  </style>
+</head>
+<body>
+
+<!-- PASSWORD GATE -->
+<div id="gate">
+  <img src="/assets/brand/logo-lantern.png" alt="RCL" />
+  <h2>Quote Builder</h2>
+  <input type="password" id="pw-input" placeholder="Enter password" />
+  <button onclick="checkPassword()">Enter</button>
+  <div class="err" id="pw-err"></div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <div class="builder-header">
+    <img src="/assets/brand/logo-lantern.png" alt="RCL" />
+    <h1>Quote Builder</h1>
+    <span>ROCK CITY LIGHTING — ADMIN</span>
+  </div>
+
+  <div class="workspace">
+
+    <!-- FORM -->
+    <div class="form-panel">
+
+      <h3>Client Info</h3>
+      <div class="field">
+        <label>Client Name</label>
+        <input type="text" id="client-name" placeholder="John & Sarah Smith" />
+      </div>
+      <div class="field">
+        <label>Property Address</label>
+        <input type="text" id="client-address" placeholder="1234 Chenal Pkwy, Little Rock, AR 72212" />
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>Phone</label>
+          <input type="text" id="client-phone" placeholder="(501) 555-0100" />
+        </div>
+        <div class="field">
+          <label>Email</label>
+          <input type="text" id="client-email" placeholder="client@email.com" />
+        </div>
+      </div>
+
+      <h3>Project Zones</h3>
+      <div class="zones" id="zones-container">
+
+        <div class="zone-item">
+          <div class="zone-header" onclick="toggleZone(this)">
+            <input type="checkbox" id="z-entry" onchange="toggleZone(this.closest('.zone-item').querySelector('.zone-header'))" />
+            <label for="z-entry">Front Entry & Driveway</label>
+          </div>
+          <div class="zone-body">
+            <div class="field"><label>Fixtures / Notes</label><textarea id="z-entry-notes" placeholder="e.g. 4 uplights on entry columns, 2 pathway lights along driveway"></textarea></div>
+          </div>
+        </div>
+
+        <div class="zone-item">
+          <div class="zone-header" onclick="toggleZone(this)">
+            <input type="checkbox" id="z-trees" onchange="toggleZone(this.closest('.zone-item').querySelector('.zone-header'))" />
+            <label for="z-trees">Trees & Landscaping</label>
+          </div>
+          <div class="zone-body">
+            <div class="field"><label>Fixtures / Notes</label><textarea id="z-trees-notes" placeholder="e.g. 6 uplights on oak trees in front yard, warm white 3000K"></textarea></div>
+          </div>
+        </div>
+
+        <div class="zone-item">
+          <div class="zone-header" onclick="toggleZone(this)">
+            <input type="checkbox" id="z-facade" onchange="toggleZone(this.closest('.zone-item').querySelector('.zone-header'))" />
+            <label for="z-facade">Facade & Architecture</label>
+          </div>
+          <div class="zone-body">
+            <div class="field"><label>Fixtures / Notes</label><textarea id="z-facade-notes" placeholder="e.g. wash lights on front columns and brick facade"></textarea></div>
+          </div>
+        </div>
+
+        <div class="zone-item">
+          <div class="zone-header" onclick="toggleZone(this)">
+            <input type="checkbox" id="z-pathway" onchange="toggleZone(this.closest('.zone-item').querySelector('.zone-header'))" />
+            <label for="z-pathway">Pathways & Steps</label>
+          </div>
+          <div class="zone-body">
+            <div class="field"><label>Fixtures / Notes</label><textarea id="z-pathway-notes" placeholder="e.g. 8 step lights on front staircase, pathway fixtures to side gate"></textarea></div>
+          </div>
+        </div>
+
+        <div class="zone-item">
+          <div class="zone-header" onclick="toggleZone(this)">
+            <input type="checkbox" id="z-patio" onchange="toggleZone(this.closest('.zone-item').querySelector('.zone-header'))" />
+            <label for="z-patio">Back Patio & Outdoor Living</label>
+          </div>
+          <div class="zone-body">
+            <div class="field"><label>Fixtures / Notes</label><textarea id="z-patio-notes" placeholder="e.g. string lights over pergola, downlights on covered patio ceiling"></textarea></div>
+          </div>
+        </div>
+
+        <div class="zone-item">
+          <div class="zone-header" onclick="toggleZone(this)">
+            <input type="checkbox" id="z-other" onchange="toggleZone(this.closest('.zone-item').querySelector('.zone-header'))" />
+            <label for="z-other">Other / Custom</label>
+          </div>
+          <div class="zone-body">
+            <div class="field"><label>Description</label><textarea id="z-other-notes" placeholder="Describe any additional work..."></textarea></div>
+          </div>
+        </div>
+
+      </div>
+
+      <h3>Pricing & Timeline</h3>
+      <div class="price-row">
+        <div class="field">
+          <label>Total Price</label>
+          <input type="text" id="total-price" placeholder="$4,500" />
+        </div>
+        <div class="field">
+          <label>Est. Completion</label>
+          <input type="text" id="est-completion" placeholder="e.g. Within 2 weeks" />
+        </div>
+      </div>
+
+      <h3>Additional Notes</h3>
+      <div class="field">
+        <textarea id="extra-notes" placeholder="Anything else to include — special requests, phasing, materials..."></textarea>
+      </div>
+
+      <button class="generate-btn" onclick="generateQuote()">Preview Quote</button>
+      <button class="pdf-btn" onclick="downloadPDF()">Download PDF</button>
+
+    </div>
+
+    <!-- PREVIEW -->
+    <div class="preview-panel" id="preview-panel">
+      <div class="hint">
+        Fill out the form and click<br><strong>Preview Quote</strong><br>to see the client-ready proposal.
+      </div>
+
+      <!-- QUOTE DOCUMENT -->
+      <div id="quote-doc" style="display:none;">
+
+        <div class="q-header">
+          <div class="q-header-left">
+            <img src="/assets/brand/logo-lantern-white.png" onerror="this.style.display='none'" />
+            <div class="brand-name">Rock City Lighting</div>
+            <div class="brand-sub">Exterior Landscape & Architectural Lighting</div>
+          </div>
+          <div class="q-header-right">
+            <div class="quote-label">Proposal</div>
+            <div class="quote-num" id="q-num">#RCL-001</div>
+            <div class="quote-date" id="q-date"></div>
+          </div>
+        </div>
+
+        <div class="q-copper-bar"></div>
+
+        <div class="q-body">
+
+          <div class="q-client-block">
+            <div>
+              <div class="q-block-label">Prepared For</div>
+              <div class="q-block-value">
+                <strong id="q-client-name">—</strong><br>
+                <span id="q-client-address">—</span><br>
+                <span id="q-client-phone">—</span><br>
+                <span id="q-client-email">—</span>
+              </div>
+            </div>
+            <div>
+              <div class="q-block-label">Prepared By</div>
+              <div class="q-block-value">
+                <strong>Tim Barnett</strong><br>
+                Rock City Lighting<br>
+                Little Rock, AR<br>
+                timothybarnett94@gmail.com
+              </div>
+            </div>
+          </div>
+
+          <div class="q-section-title">Project Overview</div>
+          <div class="q-narrative" id="q-narrative">—</div>
+
+          <div class="q-section-title">Scope of Work</div>
+          <div class="q-zones" id="q-zones"></div>
+
+          <div class="q-pricing">
+            <div class="q-pricing-left">
+              <div class="label">Investment</div>
+              <div class="includes">Includes all fixtures, wiring,<br>installation & programming</div>
+            </div>
+            <div class="q-pricing-right">
+              <div class="total-label">Total</div>
+              <div class="total-amount" id="q-total">—</div>
+            </div>
+          </div>
+
+          <div class="q-guarantee">
+            <div class="q-guarantee-icon">✦</div>
+            <div class="q-guarantee-text">
+              <strong>90-Day Make-It-Right Guarantee</strong>
+              <p>If anything about the installation isn't right — a fixture placement, brightness, color temperature, or anything else — we'll come back and fix it at no charge within 90 days. No questions asked.</p>
+            </div>
+          </div>
+
+          <div class="q-sig">
+            <div class="q-sig-block">
+              <div class="sig-line"></div>
+              <div class="sig-label">Client Signature &amp; Date</div>
+            </div>
+            <div class="q-sig-block">
+              <div class="sig-line"></div>
+              <div class="sig-label">Tim Barnett — Rock City Lighting</div>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="q-footer">
+          <div class="contact">
+            Rock City Lighting · Little Rock, AR<br>
+            timothybarnett94@gmail.com
+          </div>
+          <div class="website">rockcitylighting.com</div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  // ── PASSWORD ──────────────────────────────────────────────
+  const PASSWORD = 'rockcity2024';
+
+  function checkPassword() {
+    const val = document.getElementById('pw-input').value;
+    if (val === PASSWORD) {
+      document.getElementById('gate').style.display = 'none';
+      document.getElementById('app').style.display = 'block';
+    } else {
+      document.getElementById('pw-err').textContent = 'Incorrect password.';
+      document.getElementById('pw-input').value = '';
+    }
+  }
+
+  document.getElementById('pw-input').addEventListener('keydown', e => {
+    if (e.key === 'Enter') checkPassword();
+  });
+
+  // ── ZONE TOGGLE ───────────────────────────────────────────
+  function toggleZone(header) {
+    const cb   = header.querySelector('input[type=checkbox]');
+    const body = header.closest('.zone-item').querySelector('.zone-body');
+    if (event.target.tagName === 'INPUT') {
+      body.classList.toggle('open', cb.checked);
+    } else {
+      cb.checked = !cb.checked;
+      body.classList.toggle('open', cb.checked);
+    }
+  }
+
+  // ── ZONE DEFINITIONS ──────────────────────────────────────
+  const ZONE_DEFS = {
+    entry:   { label: 'Front Entry & Driveway',      narrative: 'The front entry and driveway will be illuminated to create an inviting first impression — guiding visitors toward the home with warm, welcoming light.' },
+    trees:   { label: 'Trees & Landscaping',          narrative: 'Uplighting will be installed throughout the landscape to highlight the natural beauty of the trees and plantings, adding depth and drama after dark.' },
+    facade:  { label: 'Facade & Architectural Detail', narrative: 'Architectural wash lighting will accentuate the home\'s facade and structural features, bringing out texture and dimension that disappears in the dark.' },
+    pathway: { label: 'Pathways & Steps',             narrative: 'Step and pathway lighting will be installed to ensure safe, comfortable movement around the property while adding a refined finishing touch.' },
+    patio:   { label: 'Back Patio & Outdoor Living',  narrative: 'The outdoor living area will be lit for entertaining and relaxation — creating an extension of the home\'s interior warmth into the backyard.' },
+    other:   { label: 'Custom Work',                  narrative: 'Additional custom lighting elements will be incorporated as detailed in the scope below.' },
+  };
+
+  // ── GENERATE QUOTE ────────────────────────────────────────
+  function generateQuote() {
+    const name     = document.getElementById('client-name').value.trim()    || '—';
+    const address  = document.getElementById('client-address').value.trim() || '—';
+    const phone    = document.getElementById('client-phone').value.trim()   || '';
+    const email    = document.getElementById('client-email').value.trim()   || '';
+    const price    = document.getElementById('total-price').value.trim()    || '—';
+    const timeline = document.getElementById('est-completion').value.trim() || '';
+    const extra    = document.getElementById('extra-notes').value.trim();
+
+    // Quote number: date-based
+    const now = new Date();
+    const qNum = `#RCL-${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}`;
+    const dateStr = now.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+    document.getElementById('q-num').textContent   = qNum;
+    document.getElementById('q-date').textContent  = dateStr;
+    document.getElementById('q-client-name').textContent    = name;
+    document.getElementById('q-client-address').textContent = address;
+    document.getElementById('q-client-phone').textContent   = phone;
+    document.getElementById('q-client-email').textContent   = email;
+    document.getElementById('q-total').textContent = price;
+
+    // Collect active zones
+    const zones = ['entry','trees','facade','pathway','patio','other'].filter(z =>
+      document.getElementById(`z-${z}`).checked
+    );
+
+    // Build narrative
+    const narrativeParts = zones.map(z => ZONE_DEFS[z].narrative);
+    let narrative = narrativeParts.join(' ');
+    if (timeline) narrative += ` Installation is estimated to be completed ${timeline.toLowerCase()}.`;
+    if (extra)    narrative += ' ' + extra;
+    if (!narrative) narrative = 'Please see the scope of work below for full project details.';
+    document.getElementById('q-narrative').textContent = narrative;
+
+    // Build zones
+    const zonesEl = document.getElementById('q-zones');
+    zonesEl.innerHTML = '';
+    zones.forEach(z => {
+      const notes = document.getElementById(`z-${z}-notes`).value.trim();
+      const div = document.createElement('div');
+      div.className = 'q-zone';
+      div.innerHTML = `
+        <div class="q-zone-name">${ZONE_DEFS[z].label}</div>
+        ${notes ? `<div class="q-zone-fixtures">${notes}</div>` : ''}
+      `;
+      zonesEl.appendChild(div);
+    });
+
+    document.getElementById('quote-doc').style.display = 'block';
+    document.querySelector('.hint') && (document.querySelector('.hint').style.display = 'none');
+    document.getElementById('quote-doc').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  // ── DOWNLOAD PDF ──────────────────────────────────────────
+  function downloadPDF() {
+    generateQuote();
+    const el   = document.getElementById('quote-doc');
+    const name = document.getElementById('client-name').value.trim().replace(/\s+/g,'-') || 'Quote';
+    const opts = {
+      margin:      0,
+      filename:    `RCL-Quote-${name}.pdf`,
+      image:       { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2, useCORS: true },
+      jsPDF:       { unit: 'px', format: [800, 1130], orientation: 'portrait' },
+    };
+    html2pdf().set(opts).from(el).save();
+  }
+</script>
+
+</body>
+</html>
