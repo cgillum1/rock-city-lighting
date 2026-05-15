@@ -78,17 +78,41 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 });
 
 // Form submit
-document.querySelector('.contact-form form')?.addEventListener('submit', e => {
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwNarhgPjLV86aeos486Vhkb6Uf-yJ2KsbtyZLYna8QGY1qxKcuyfN4k4720kM6n67uoQ/exec';
+
+document.querySelector('.contact-form form')?.addEventListener('submit', async e => {
   e.preventDefault();
-  const btn = e.target.querySelector('.form-submit');
-  const original = btn.textContent;
-  btn.textContent = 'Sent! We\'ll be in touch soon.';
+  const form = e.target;
+  const btn = form.querySelector('.form-submit');
+  btn.textContent = 'Sending...';
   btn.disabled = true;
-  btn.style.opacity = '0.7';
-  setTimeout(() => {
-    btn.textContent = original;
+
+  const payload = {
+    name:    form.name.value,
+    phone:   form.phone.value,
+    email:   form.email.value,
+    address: form.address.value,
+    project: form.project.value,
+    time:    form.timing.value,
+  };
+
+  try {
+    await fetch(SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    btn.textContent = 'Sent! We\'ll be in touch soon.';
+    btn.style.opacity = '0.7';
+    form.reset();
+    setTimeout(() => {
+      btn.textContent = 'Send My Request';
+      btn.disabled = false;
+      btn.style.opacity = '';
+    }, 5000);
+  } catch {
+    btn.textContent = 'Something went wrong — please call us.';
     btn.disabled = false;
-    btn.style.opacity = '';
-    e.target.reset();
-  }, 4000);
+  }
 });
