@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <defs>
+    <!-- Top arc: counterclockwise left→top→right at r=43 -->
+    <path id="arc-top" d="M 7,50 A 43,43 0 0,0 93,50"/>
+    <!-- Bottom arc: clockwise left→bottom→right at r=43 -->
+    <path id="arc-bot" d="M 7,50 A 43,43 0 0,1 93,50"/>
+  </defs>
+
+  <!-- Navy fill -->
+  <circle cx="50" cy="50" r="50" fill="#0F1E2D"/>
+  <!-- Outer copper ring -->
+  <circle cx="50" cy="50" r="47" fill="none" stroke="#B87338" stroke-width="2"/>
+  <!-- Inner copper ring -->
+  <circle cx="50" cy="50" r="39" fill="none" stroke="#B87338" stroke-width="1"/>
+
+  <!-- Cardinal ornament dots between the rings -->
+  <circle cx="50" cy="10" r="1.8" fill="#B87338"/>
+  <circle cx="90" cy="50" r="1.8" fill="#B87338"/>
+  <circle cx="50" cy="90" r="1.8" fill="#B87338"/>
+  <circle cx="10" cy="50" r="1.8" fill="#B87338"/>
+
+  <!-- ROCK CITY on top arc -->
+  <text font-family="Georgia,'Times New Roman',serif" font-size="7.8" font-weight="400"
+        fill="#B87338" letter-spacing="3.5">
+    <textPath href="#arc-top" startOffset="50%" text-anchor="middle" dy="-1">ROCK CITY</textPath>
+  </text>
+
+  <!-- LIGHTING on bottom arc — side="right" renders text on outside of arc -->
+  <text font-family="Georgia,'Times New Roman',serif" font-size="7" font-weight="400"
+        fill="#B87338" letter-spacing="3">
+    <textPath href="#arc-bot" startOffset="50%" text-anchor="middle" side="right" dy="1">LIGHTING</textPath>
+  </text>
+
+  <!-- LANTERN centered at 50,45 -->
+  <!-- Handle loop -->
+  <path d="M 45.5,27.5 Q 50,23 54.5,27.5"
+        fill="none" stroke="#B87338" stroke-width="1.6" stroke-linecap="round"/>
+  <!-- Top mounting cap -->
+  <rect x="43" y="27.5" width="14" height="3.5" rx="0.8" fill="#B87338"/>
+  <!-- Lantern body outline -->
+  <rect x="43" y="31" width="14" height="18" rx="1.5"
+        fill="none" stroke="#B87338" stroke-width="1.5"/>
+  <!-- Inner grid — vertical -->
+  <line x1="50" y1="31" x2="50" y2="49" stroke="#B87338" stroke-width="0.6" opacity="0.4"/>
+  <!-- Inner grid — horizontals -->
+  <line x1="43" y1="37.5" x2="57" y2="37.5" stroke="#B87338" stroke-width="0.6" opacity="0.4"/>
+  <line x1="43" y1="44" x2="57" y2="44" stroke="#B87338" stroke-width="0.6" opacity="0.4"/>
+  <!-- Flame -->
+  <path d="M 50,34 C 47.5,36.5 47.5,40.5 50,41.5 C 52.5,40.5 52.5,36.5 50,34 Z"
+        fill="#B87338"/>
+  <!-- Base ring -->
+  <rect x="42" y="49" width="16" height="2.5" rx="1" fill="#B87338"/>
+  <!-- Bottom foot -->
+  <rect x="44" y="51.5" width="12" height="1.5" rx="0.5" fill="#B87338" opacity="0.7"/>
+</svg>
