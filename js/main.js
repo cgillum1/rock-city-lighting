@@ -53,8 +53,8 @@ const mobileMenu = document.querySelector('.nav-mobile-menu');
 const mobileClose = document.querySelector('.nav-mobile-close');
 
 hamburger?.addEventListener('click', () => {
-  mobileMenu?.classList.add('open');
-  document.body.style.overflow = 'hidden';
+  const isOpen = mobileMenu?.classList.toggle('open');
+  document.body.style.overflow = isOpen ? 'hidden' : '';
 });
 mobileClose?.addEventListener('click', closeMobileNav);
 mobileMenu?.querySelectorAll('a').forEach(a => a.addEventListener('click', closeMobileNav));
