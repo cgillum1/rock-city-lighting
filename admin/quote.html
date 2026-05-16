@@ -427,8 +427,13 @@
         <input type="text" id="client-name" placeholder="John & Sarah Smith" />
       </div>
       <div class="field">
-        <label>Property Address</label>
-        <input type="text" id="client-address" placeholder="Start typing an address…" autocomplete="off" />
+        <label>Street Address</label>
+        <input type="text" id="client-address" placeholder="Start typing — address will auto-fill…" autocomplete="off" />
+      </div>
+      <div class="field-row" style="grid-template-columns: 2fr 1fr 1fr;">
+        <div class="field"><label>City</label><input type="text" id="client-city" placeholder="Little Rock" /></div>
+        <div class="field"><label>State</label><input type="text" id="client-state" placeholder="AR" maxlength="2" style="text-transform:uppercase;" /></div>
+        <div class="field"><label>ZIP</label><input type="text" id="client-zip" placeholder="72211" inputmode="numeric" maxlength="10" /></div>
       </div>
       <div class="field-row">
         <div class="field"><label>Phone</label><input type="tel" id="client-phone" placeholder="(501) 555-0100" inputmode="tel" /></div>
@@ -731,17 +736,18 @@
     ac.addListener('place_changed', () => {
       const place = ac.getPlace();
       if (!place.address_components) return;
-      // Build a clean formatted address from components
       let street = '', city = '', state = '', zip = '';
       place.address_components.forEach(c => {
-        if (c.types.includes('street_number')) street = c.long_name + ' ';
-        if (c.types.includes('route'))         street += c.long_name;
-        if (c.types.includes('locality'))      city   = c.long_name;
-        if (c.types.includes('administrative_area_level_1')) state = c.short_name;
-        if (c.types.includes('postal_code'))   zip    = c.long_name;
+        if (c.types.includes('street_number'))               street = c.long_name + ' ';
+        if (c.types.includes('route'))                       street += c.long_name;
+        if (c.types.includes('locality'))                    city   = c.long_name;
+        if (c.types.includes('administrative_area_level_1')) state  = c.short_name;
+        if (c.types.includes('postal_code'))                 zip    = c.long_name;
       });
-      const full = [street.trim(), city, state, zip].filter(Boolean).join(', ');
-      input.value = full || place.formatted_address;
+      input.value = street.trim();
+      document.getElementById('client-city').value  = city;
+      document.getElementById('client-state').value = state;
+      document.getElementById('client-zip').value   = zip;
       liveUpdate();
     });
   };
@@ -809,8 +815,8 @@
     mt.addEventListener('input', () => { formatCurrency(mt); liveUpdate(); });
     mt.addEventListener('blur',  () => finalizeCurrency(mt));
 
-    // All text inputs & textareas in form
-    document.querySelectorAll('.form-panel input[type=text], .form-panel input[type=date], .form-panel textarea').forEach(el => {
+    // All text inputs & textareas in form (including tel inputs)
+    document.querySelectorAll('.form-panel input[type=text], .form-panel input[type=tel], .form-panel input[type=date], .form-panel textarea').forEach(el => {
       el.addEventListener('input', liveUpdate);
     });
 
@@ -1071,7 +1077,12 @@
   // ── GENERATE QUOTE ────────────────────────────────────────
   function generateQuote() {
     const name        = document.getElementById('client-name').value.trim();
-    const address     = document.getElementById('client-address').value.trim();
+    const street      = document.getElementById('client-address').value.trim();
+    const city        = document.getElementById('client-city').value.trim();
+    const state       = document.getElementById('client-state').value.trim();
+    const zip         = document.getElementById('client-zip').value.trim();
+    const cityLine    = [city, state, zip].filter(Boolean).join(' ');
+    const address     = [street, cityLine].filter(Boolean).join('\n');
     const phone       = document.getElementById('client-phone').value.trim();
     const email       = document.getElementById('client-email').value.trim();
     const projectName = document.getElementById('project-name').value.trim();
