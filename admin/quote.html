@@ -198,19 +198,13 @@
     /* ── Dark header ── */
     .q-doc-header {
       background: var(--navy);
-      padding: 44px 60px 40px;
-      display: flex; flex-direction: column; align-items: center;
-    }
-    .q-doc-header .q-full-logo { width: 220px; margin-bottom: 28px; display: block; }
-    .q-copper-bar { height: 4px; background: linear-gradient(90deg, transparent, var(--copper) 20%, var(--gold) 50%, var(--copper) 80%, transparent); }
-    .q-doc-title-wrap {
-      background: var(--navy);
-      padding: 28px 60px 32px;
-      display: flex; flex-direction: column; align-items: center;
+      padding: 16px 60px;
+      display: flex; align-items: center; justify-content: space-between;
+      border-top: 3px solid var(--copper);
       border-bottom: 3px solid var(--copper);
     }
-    .q-diamond { width: 7px; height: 7px; background: var(--copper); transform: rotate(45deg); margin-bottom: 16px; }
-    .q-doc-title { font-family: var(--font-serif); font-size: 2rem; color: var(--cream); letter-spacing: 0.28em; text-transform: uppercase; line-height: 1; }
+    .q-doc-header .q-full-logo { height: 48px; width: auto; display: block; }
+    .q-doc-title { font-family: var(--font-serif); font-size: 1.5rem; color: var(--cream); letter-spacing: 0.28em; text-transform: uppercase; line-height: 1; }
 
     /* ── Dark body ── */
     .q-body { background: var(--navy-body); }
@@ -546,10 +540,6 @@
 
         <div class="q-doc-header">
           <img src="/assets/brand/logo-stacked.png" class="q-full-logo" alt="Rock City Lighting" />
-        </div>
-        <div class="q-copper-bar"></div>
-        <div class="q-doc-title-wrap">
-          <div class="q-diamond"></div>
           <div class="q-doc-title">Quote</div>
         </div>
 
