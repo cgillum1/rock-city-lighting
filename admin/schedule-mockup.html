@@ -1,0 +1,1410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Schedule — Rock City Lighting Admin</title>
+<style>
+  /* ── DESIGN TOKENS ── */
+  :root {
+    --navy:     #0d1b2e;
+    --navy2:    #162840;
+    --copper:   #b87338;
+    --gold:     #d4a853;
+    --cream:    #f5f0e8;
+    --green:    #2a8a4e;
+    --red:      #c0392b;
+    --orange:   #c47a20;
+    --sidebar-w: 220px;
+    --topbar-h:  58px;
+    --page-bg:   #f0f2f5;
+
+    /* Calendar grid */
+    --time-col: 52px;        /* width of the time label column */
+    --day-col: 1fr;          /* each day column */
+    --hour-h: 56px;          /* height of one hour row */
+    --grid-cols: 7;          /* number of day columns */
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    background: var(--page-bg);
+    color: #1a2030;
+    min-height: 100vh;
+    display: flex;
+  }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    width: var(--sidebar-w);
+    background: var(--navy);
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0; left: 0;
+    height: 100vh;
+    z-index: 100;
+    transition: transform 0.25s ease;
+  }
+  .sidebar-logo {
+    padding: 20px 20px 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .sidebar-logo img {
+    width: 36px; height: 36px;
+    object-fit: contain; opacity: 0.9;
+  }
+  .sidebar-logo-text .name {
+    font-family: Georgia, serif;
+    color: var(--copper);
+    font-weight: 700;
+    font-size: 0.82rem;
+    letter-spacing: 0.03em;
+    line-height: 1;
+  }
+  .sidebar-logo-text .sub {
+    color: rgba(255,255,255,0.28);
+    font-size: 0.6rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-top: 3px;
+  }
+  .sidebar-nav { flex: 1; padding: 10px 0; overflow-y: auto; }
+  .nav-section {
+    padding: 14px 20px 5px;
+    font-size: 0.57rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.22);
+  }
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 20px;
+    color: rgba(255,255,255,0.48);
+    font-size: 0.8rem;
+    cursor: pointer;
+    border-right: 3px solid transparent;
+    transition: all 0.15s;
+    text-decoration: none;
+  }
+  .nav-item:hover { color: rgba(255,255,255,0.82); background: rgba(255,255,255,0.05); }
+  .nav-item.active { color: var(--gold); background: rgba(184,115,56,0.13); border-right-color: var(--copper); }
+  .nav-icon { width: 18px; height: 18px; flex-shrink: 0; color: inherit; }
+  .nav-item.active .nav-icon { color: var(--gold); }
+  .nav-badge {
+    margin-left: auto;
+    background: var(--copper);
+    color: white;
+    font-size: 0.6rem;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 10px;
+    min-width: 18px;
+    text-align: center;
+  }
+
+  /* ── MAIN ── */
+  .main {
+    margin-left: var(--sidebar-w);
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    overflow: hidden;
+  }
+
+  /* ── TOPBAR ── */
+  .topbar {
+    background: white;
+    border-bottom: 1px solid #e4e6ea;
+    padding: 0 28px;
+    height: var(--topbar-h);
+    display: flex;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    gap: 12px;
+    flex-shrink: 0;
+  }
+  .hamburger {
+    display: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--navy);
+    padding: 2px;
+  }
+  .topbar-title {
+    font-family: Georgia, serif;
+    font-size: 0.96rem;
+    font-weight: 700;
+    color: var(--navy);
+    flex: 1;
+  }
+  .topbar-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--copper);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 14px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    text-transform: uppercase;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+  }
+
+  /* ── SCHEDULE LAYOUT ── */
+  .schedule-body {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+    height: calc(100vh - var(--topbar-h));
+  }
+
+  /* ── LEFT PANEL ── */
+  .left-panel {
+    width: 240px;
+    flex-shrink: 0;
+    background: white;
+    border-right: 1px solid #e4e6ea;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+  }
+
+  /* Google Calendar sync info */
+  .gcal-info {
+    padding: 10px 14px;
+    background: #f0f7ff;
+    border-bottom: 1px solid #dbeafe;
+    font-size: 0.7rem;
+    color: #1e40af;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    line-height: 1.4;
+  }
+  .gcal-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--green);
+    flex-shrink: 0;
+  }
+
+  /* Mini month calendar */
+  .mini-cal { padding: 14px; }
+  .mini-cal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  .mini-cal-month {
+    font-family: Georgia, serif;
+    font-size: 0.86rem;
+    font-weight: 700;
+    color: var(--navy);
+  }
+  .mini-cal-nav {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #9ca3af;
+    padding: 2px 4px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+  }
+  .mini-cal-nav:hover { background: #f3f4f6; color: var(--navy); }
+
+  .mini-cal-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 0;
+  }
+  .mini-dow {
+    text-align: center;
+    font-size: 0.58rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #9ca3af;
+    padding: 3px 0 6px;
+  }
+  .mini-day {
+    text-align: center;
+    font-size: 0.74rem;
+    color: #374151;
+    padding: 3px 0;
+    border-radius: 50%;
+    cursor: pointer;
+    position: relative;
+    line-height: 1.8;
+    transition: background 0.1s;
+  }
+  .mini-day:hover { background: #f3f4f6; }
+  .mini-day.today {
+    background: var(--navy);
+    color: white;
+    border-radius: 50%;
+    font-weight: 700;
+  }
+  .mini-day.has-job::after {
+    content: '';
+    position: absolute;
+    bottom: 1px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 4px; height: 4px;
+    border-radius: 50%;
+    background: var(--copper);
+  }
+  .mini-day.today::after { background: var(--gold); }
+  .mini-day.other-month { color: #d1d5db; }
+  .mini-day.in-week {
+    background: rgba(184,115,56,0.08);
+    border-radius: 0;
+  }
+  .mini-day.week-start { border-radius: 50% 0 0 50%; }
+  .mini-day.week-end { border-radius: 0 50% 50% 0; }
+
+  /* Upcoming list */
+  .upcoming-section { padding: 14px; border-top: 1px solid #f0f0f0; flex: 1; }
+  .upcoming-label {
+    font-size: 0.6rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: #9ca3af;
+    margin-bottom: 10px;
+  }
+  .upcoming-item {
+    display: flex;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid #f5f5f5;
+  }
+  .upcoming-item:last-child { border-bottom: none; }
+  .upcoming-bar {
+    width: 4px;
+    border-radius: 2px;
+    flex-shrink: 0;
+    align-self: stretch;
+    min-height: 36px;
+  }
+  .bar-copper { background: var(--copper); }
+  .bar-slate  { background: #64748b; }
+  .bar-lightblue { background: #93c5fd; }
+
+  .upcoming-info { flex: 1; min-width: 0; }
+  .upcoming-client {
+    font-family: Georgia, serif;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #1a2030;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .upcoming-type {
+    font-size: 0.68rem;
+    color: #6b7280;
+    margin-top: 2px;
+  }
+  .upcoming-when {
+    font-size: 0.66rem;
+    color: #9ca3af;
+    margin-top: 2px;
+    white-space: nowrap;
+  }
+
+  /* ── RIGHT PANEL: WEEK GRID ── */
+  .right-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    min-width: 0;
+  }
+
+  /* Week header bar */
+  .week-header {
+    background: white;
+    border-bottom: 1px solid #e4e6ea;
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+  .week-nav-btn {
+    background: none;
+    border: 1px solid #e4e6ea;
+    border-radius: 6px;
+    padding: 5px 10px;
+    cursor: pointer;
+    color: #6b7280;
+    display: flex;
+    align-items: center;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+  }
+  .week-nav-btn:hover { background: #f3f4f6; }
+  .week-range {
+    font-family: Georgia, serif;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--navy);
+    flex: 1;
+  }
+  .week-today-btn {
+    border: 1px solid #e4e6ea;
+    background: white;
+    border-radius: 6px;
+    padding: 5px 12px;
+    font-size: 0.74rem;
+    font-weight: 600;
+    color: #374151;
+    cursor: pointer;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+  }
+  .week-today-btn:hover { background: #f3f4f6; }
+  .view-select {
+    border: 1px solid #e4e6ea;
+    border-radius: 6px;
+    padding: 5px 10px;
+    font-size: 0.74rem;
+    color: #374151;
+    background: white;
+    cursor: pointer;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+  }
+
+  /* Calendar grid wrapper */
+  .cal-scroll {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: auto;
+    position: relative;
+    background: white;
+  }
+
+  .cal-table {
+    min-width: 600px;
+    width: 100%;
+    position: relative;
+  }
+
+  /* Day column headers */
+  .cal-day-headers {
+    display: grid;
+    grid-template-columns: var(--time-col) repeat(var(--grid-cols), var(--day-col));
+    border-bottom: 1px solid #e4e6ea;
+    position: sticky;
+    top: 0;
+    background: white;
+    z-index: 10;
+  }
+  .cal-day-header-spacer { border-right: 1px solid #e4e6ea; }
+  .cal-day-header {
+    text-align: center;
+    padding: 8px 4px;
+    border-right: 1px solid #f0f0f0;
+    cursor: pointer;
+  }
+  .cal-day-header:last-child { border-right: none; }
+  .cal-dow {
+    font-size: 0.6rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #9ca3af;
+  }
+  .cal-date-num {
+    font-family: Georgia, serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #374151;
+    line-height: 1.2;
+    margin-top: 2px;
+  }
+  .cal-day-header.today .cal-date-num {
+    background: var(--navy);
+    color: white;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 2px auto 0;
+    font-size: 0.86rem;
+  }
+
+  /* All-day row */
+  .cal-allday-row {
+    display: grid;
+    grid-template-columns: var(--time-col) repeat(var(--grid-cols), var(--day-col));
+    border-bottom: 2px solid #e4e6ea;
+    background: #fafbfc;
+    min-height: 28px;
+  }
+  .cal-allday-label {
+    padding: 6px 4px;
+    font-size: 0.6rem;
+    color: #9ca3af;
+    text-align: right;
+    border-right: 1px solid #e4e6ea;
+    padding-right: 8px;
+    align-self: center;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .cal-allday-cell {
+    border-right: 1px solid #f0f0f0;
+    padding: 4px;
+  }
+  .cal-allday-cell:last-child { border-right: none; }
+
+  /* Time grid */
+  .cal-grid {
+    display: grid;
+    grid-template-columns: var(--time-col) repeat(var(--grid-cols), var(--day-col));
+    position: relative;
+  }
+  .cal-time-label {
+    font-size: 0.62rem;
+    color: #9ca3af;
+    text-align: right;
+    padding-right: 8px;
+    height: var(--hour-h);
+    display: flex;
+    align-items: flex-start;
+    padding-top: 4px;
+    border-right: 1px solid #e4e6ea;
+    letter-spacing: 0.02em;
+    font-weight: 500;
+    position: relative;
+    z-index: 2;
+    background: white;
+  }
+  .cal-cell {
+    height: var(--hour-h);
+    border-right: 1px solid #f0f0f0;
+    border-bottom: 1px solid #f5f5f5;
+    position: relative;
+  }
+  .cal-cell:last-child { border-right: none; }
+  /* Half-hour dotted line */
+  .cal-cell::after {
+    content: '';
+    position: absolute;
+    left: 0; right: 0;
+    top: 50%;
+    border-top: 1px dashed #f0f0f0;
+  }
+
+  /* ── APPOINTMENTS ── */
+  /* All appointments are absolutely positioned within a .cal-col-wrap */
+  .cal-col-wrap {
+    position: relative;
+    height: calc(var(--hour-h) * 11); /* 7am–6pm = 11 hours */
+    grid-column: span 1;
+  }
+
+  .apt {
+    position: absolute;
+    left: 2px; right: 2px;
+    border-radius: 5px;
+    padding: 5px 8px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: opacity 0.15s, transform 0.1s;
+    z-index: 5;
+  }
+  .apt:hover { opacity: 0.9; transform: scale(1.01); }
+
+  .apt-navy {
+    background: var(--navy);
+    color: var(--cream);
+  }
+  .apt-copper {
+    background: var(--copper);
+    color: var(--cream);
+  }
+  .apt-lightblue {
+    background: #dbeafe;
+    color: #1e3a5f;
+    border: 1px solid #93c5fd;
+  }
+
+  .apt-client {
+    font-family: Georgia, serif;
+    font-size: 0.76rem;
+    font-weight: 700;
+    line-height: 1.2;
+  }
+  .apt-type {
+    font-size: 0.64rem;
+    opacity: 0.8;
+    margin-top: 2px;
+  }
+  .apt-time {
+    font-size: 0.62rem;
+    opacity: 0.7;
+    margin-top: 3px;
+  }
+
+  /* Current time indicator */
+  .now-line {
+    position: absolute;
+    left: 0; right: 0;
+    z-index: 8;
+    pointer-events: none;
+  }
+  .now-line-inner {
+    height: 2px;
+    background: var(--red);
+    position: relative;
+  }
+  .now-line-inner::before {
+    content: '';
+    position: absolute;
+    left: -4px; top: -4px;
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--red);
+  }
+
+  /* ── SIDEBAR OVERLAY ── */
+  .sidebar-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.45);
+    z-index: 99;
+  }
+
+  /* ── MOBILE BOTTOM NAV ── */
+  .mobile-bottom-nav { display: none; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    .left-panel { width: 200px; }
+  }
+
+  @media (max-width: 640px) {
+    /* Sidebar slide-in on mobile */
+    .sidebar { transform: translateX(calc(-1 * var(--sidebar-w))); }
+    .sidebar.open { transform: translateX(0); }
+    .sidebar-overlay.open { display: block; }
+    .main { margin-left: 0; }
+    .hamburger { display: flex; }
+    .topbar { padding: 0 14px; }
+
+    /* On mobile, hide the week grid and show a vertical list */
+    .left-panel { display: none; }
+    .right-panel { flex: 1; }
+    .week-header { padding: 10px 12px; flex-wrap: wrap; gap: 6px; }
+    .week-range { font-size: 0.84rem; }
+
+    /* Hide grid, show mobile list */
+    .cal-scroll { display: none; }
+    .mobile-cal-list { display: block; }
+
+    /* Horizontal date strip */
+    .date-strip {
+      display: flex;
+      overflow-x: auto;
+      padding: 10px 12px;
+      gap: 8px;
+      border-bottom: 1px solid #e4e6ea;
+      background: white;
+      scrollbar-width: none;
+    }
+    .date-strip::-webkit-scrollbar { display: none; }
+    .date-strip-item {
+      flex-shrink: 0;
+      text-align: center;
+      cursor: pointer;
+      padding: 6px 10px;
+      border-radius: 8px;
+    }
+    .date-strip-item.active {
+      background: var(--navy);
+    }
+    .date-strip-dow {
+      font-size: 0.58rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #9ca3af;
+    }
+    .date-strip-item.active .date-strip-dow { color: rgba(255,255,255,0.6); }
+    .date-strip-num {
+      font-family: Georgia, serif;
+      font-size: 1rem;
+      font-weight: 700;
+      color: #374151;
+      line-height: 1.2;
+    }
+    .date-strip-item.active .date-strip-num { color: white; }
+    .date-strip-dot {
+      width: 4px; height: 4px;
+      border-radius: 50%;
+      background: var(--copper);
+      margin: 2px auto 0;
+    }
+    .date-strip-item.active .date-strip-dot { background: var(--gold); }
+
+    /* Mobile bottom nav */
+    .mobile-bottom-nav {
+      display: flex;
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      background: var(--navy);
+      border-top: 1px solid rgba(255,255,255,0.09);
+      z-index: 100;
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+    .mob-nav-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 10px 4px 8px;
+      font-size: 0.59rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.38);
+      cursor: pointer;
+      gap: 4px;
+      text-decoration: none;
+    }
+    .mob-nav-item.active { color: var(--copper); }
+    .main { padding-bottom: 62px; }
+  }
+
+  /* Mobile event list (hidden on desktop) */
+  .mobile-cal-list { display: none; }
+  .mobile-day-section { padding: 0 12px; }
+  .mobile-day-label {
+    font-family: Georgia, serif;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #9ca3af;
+    padding: 14px 0 6px;
+    border-top: 1px solid #f0f0f0;
+    margin-top: 4px;
+  }
+  .mobile-day-label.today-label { color: var(--navy); }
+  .mobile-apt {
+    display: flex;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    margin-bottom: 8px;
+  }
+  .mobile-apt.navy { background: var(--navy); }
+  .mobile-apt.copper { background: var(--copper); }
+  .mobile-apt.lightblue { background: #dbeafe; }
+  .mobile-apt-time {
+    font-size: 0.7rem;
+    font-weight: 600;
+    min-width: 56px;
+    flex-shrink: 0;
+    padding-top: 2px;
+  }
+  .mobile-apt.navy .mobile-apt-time,
+  .mobile-apt.copper .mobile-apt-time { color: rgba(255,255,255,0.7); }
+  .mobile-apt.lightblue .mobile-apt-time { color: #3b82f6; }
+  .mobile-apt-info { flex: 1; }
+  .mobile-apt-client {
+    font-family: Georgia, serif;
+    font-size: 0.84rem;
+    font-weight: 700;
+  }
+  .mobile-apt.navy .mobile-apt-client,
+  .mobile-apt.copper .mobile-apt-client { color: var(--cream); }
+  .mobile-apt.lightblue .mobile-apt-client { color: #1e3a5f; }
+  .mobile-apt-type {
+    font-size: 0.7rem;
+    opacity: 0.75;
+    margin-top: 2px;
+  }
+  .mobile-apt.navy .mobile-apt-type,
+  .mobile-apt.copper .mobile-apt-type { color: rgba(255,255,255,0.75); }
+  .mobile-apt.lightblue .mobile-apt-type { color: #374151; }
+  .no-events {
+    font-size: 0.78rem;
+    color: #d1d5db;
+    padding: 10px 0;
+    font-style: italic;
+  }
+</style>
+</head>
+<body>
+
+<!-- SVG icon sprite -->
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none">
+  <defs>
+    <symbol id="icon-home" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M3 9.75L12 3l9 6.75V21a1 1 0 01-1 1H4a1 1 0 01-1-1V9.75z"/><path d="M9 22V12h6v10"/>
+    </symbol>
+    <symbol id="icon-calendar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>
+    </symbol>
+    <symbol id="icon-clients" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+    </symbol>
+    <symbol id="icon-document" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="13" y2="17"/>
+    </symbol>
+    <symbol id="icon-dollar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="12" y1="2" x2="12" y2="22"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/>
+    </symbol>
+    <symbol id="icon-chevron-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="15 18 9 12 15 6"/>
+    </symbol>
+    <symbol id="icon-chevron-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="9 18 15 12 9 6"/>
+    </symbol>
+    <symbol id="icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+    </symbol>
+    <symbol id="icon-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+    </symbol>
+    <symbol id="icon-gcal" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>
+    </symbol>
+  </defs>
+</svg>
+
+<!-- Mobile sidebar overlay -->
+<div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar" role="navigation" aria-label="Main navigation">
+  <div class="sidebar-logo">
+    <img src="/assets/brand/logo-lantern.png" alt="Rock City Lighting" onerror="this.style.display='none'">
+    <div class="sidebar-logo-text">
+      <div class="name">Rock City Lighting</div>
+      <div class="sub">Admin Portal</div>
+    </div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section">Main</div>
+    <a class="nav-item" href="/admin/dashboard-mockup.html">
+      <svg class="nav-icon"><use href="#icon-home"/></svg>
+      Dashboard
+    </a>
+    <a class="nav-item active" href="/admin/schedule-mockup.html" aria-current="page">
+      <svg class="nav-icon"><use href="#icon-calendar"/></svg>
+      Schedule
+    </a>
+    <a class="nav-item" href="/admin/client-mockup.html">
+      <svg class="nav-icon"><use href="#icon-clients"/></svg>
+      Clients
+    </a>
+    <div class="nav-section">Tools</div>
+    <a class="nav-item" href="/admin/quote.html">
+      <svg class="nav-icon"><use href="#icon-document"/></svg>
+      Quote Builder
+    </a>
+    <a class="nav-item" href="#">
+      <svg class="nav-icon"><use href="#icon-dollar"/></svg>
+      Invoices
+      <span class="nav-badge">3</span>
+    </a>
+  </nav>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+
+  <header class="topbar">
+    <button class="hamburger" onclick="openSidebar()" aria-label="Open navigation">
+      <svg width="22" height="22"><use href="#icon-menu"/></svg>
+    </button>
+    <div class="topbar-title">Schedule</div>
+    <button class="topbar-btn">
+      <svg width="14" height="14"><use href="#icon-plus"/></svg>
+      Add Event
+    </button>
+  </header>
+
+  <div class="schedule-body">
+
+    <!-- LEFT PANEL: mini calendar + upcoming -->
+    <div class="left-panel">
+
+      <!-- Google Calendar sync notice -->
+      <div class="gcal-info">
+        <span class="gcal-dot"></span>
+        Connected to Google Calendar &middot; tim@rockcitylighting.com &middot; Events sync automatically
+      </div>
+
+      <!-- Mini month calendar: May 2026 -->
+      <div class="mini-cal">
+        <div class="mini-cal-header">
+          <span class="mini-cal-month">May 2026</span>
+          <div style="display:flex;gap:2px;">
+            <button class="mini-cal-nav" aria-label="Previous month">
+              <svg width="14" height="14"><use href="#icon-chevron-left"/></svg>
+            </button>
+            <button class="mini-cal-nav" aria-label="Next month">
+              <svg width="14" height="14"><use href="#icon-chevron-right"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="mini-cal-grid">
+          <!-- Day of week headers -->
+          <div class="mini-dow">S</div>
+          <div class="mini-dow">M</div>
+          <div class="mini-dow">T</div>
+          <div class="mini-dow">W</div>
+          <div class="mini-dow">T</div>
+          <div class="mini-dow">F</div>
+          <div class="mini-dow">S</div>
+
+          <!-- Week 1: May 1–4 (starts on Friday) -->
+          <!-- Apr 26–30 -->
+          <div class="mini-day other-month">26</div>
+          <div class="mini-day other-month">27</div>
+          <div class="mini-day other-month">28</div>
+          <div class="mini-day other-month">29</div>
+          <div class="mini-day other-month">30</div>
+          <div class="mini-day">1</div>
+          <div class="mini-day">2</div>
+
+          <!-- Week 2: May 3–9 -->
+          <div class="mini-day">3</div>
+          <div class="mini-day">4</div>
+          <div class="mini-day">5</div>
+          <div class="mini-day">6</div>
+          <div class="mini-day">7</div>
+          <div class="mini-day">8</div>
+          <div class="mini-day">9</div>
+
+          <!-- Week 3: May 10–16 (current week shown in grid) -->
+          <div class="mini-day">10</div>
+          <div class="mini-day week-start in-week">11</div>
+          <div class="mini-day in-week has-job">12</div>
+          <div class="mini-day in-week">13</div>
+          <div class="mini-day in-week">14</div>
+          <div class="mini-day in-week">15</div>
+          <div class="mini-day today week-end has-job">16</div>
+
+          <!-- Week 4: May 17–23 -->
+          <div class="mini-day">17</div>
+          <div class="mini-day">18</div>
+          <div class="mini-day has-job">19</div>
+          <div class="mini-day has-job">20</div>
+          <div class="mini-day">21</div>
+          <div class="mini-day has-job">22</div>
+          <div class="mini-day">23</div>
+
+          <!-- Week 5: May 24–31 -->
+          <div class="mini-day">24</div>
+          <div class="mini-day">25</div>
+          <div class="mini-day">26</div>
+          <div class="mini-day">27</div>
+          <div class="mini-day">28</div>
+          <div class="mini-day">29</div>
+          <div class="mini-day">30</div>
+          <div class="mini-day">31</div>
+          <div class="mini-day other-month">1</div>
+          <div class="mini-day other-month">2</div>
+          <div class="mini-day other-month">3</div>
+          <div class="mini-day other-month">4</div>
+          <div class="mini-day other-month">5</div>
+          <div class="mini-day other-month">6</div>
+        </div>
+      </div>
+
+      <!-- Upcoming list -->
+      <div class="upcoming-section">
+        <div class="upcoming-label">Upcoming</div>
+
+        <div class="upcoming-item">
+          <div class="upcoming-bar bar-copper"></div>
+          <div class="upcoming-info">
+            <div class="upcoming-client">Hernandez</div>
+            <div class="upcoming-type">Full Install</div>
+            <div class="upcoming-when">Mon May 13, 9:00 am</div>
+          </div>
+        </div>
+
+        <div class="upcoming-item">
+          <div class="upcoming-bar bar-slate"></div>
+          <div class="upcoming-info">
+            <div class="upcoming-client">Williams</div>
+            <div class="upcoming-type">Touch-up / Maintenance</div>
+            <div class="upcoming-when">Wed May 15, 2:00 pm</div>
+          </div>
+        </div>
+
+        <div class="upcoming-item">
+          <div class="upcoming-bar bar-lightblue"></div>
+          <div class="upcoming-info">
+            <div class="upcoming-client">Thompson</div>
+            <div class="upcoming-type">Quote Walk</div>
+            <div class="upcoming-when">Fri May 17, 10:00 am</div>
+          </div>
+        </div>
+
+        <div class="upcoming-item">
+          <div class="upcoming-bar bar-copper"></div>
+          <div class="upcoming-info">
+            <div class="upcoming-client">Collins</div>
+            <div class="upcoming-type">Full Install</div>
+            <div class="upcoming-when">Mon May 19, 8:30 am</div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /left-panel -->
+
+    <!-- RIGHT PANEL: week grid -->
+    <div class="right-panel">
+
+      <!-- Week controls -->
+      <div class="week-header">
+        <button class="week-nav-btn" aria-label="Previous week">
+          <svg width="16" height="16"><use href="#icon-chevron-left"/></svg>
+        </button>
+        <button class="week-nav-btn" aria-label="Next week">
+          <svg width="16" height="16"><use href="#icon-chevron-right"/></svg>
+        </button>
+        <div class="week-range">May 12 – May 18, 2026</div>
+        <button class="week-today-btn">Today</button>
+        <select class="view-select" aria-label="Calendar view">
+          <option selected>Week</option>
+          <option>Month</option>
+          <option>Day</option>
+        </select>
+      </div>
+
+      <!-- Mobile: horizontal date strip (shown only on mobile via CSS) -->
+      <div class="date-strip" aria-hidden="true">
+        <div class="date-strip-item"><div class="date-strip-dow">Sun</div><div class="date-strip-num">12</div></div>
+        <div class="date-strip-item"><div class="date-strip-dow">Mon</div><div class="date-strip-num">13</div><div class="date-strip-dot"></div></div>
+        <div class="date-strip-item"><div class="date-strip-dow">Tue</div><div class="date-strip-num">14</div></div>
+        <div class="date-strip-item"><div class="date-strip-dow">Wed</div><div class="date-strip-num">15</div><div class="date-strip-dot"></div></div>
+        <div class="date-strip-item"><div class="date-strip-dow">Thu</div><div class="date-strip-num">16</div></div>
+        <div class="date-strip-item active"><div class="date-strip-dow">Fri</div><div class="date-strip-num">17</div><div class="date-strip-dot"></div></div>
+        <div class="date-strip-item"><div class="date-strip-dow">Sat</div><div class="date-strip-num">18</div></div>
+      </div>
+
+      <!-- Mobile list view (shown on mobile via CSS) -->
+      <div class="mobile-cal-list" id="mobile-cal-list">
+        <div class="mobile-day-section">
+          <div class="mobile-day-label">Sunday, May 12</div>
+          <div class="no-events">No events</div>
+        </div>
+        <div class="mobile-day-section">
+          <div class="mobile-day-label">Monday, May 13</div>
+          <div class="mobile-apt navy">
+            <div class="mobile-apt-time">9:00 am – 3:00 pm</div>
+            <div class="mobile-apt-info">
+              <div class="mobile-apt-client">Hernandez</div>
+              <div class="mobile-apt-type">Full Install</div>
+            </div>
+          </div>
+        </div>
+        <div class="mobile-day-section">
+          <div class="mobile-day-label">Tuesday, May 14</div>
+          <div class="no-events">No events</div>
+        </div>
+        <div class="mobile-day-section">
+          <div class="mobile-day-label">Wednesday, May 15</div>
+          <div class="mobile-apt copper">
+            <div class="mobile-apt-time">2:00 – 3:30 pm</div>
+            <div class="mobile-apt-info">
+              <div class="mobile-apt-client">Williams</div>
+              <div class="mobile-apt-type">Touch-up</div>
+            </div>
+          </div>
+        </div>
+        <div class="mobile-day-section">
+          <div class="mobile-day-label">Thursday, May 16</div>
+          <div class="no-events">No events</div>
+        </div>
+        <div class="mobile-day-section">
+          <div class="mobile-day-label today-label">Friday, May 17 — Today</div>
+          <div class="mobile-apt lightblue">
+            <div class="mobile-apt-time">10:00 – 11:00 am</div>
+            <div class="mobile-apt-info">
+              <div class="mobile-apt-client">Thompson</div>
+              <div class="mobile-apt-type">Quote Walk</div>
+            </div>
+          </div>
+        </div>
+        <div class="mobile-day-section">
+          <div class="mobile-day-label">Saturday, May 18</div>
+          <div class="no-events">No events</div>
+        </div>
+      </div>
+
+      <!-- Desktop/tablet calendar grid (hidden on mobile via CSS) -->
+      <div class="cal-scroll" id="cal-scroll">
+        <div class="cal-table">
+
+          <!-- Day column headers -->
+          <div class="cal-day-headers">
+            <div class="cal-day-header-spacer"></div>
+            <div class="cal-day-header">
+              <div class="cal-dow">Sun</div>
+              <div class="cal-date-num">12</div>
+            </div>
+            <div class="cal-day-header">
+              <div class="cal-dow">Mon</div>
+              <div class="cal-date-num">13</div>
+            </div>
+            <div class="cal-day-header">
+              <div class="cal-dow">Tue</div>
+              <div class="cal-date-num">14</div>
+            </div>
+            <div class="cal-day-header">
+              <div class="cal-dow">Wed</div>
+              <div class="cal-date-num">15</div>
+            </div>
+            <div class="cal-day-header">
+              <div class="cal-dow">Thu</div>
+              <div class="cal-date-num">16</div>
+            </div>
+            <div class="cal-day-header today">
+              <div class="cal-dow">Fri</div>
+              <div class="cal-date-num">17</div>
+            </div>
+            <div class="cal-day-header">
+              <div class="cal-dow">Sat</div>
+              <div class="cal-date-num">18</div>
+            </div>
+          </div>
+
+          <!-- All-day row -->
+          <div class="cal-allday-row">
+            <div class="cal-allday-label">All day</div>
+            <div class="cal-allday-cell"></div><!-- Sun -->
+            <div class="cal-allday-cell"></div><!-- Mon -->
+            <div class="cal-allday-cell"></div><!-- Tue -->
+            <div class="cal-allday-cell"></div><!-- Wed -->
+            <div class="cal-allday-cell"></div><!-- Thu -->
+            <div class="cal-allday-cell"></div><!-- Fri -->
+            <div class="cal-allday-cell"></div><!-- Sat -->
+          </div>
+
+          <!--
+            TIME GRID APPROACH:
+            Each row is one hour (--hour-h tall).
+            We show 7am through 6pm = 11 rows.
+            Appointments are positioned via inline style using top/height calculations.
+
+            Formula:
+              top = (start_hour - 7) * var(--hour-h) + (start_min / 60) * var(--hour-h)
+              height = duration_in_hours * var(--hour-h)
+
+            With --hour-h = 56px:
+              Hernandez 9am–3pm:  top=(9-7)*56=112px, height=6*56=336px
+              Williams 2–3:30pm:  top=(14-7)*56=392px + 0=392px, height=1.5*56=84px
+              Thompson 10–11am:   top=(10-7)*56=168px, height=1*56=56px
+              Now line at 10:30am on Fri: top=(10.5-7)*56=196px
+          -->
+
+          <!--
+            We build this as a CSS grid where:
+            - column 1 = time labels (repeated for each row)
+            - columns 2–8 = day cells
+            But appointments overlay on a per-day absolute wrapper.
+
+            Simplest approach: render the background grid rows + labels,
+            then overlay appointment columns absolutely via JS-positioned divs.
+          -->
+
+          <div class="cal-grid" id="cal-grid">
+            <!-- We render 11 time rows (7am–5pm labels, 6pm is the last boundary) -->
+            <!-- Each time-label cell plus 7 day cells per hour row -->
+
+            <!-- 7 AM -->
+            <div class="cal-time-label">7 am</div>
+            <div class="cal-cell"></div><div class="cal-cell"></div><div class="cal-cell"></div>
+            <div class="cal-cell"></div><div class="cal-cell"></div><div class="cal-cell"></div><div class="cal-cell"></div>
+            <!-- 8 AM -->
+            <div class="cal-time-label">8 am</div>
+            <div class="cal-cell"></div><div class="cal-cell"></div><div class="cal-cell"></div>
+            <div class="cal-cell"></div><div class="cal-cell"></div><div class="cal-cell"></div><div class="cal-cell"></div>
+            <!-- 9 AM -->
+            <div class="cal-time-label">9 am</div>
+            <div class="cal-cell"></div><div class="cal-cell"></div><div class="cal-cell"></div>
+            <div class="cal-cell"></div><div class="cal-cell"></div><div class="cal-cell"></div><div class="cal-cell"></div>
+            <!-- 10 AM -->
+            <div class="cal-time-label">10 am</div>
+            <div class="cal-cell"></div><div class="cal-cell"></div><div class="cal-cell"></div>
+            <div class="cal-cell"></div><div class="cal-cell"></div><div class="cal-cell"></div><div class="cal-cell"></div>
+            <!-- 11 AM -->
+            <div class="cal-time-label">11 am</div>
+            <div class="cal-cell"></div><div class="cal-cell"></div><div class="cal-cell"></div>
+            <div class="cal-cell"></div><div class="cal-cell"></div><div class="cal-cell"></div><div class="cal-cell"></div>
+            <!-- 12 PM -->
+            <div class="cal-time-label" style="font-weight:600;color:#6b7280;">12 pm</div>
+            <div class="cal-cell"></div><div class="cal-cell"></div><div class="cal-cell"></div>
+            <div class="cal-cell"></div><div class="cal-cell"></div><div class="cal-cell"></div><div class="cal-cell"></div>
+            <!-- 1 PM -->
+            <div class="cal-time-label">1 pm</div>
+            <div class="cal-cell"></div><div class="cal-cell"></div><div class="cal-cell"></div>
+            <div class="cal-cell"></div><div class="cal-cell"></div><div class="cal-cell"></div><div class="cal-cell"></div>
+            <!-- 2 PM -->
+            <div class="cal-time-label">2 pm</div>
+            <div class="cal-cell"></div><div class="cal-cell"></div><div class="cal-cell"></div>
+            <div class="cal-cell"></div><div class="cal-cell"></div><div class="cal-cell"></div><div class="cal-cell"></div>
+            <!-- 3 PM -->
+            <div class="cal-time-label">3 pm</div>
+            <div class="cal-cell"></div><div class="cal-cell"></div><div class="cal-cell"></div>
+            <div class="cal-cell"></div><div class="cal-cell"></div><div class="cal-cell"></div><div class="cal-cell"></div>
+            <!-- 4 PM -->
+            <div class="cal-time-label">4 pm</div>
+            <div class="cal-cell"></div><div class="cal-cell"></div><div class="cal-cell"></div>
+            <div class="cal-cell"></div><div class="cal-cell"></div><div class="cal-cell"></div><div class="cal-cell"></div>
+            <!-- 5 PM -->
+            <div class="cal-time-label">5 pm</div>
+            <div class="cal-cell"></div><div class="cal-cell"></div><div class="cal-cell"></div>
+            <div class="cal-cell"></div><div class="cal-cell"></div><div class="cal-cell"></div><div class="cal-cell"></div>
+            <!-- 6 PM (closing boundary, no cells, just the label at top of this row) -->
+            <div class="cal-time-label" style="border-bottom:none;">6 pm</div>
+            <div class="cal-cell" style="border-bottom:none;"></div><div class="cal-cell" style="border-bottom:none;"></div>
+            <div class="cal-cell" style="border-bottom:none;"></div><div class="cal-cell" style="border-bottom:none;"></div>
+            <div class="cal-cell" style="border-bottom:none;"></div><div class="cal-cell" style="border-bottom:none;"></div>
+            <div class="cal-cell" style="border-bottom:none;"></div>
+          </div><!-- /cal-grid -->
+
+          <!--
+            Appointment overlay layer.
+            This is a grid of 8 columns (time-col + 7 day cols) with a single tall row
+            matching the grid height. We place appointments in named grid areas.
+          -->
+          <div id="apt-overlay" style="
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            pointer-events: none;
+            display: grid;
+            grid-template-columns: var(--time-col) repeat(7, 1fr);
+            /* We'll use JS to position within each column */
+          ">
+          </div>
+
+        </div><!-- /cal-table -->
+      </div><!-- /cal-scroll -->
+
+    </div><!-- /right-panel -->
+  </div><!-- /schedule-body -->
+</div><!-- /main -->
+
+<!-- Mobile bottom nav -->
+<nav class="mobile-bottom-nav" aria-label="Mobile navigation">
+  <a class="mob-nav-item" href="/admin/dashboard-mockup.html">
+    <svg width="20" height="20"><use href="#icon-home"/></svg>
+    Home
+  </a>
+  <a class="mob-nav-item active" href="/admin/schedule-mockup.html">
+    <svg width="20" height="20"><use href="#icon-calendar"/></svg>
+    Schedule
+  </a>
+  <a class="mob-nav-item" href="/admin/client-mockup.html">
+    <svg width="20" height="20"><use href="#icon-clients"/></svg>
+    Clients
+  </a>
+  <a class="mob-nav-item" href="/admin/quote.html">
+    <svg width="20" height="20"><use href="#icon-document"/></svg>
+    Quotes
+  </a>
+  <a class="mob-nav-item" href="#">
+    <svg width="20" height="20"><use href="#icon-dollar"/></svg>
+    Invoices
+  </a>
+</nav>
+
+<script>
+  /* ── SIDEBAR TOGGLE ── */
+  function openSidebar() {
+    document.getElementById('sidebar').classList.add('open');
+    document.getElementById('sidebar-overlay').classList.add('open');
+  }
+  function closeSidebar() {
+    document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('sidebar-overlay').classList.remove('open');
+  }
+
+  /* ── CALENDAR APPOINTMENT RENDERING ── */
+  /*
+    Layout constants (must match CSS --hour-h: 56px, grid starts at 7am).
+    DAY columns: 0=Sun, 1=Mon, 2=Tue, 3=Wed, 4=Thu, 5=Fri, 6=Sat
+  */
+  const HOUR_H = 56;     // pixels per hour
+  const START_HOUR = 7;  // 7am
+
+  // Appointments definition
+  const appointments = [
+    {
+      day: 1,                  // Monday col index (0=Sun)
+      startH: 9, startM: 0,
+      endH: 15, endM: 0,
+      cssClass: 'apt-navy',
+      client: 'Hernandez',
+      type: 'Full Install',
+      timeLabel: '9:00 am – 3:00 pm'
+    },
+    {
+      day: 3,                  // Wednesday
+      startH: 14, startM: 0,
+      endH: 15, endM: 30,
+      cssClass: 'apt-copper',
+      client: 'Williams',
+      type: 'Touch-up',
+      timeLabel: '2:00 – 3:30 pm'
+    },
+    {
+      day: 5,                  // Friday
+      startH: 10, startM: 0,
+      endH: 11, endM: 0,
+      cssClass: 'apt-lightblue',
+      client: 'Thompson',
+      type: 'Quote Walk',
+      timeLabel: '10:00 – 11:00 am'
+    }
+  ];
+
+  function renderAppointments() {
+    const grid = document.getElementById('cal-grid');
+    if (!grid) return;
+    const gridRect = grid.getBoundingClientRect();
+
+    // Get the cal-table for positioning reference
+    const calTable = grid.closest('.cal-table');
+    if (!calTable) return;
+
+    // We need to find the left offset and width of each day column.
+    // The grid has time-col (52px) + 7 equal columns.
+    // We'll compute column widths from the first row of cal-cell elements.
+    const firstRowCells = grid.querySelectorAll('.cal-time-label, .cal-cell');
+    // First 8 items = time label + 7 day cells
+    const cells = Array.from(firstRowCells).slice(0, 8);
+    if (cells.length < 8) return;
+
+    // Get the calendar grid's offset within the scrollable wrapper
+    const calScroll = document.getElementById('cal-scroll');
+    const calScrollRect = calScroll.getBoundingClientRect();
+
+    // We'll render appointments directly into the cal-scroll overlay
+    const overlay = document.getElementById('apt-overlay');
+    overlay.innerHTML = '';
+    overlay.style.pointerEvents = 'none';
+
+    // Position the overlay relative to cal-table
+    // The cal-table contains: day-headers + allday-row + cal-grid
+    // We need to know how tall day-headers and allday-row are
+    const dayHeaders = calTable.querySelector('.cal-day-headers');
+    const alldayRow = calTable.querySelector('.cal-allday-row');
+    const gridTop = (dayHeaders ? dayHeaders.offsetHeight : 0) +
+                    (alldayRow ? alldayRow.offsetHeight : 0);
+
+    appointments.forEach(apt => {
+      const topInGrid = ((apt.startH - START_HOUR) + apt.startM / 60) * HOUR_H;
+      const heightPx  = ((apt.endH - apt.startH) + (apt.endM - apt.startM) / 60) * HOUR_H;
+
+      // Get day cell width and x position
+      // cells[0] = time label, cells[1..7] = day cols
+      const dayCell = cells[apt.day + 1]; // +1 because cells[0] is time label
+      if (!dayCell) return;
+      const dayCellRect = dayCell.getBoundingClientRect();
+      const calTableRect = calTable.getBoundingClientRect();
+
+      const leftPx = dayCellRect.left - calTableRect.left + 2;
+      const widthPx = dayCellRect.width - 4;
+
+      const div = document.createElement('div');
+      div.className = 'apt ' + apt.cssClass;
+      div.style.position = 'absolute';
+      div.style.top  = (gridTop + topInGrid) + 'px';
+      div.style.left = leftPx + 'px';
+      div.style.width = widthPx + 'px';
+      div.style.height = heightPx + 'px';
+      div.style.pointerEvents = 'auto';
+
+      div.innerHTML = `
+        <div class="apt-client">${apt.client}</div>
+        <div class="apt-type">${apt.type}</div>
+        <div class="apt-time">${apt.timeLabel}</div>
+      `;
+
+      calTable.appendChild(div);
+    });
+
+    // Draw current time indicator on Friday (col index 5)
+    // Today is Fri May 17 (in the mockup), time ~10:30 am
+    const nowHour = 10, nowMin = 30;
+    const nowTop = gridTop + ((nowHour - START_HOUR) + nowMin / 60) * HOUR_H;
+
+    const fridayCell = cells[5 + 1]; // col index 5 = Friday
+    if (fridayCell) {
+      const calTableRect = calTable.getBoundingClientRect();
+      const fridayRect = fridayCell.getBoundingClientRect();
+      const nowLeft = fridayRect.left - calTableRect.left;
+      const nowWidth = fridayRect.width;
+
+      const nowLine = document.createElement('div');
+      nowLine.className = 'now-line';
+      nowLine.style.position = 'absolute';
+      nowLine.style.top = nowTop + 'px';
+      nowLine.style.left = nowLeft + 'px';
+      nowLine.style.width = nowWidth + 'px';
+
+      const inner = document.createElement('div');
+      inner.className = 'now-line-inner';
+      nowLine.appendChild(inner);
+      calTable.appendChild(nowLine);
+    }
+  }
+
+  // Render on load and on resize
+  window.addEventListener('load', () => {
+    renderAppointments();
+    // Scroll to ~8am so the grid is nicely positioned
+    const calScroll = document.getElementById('cal-scroll');
+    if (calScroll) {
+      calScroll.scrollTop = (8 - START_HOUR) * HOUR_H;
+    }
+  });
+
+  let resizeTimer;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+      // Remove previous appointment divs and now lines
+      const calTable = document.querySelector('.cal-table');
+      if (calTable) {
+        calTable.querySelectorAll('.apt, .now-line').forEach(el => el.remove());
+      }
+      renderAppointments();
+    }, 100);
+  });
+</script>
+</body>
+</html>

@@ -464,7 +464,7 @@
       <div class="field-row">
         <div class="field">
           <label>Quote #</label>
-          <input type="text" id="quote-num" placeholder="RC-2026-001" />
+          <input type="text" id="quote-num" placeholder="RCL-0000" />
         </div>
         <div class="field">
           <label>Valid Until</label>
@@ -778,11 +778,13 @@
     // Auto-fill quote number if blank
     const qField = document.getElementById('quote-num');
     if (!qField.value.trim()) {
-      const year = now.getFullYear();
-      const key  = `rcl-quote-seq-${year}`;
-      const next = (parseInt(localStorage.getItem(key) || '0', 10)) + 1;
-      localStorage.setItem(key, next);
-      qField.value = `RC-${year}-${String(next).padStart(3, '0')}`;
+      const usedKey = 'rcl-used-quote-nums';
+      const used = new Set(JSON.parse(localStorage.getItem(usedKey) || '[]'));
+      let n;
+      do { n = Math.floor(1000 + Math.random() * 9000); } while (used.has(n));
+      used.add(n);
+      localStorage.setItem(usedKey, JSON.stringify([...used]));
+      qField.value = `RCL-${n}`;
     }
   }
 

@@ -1,0 +1,1056 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Clients / Henderson, Mark — Rock City Lighting Admin</title>
+<style>
+  /* ── DESIGN TOKENS ── */
+  :root {
+    --navy:     #0d1b2e;
+    --navy2:    #162840;
+    --copper:   #b87338;
+    --gold:     #d4a853;
+    --cream:    #f5f0e8;
+    --green:    #2a8a4e;
+    --red:      #c0392b;
+    --orange:   #c47a20;
+    --sidebar-w: 220px;
+    --topbar-h:  58px;
+    --page-bg:   #f0f2f5;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    background: var(--page-bg);
+    color: #1a2030;
+    min-height: 100vh;
+    display: flex;
+  }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    width: var(--sidebar-w);
+    background: var(--navy);
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0; left: 0;
+    height: 100vh;
+    z-index: 100;
+    transition: transform 0.25s ease;
+  }
+  .sidebar-logo {
+    padding: 20px 20px 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .sidebar-logo img {
+    width: 36px; height: 36px;
+    object-fit: contain; opacity: 0.9;
+  }
+  .sidebar-logo-text .name {
+    font-family: Georgia, serif;
+    color: var(--copper);
+    font-weight: 700;
+    font-size: 0.82rem;
+    letter-spacing: 0.03em;
+    line-height: 1;
+  }
+  .sidebar-logo-text .sub {
+    color: rgba(255,255,255,0.28);
+    font-size: 0.6rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-top: 3px;
+  }
+  .sidebar-nav { flex: 1; padding: 10px 0; overflow-y: auto; }
+  .nav-section {
+    padding: 14px 20px 5px;
+    font-size: 0.57rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.22);
+  }
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 20px;
+    color: rgba(255,255,255,0.48);
+    font-size: 0.8rem;
+    cursor: pointer;
+    border-right: 3px solid transparent;
+    transition: all 0.15s;
+    text-decoration: none;
+  }
+  .nav-item:hover { color: rgba(255,255,255,0.82); background: rgba(255,255,255,0.05); }
+  .nav-item.active { color: var(--gold); background: rgba(184,115,56,0.13); border-right-color: var(--copper); }
+  .nav-icon { width: 18px; height: 18px; flex-shrink: 0; color: inherit; }
+  .nav-item.active .nav-icon { color: var(--gold); }
+  .nav-badge {
+    margin-left: auto;
+    background: var(--copper);
+    color: white;
+    font-size: 0.6rem;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 10px;
+    min-width: 18px;
+    text-align: center;
+  }
+
+  /* ── MAIN AREA ── */
+  .main {
+    margin-left: var(--sidebar-w);
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+
+  /* ── TOPBAR ── */
+  .topbar {
+    background: white;
+    border-bottom: 1px solid #e4e6ea;
+    padding: 0 28px;
+    height: var(--topbar-h);
+    display: flex;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    gap: 10px;
+  }
+  .hamburger {
+    display: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--navy);
+    padding: 2px;
+  }
+  .breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.82rem;
+    color: #9ca3af;
+    flex: 1;
+  }
+  .breadcrumb a { color: #9ca3af; text-decoration: none; }
+  .breadcrumb a:hover { color: var(--copper); }
+  .breadcrumb .current {
+    font-family: Georgia, serif;
+    color: var(--navy);
+    font-weight: 700;
+    font-size: 0.88rem;
+  }
+
+  .page-content { padding: 24px 28px; flex: 1; }
+
+  /* ── CLIENT HEADER ── */
+  .client-header {
+    background: white;
+    border: 1px solid #e4e6ea;
+    border-left: 5px solid var(--copper);
+    border-radius: 10px;
+    padding: 24px 28px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  .client-header-info { flex: 1; min-width: 240px; }
+  .client-name-large {
+    font-family: Georgia, serif;
+    font-size: 1.7rem;
+    font-weight: 700;
+    color: var(--navy);
+    line-height: 1.1;
+    margin-bottom: 4px;
+  }
+  .client-address {
+    font-size: 0.82rem;
+    color: #6b7280;
+    margin-bottom: 10px;
+  }
+  .client-contact-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    font-size: 0.8rem;
+    color: #4b5563;
+    margin-bottom: 12px;
+  }
+  .client-contact-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .client-contact-item svg { color: var(--copper); }
+  .client-meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.62rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .badge-green  { background: #e6f7ee; color: #1d7a40; }
+  .badge-orange { background: #fff4e0; color: var(--orange); }
+  .badge-gray   { background: #f0f0f0; color: #888; }
+  .badge-red    { background: #fde8e8; color: var(--red); }
+  .badge-blue   { background: #eff6ff; color: #2563eb; }
+
+  .last-contact {
+    font-size: 0.74rem;
+    color: #9ca3af;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .client-header-actions {
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    padding-top: 4px;
+  }
+  .btn-outline {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    border: 1.5px solid #d1d5db;
+    background: white;
+    border-radius: 7px;
+    padding: 8px 14px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--navy);
+    cursor: pointer;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    text-decoration: none;
+    transition: border-color 0.15s, color 0.15s;
+  }
+  .btn-outline:hover { border-color: var(--copper); color: var(--copper); }
+  .btn-outline svg { color: inherit; }
+  .btn-primary {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--copper);
+    color: white;
+    border: none;
+    border-radius: 7px;
+    padding: 8px 14px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    text-decoration: none;
+  }
+
+  /* ── QUICK STATS BAR ── */
+  .stats-bar {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .stat-box {
+    background: white;
+    border: 1px solid #e4e6ea;
+    border-radius: 10px;
+    padding: 16px 20px;
+  }
+  .stat-label {
+    font-size: 0.6rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: #9ca3af;
+    margin-bottom: 6px;
+  }
+  .stat-value {
+    font-family: Georgia, serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--navy);
+    line-height: 1;
+  }
+  .stat-value.red { color: var(--red); }
+  .stat-value.green { color: var(--green); }
+
+  /* ── SECTION HEADINGS ── */
+  .section-heading {
+    font-family: Georgia, serif;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .section-heading svg { color: var(--copper); }
+
+  /* ── SERVICE PLANS ── */
+  .plans-row {
+    display: flex;
+    gap: 14px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+  .plan-card {
+    background: white;
+    border: 1px solid #e4e6ea;
+    border-radius: 10px;
+    padding: 20px;
+    flex: 1;
+    min-width: 240px;
+    max-width: 360px;
+    position: relative;
+  }
+  .plan-card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    gap: 10px;
+  }
+  .plan-name {
+    font-family: Georgia, serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--navy);
+    line-height: 1.2;
+  }
+  .plan-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin-bottom: 12px;
+  }
+  .plan-meta-row {
+    font-size: 0.78rem;
+    color: #6b7280;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .plan-meta-row svg { color: var(--copper); flex-shrink: 0; }
+  .plan-meta-row strong { color: #1a2030; font-weight: 600; }
+  .plan-price {
+    font-family: Georgia, serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 10px;
+  }
+  .plan-price span { font-size: 0.72rem; font-family: 'Helvetica Neue', Arial, sans-serif; color: #9ca3af; font-weight: 400; }
+  .plan-desc {
+    font-size: 0.76rem;
+    color: #6b7280;
+    line-height: 1.5;
+    border-top: 1px solid #f0f0f0;
+    padding-top: 10px;
+    margin-top: 4px;
+  }
+
+  /* Empty "add plan" card */
+  .plan-card-add {
+    background: transparent;
+    border: 2px dashed #d1d5db;
+    border-radius: 10px;
+    padding: 20px;
+    flex: 1;
+    min-width: 200px;
+    max-width: 260px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+    color: #9ca3af;
+    transition: border-color 0.15s, color 0.15s;
+    text-align: center;
+  }
+  .plan-card-add:hover { border-color: var(--copper); color: var(--copper); }
+  .plan-card-add svg { flex-shrink: 0; }
+  .plan-card-add-label { font-size: 0.8rem; font-weight: 600; }
+
+  /* ── DOCUMENT / INVOICE TABLES ── */
+  .section-card {
+    background: white;
+    border: 1px solid #e4e6ea;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 20px;
+  }
+  .section-card-head {
+    padding: 14px 20px;
+    border-bottom: 1px solid #f0f0f0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .section-card-title {
+    font-family: Georgia, serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--navy);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .section-card-title svg { color: var(--copper); }
+  .section-card-link {
+    font-size: 0.72rem;
+    color: var(--copper);
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+  }
+
+  .data-table { width: 100%; border-collapse: collapse; font-size: 0.78rem; }
+  .data-table th {
+    background: #f8f9fb;
+    border-bottom: 1px solid #ebebeb;
+    padding: 9px 20px;
+    text-align: left;
+    font-size: 0.59rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+    color: #9ca3af;
+  }
+  .data-table td {
+    padding: 12px 20px;
+    border-bottom: 1px solid #f5f5f5;
+    vertical-align: middle;
+    color: #374151;
+  }
+  .data-table tr:last-child td { border-bottom: none; }
+  .data-table tr:hover td { background: #fafbfc; }
+
+  .doc-number {
+    font-family: Georgia, serif;
+    font-weight: 700;
+    color: var(--navy);
+    font-size: 0.84rem;
+  }
+  .doc-sub { font-size: 0.7rem; color: #9ca3af; margin-top: 2px; }
+
+  .action-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--copper);
+    text-decoration: none;
+    cursor: pointer;
+    padding: 3px 8px;
+    border-radius: 5px;
+    border: 1px solid transparent;
+    transition: background 0.12s, border-color 0.12s;
+  }
+  .action-link:hover { background: #fff4ea; border-color: var(--copper); }
+
+  .action-link.danger {
+    color: var(--red);
+    border-color: #fca5a5;
+    background: #fef2f2;
+  }
+  .action-link.danger:hover { background: #fee2e2; }
+
+  .overdue-text {
+    color: var(--red);
+    font-weight: 700;
+    font-size: 0.76rem;
+  }
+
+  .amount-cell {
+    font-family: Georgia, serif;
+    font-weight: 600;
+    color: #1a2030;
+    font-size: 0.84rem;
+  }
+
+  /* ── NOTES BOX ── */
+  .notes-card {
+    background: white;
+    border: 1px solid #e4e6ea;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 20px;
+  }
+  .notes-head {
+    padding: 14px 20px;
+    border-bottom: 1px solid #f0f0f0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .notes-title {
+    font-family: Georgia, serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--navy);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .notes-title svg { color: var(--copper); }
+  .notes-edit-link {
+    font-size: 0.72rem;
+    color: var(--copper);
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+  }
+  .notes-body {
+    padding: 18px 20px;
+    font-size: 0.82rem;
+    color: #374151;
+    line-height: 1.7;
+    background: #fafbfc;
+    border: none;
+    width: 100%;
+    resize: vertical;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    min-height: 100px;
+  }
+
+  /* ── SIDEBAR OVERLAY ── */
+  .sidebar-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.45);
+    z-index: 99;
+  }
+
+  /* ── MOBILE BOTTOM NAV ── */
+  .mobile-bottom-nav { display: none; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 960px) {
+    .stats-bar { grid-template-columns: 1fr 1fr; }
+    .data-table th:nth-child(n+4),
+    .data-table td:nth-child(n+4) { display: none; }
+  }
+
+  @media (max-width: 640px) {
+    .sidebar { transform: translateX(calc(-1 * var(--sidebar-w))); }
+    .sidebar.open { transform: translateX(0); }
+    .sidebar-overlay.open { display: block; }
+    .main { margin-left: 0; }
+    .hamburger { display: flex; }
+    .topbar { padding: 0 14px; }
+    .page-content { padding: 14px; }
+
+    .client-header { padding: 16px; flex-direction: column; }
+    .client-header-actions { flex-direction: row; width: 100%; }
+    .client-name-large { font-size: 1.3rem; }
+    .stats-bar { grid-template-columns: 1fr 1fr; gap: 8px; }
+    .stat-value { font-size: 1.2rem; }
+    .plans-row { flex-direction: column; }
+    .plan-card, .plan-card-add { max-width: 100%; }
+
+    .data-table th:nth-child(n+3),
+    .data-table td:nth-child(n+3) { display: none; }
+
+    /* Job history table — keep 3 cols on mobile */
+    .history-table th:nth-child(n+4),
+    .history-table td:nth-child(n+4) { display: none; }
+
+    .mobile-bottom-nav {
+      display: flex;
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      background: var(--navy);
+      border-top: 1px solid rgba(255,255,255,0.09);
+      z-index: 100;
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+    .mob-nav-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 10px 4px 8px;
+      font-size: 0.59rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.38);
+      cursor: pointer;
+      gap: 4px;
+      text-decoration: none;
+    }
+    .mob-nav-item.active { color: var(--copper); }
+    .main { padding-bottom: 62px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- SVG icon sprite -->
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none">
+  <defs>
+    <symbol id="icon-home" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M3 9.75L12 3l9 6.75V21a1 1 0 01-1 1H4a1 1 0 01-1-1V9.75z"/><path d="M9 22V12h6v10"/>
+    </symbol>
+    <symbol id="icon-calendar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>
+    </symbol>
+    <symbol id="icon-clients" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+    </symbol>
+    <symbol id="icon-document" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="13" y2="17"/>
+    </symbol>
+    <symbol id="icon-dollar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="12" y1="2" x2="12" y2="22"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/>
+    </symbol>
+    <symbol id="icon-chevron-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="9 18 15 12 9 6"/>
+    </symbol>
+    <symbol id="icon-alert" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+    </symbol>
+    <symbol id="icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="20 6 9 17 4 12"/>
+    </symbol>
+    <symbol id="icon-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+    </symbol>
+    <symbol id="icon-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+    </symbol>
+    <symbol id="icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+    </symbol>
+    <symbol id="icon-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+    </symbol>
+    <symbol id="icon-phone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 0116.92 2a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L17.91 9.9a16 16 0 006.09 6.09l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/>
+    </symbol>
+    <symbol id="icon-mail" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/>
+    </symbol>
+    <symbol id="icon-map-pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/>
+    </symbol>
+    <symbol id="icon-edit" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
+    </symbol>
+    <symbol id="icon-download" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+    </symbol>
+    <symbol id="icon-shield" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+    </symbol>
+    <symbol id="icon-refresh" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/>
+    </symbol>
+    <symbol id="icon-note" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/>
+    </symbol>
+  </defs>
+</svg>
+
+<!-- Mobile sidebar overlay -->
+<div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar" role="navigation" aria-label="Main navigation">
+  <div class="sidebar-logo">
+    <img src="/assets/brand/logo-lantern.png" alt="Rock City Lighting" onerror="this.style.display='none'">
+    <div class="sidebar-logo-text">
+      <div class="name">Rock City Lighting</div>
+      <div class="sub">Admin Portal</div>
+    </div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section">Main</div>
+    <a class="nav-item" href="/admin/dashboard-mockup.html">
+      <svg class="nav-icon"><use href="#icon-home"/></svg>
+      Dashboard
+    </a>
+    <a class="nav-item" href="/admin/schedule-mockup.html">
+      <svg class="nav-icon"><use href="#icon-calendar"/></svg>
+      Schedule
+    </a>
+    <a class="nav-item active" href="/admin/client-mockup.html" aria-current="page">
+      <svg class="nav-icon"><use href="#icon-clients"/></svg>
+      Clients
+    </a>
+    <div class="nav-section">Tools</div>
+    <a class="nav-item" href="/admin/quote.html">
+      <svg class="nav-icon"><use href="#icon-document"/></svg>
+      Quote Builder
+    </a>
+    <a class="nav-item" href="#">
+      <svg class="nav-icon"><use href="#icon-dollar"/></svg>
+      Invoices
+      <span class="nav-badge">3</span>
+    </a>
+  </nav>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- Top bar -->
+  <header class="topbar">
+    <button class="hamburger" onclick="openSidebar()" aria-label="Open navigation">
+      <svg width="22" height="22"><use href="#icon-menu"/></svg>
+    </button>
+    <div class="breadcrumb">
+      <a href="/admin/client-mockup.html">Clients</a>
+      <svg width="14" height="14" style="color:#d1d5db"><use href="#icon-chevron-right"/></svg>
+      <span class="current">Henderson, Mark</span>
+    </div>
+  </header>
+
+  <div class="page-content">
+
+    <!-- Client header -->
+    <div class="client-header">
+      <div class="client-header-info">
+        <div class="client-name-large">Mark Henderson</div>
+        <div class="client-address">
+          <svg width="13" height="13" style="color:var(--copper);vertical-align:middle;margin-right:4px"><use href="#icon-map-pin"/></svg>
+          42 Chenal Pkwy, Little Rock AR 72211
+        </div>
+        <div class="client-contact-row">
+          <div class="client-contact-item">
+            <svg width="13" height="13"><use href="#icon-phone"/></svg>
+            (501) 555-0192
+          </div>
+          <div class="client-contact-item">
+            <svg width="13" height="13"><use href="#icon-mail"/></svg>
+            mark.henderson@email.com
+          </div>
+        </div>
+        <div class="client-meta">
+          <span class="badge badge-green">Active Client</span>
+          <span class="last-contact">
+            <svg width="12" height="12"><use href="#icon-clock"/></svg>
+            Last job Mar 3, 2026
+          </span>
+        </div>
+      </div>
+
+      <div class="client-header-actions">
+        <a class="btn-outline" href="tel:5015550192">
+          <svg width="14" height="14"><use href="#icon-phone"/></svg>
+          Call
+        </a>
+        <a class="btn-outline" href="mailto:mark.henderson@email.com">
+          <svg width="14" height="14"><use href="#icon-mail"/></svg>
+          Send Email
+        </a>
+        <a class="btn-primary" href="/admin/quote.html">
+          <svg width="14" height="14"><use href="#icon-document"/></svg>
+          New Quote
+        </a>
+      </div>
+    </div>
+
+    <!-- Quick stats bar -->
+    <div class="stats-bar">
+      <div class="stat-box">
+        <div class="stat-label">Lifetime Billed</div>
+        <div class="stat-value">$8,400</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-label">Jobs Completed</div>
+        <div class="stat-value">2</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-label">Active Plans</div>
+        <div class="stat-value">1</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-label">Outstanding</div>
+        <div class="stat-value red">$2,400</div>
+      </div>
+    </div>
+
+    <!-- Service Plans -->
+    <div class="section-heading">
+      <svg width="16" height="16"><use href="#icon-refresh"/></svg>
+      Service Plans
+    </div>
+    <div class="plans-row">
+      <!-- Active plan -->
+      <div class="plan-card">
+        <div class="plan-card-header">
+          <div class="plan-name">Annual Maintenance Visit</div>
+          <span class="badge badge-green">Active</span>
+        </div>
+        <div class="plan-meta">
+          <div class="plan-meta-row">
+            <svg width="13" height="13"><use href="#icon-refresh"/></svg>
+            Frequency: <strong>Annual</strong>
+          </div>
+          <div class="plan-meta-row">
+            <svg width="13" height="13"><use href="#icon-calendar"/></svg>
+            Next visit: <strong>June 15, 2026</strong>
+          </div>
+        </div>
+        <div class="plan-price">
+          $250 <span>/ visit</span>
+        </div>
+        <div class="plan-desc">
+          System check, fixture re-aiming, bulb replacement, timer adjustment.
+        </div>
+      </div>
+
+      <!-- Add plan card -->
+      <div class="plan-card-add" role="button" tabindex="0">
+        <svg width="28" height="28"><use href="#icon-plus"/></svg>
+        <div class="plan-card-add-label">Add Service Plan</div>
+      </div>
+    </div>
+
+    <!-- Signed Documents -->
+    <div class="section-card">
+      <div class="section-card-head">
+        <div class="section-card-title">
+          <svg width="16" height="16"><use href="#icon-document"/></svg>
+          Signed Documents
+        </div>
+        <a class="section-card-link" href="#">Upload document</a>
+      </div>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Document</th>
+            <th>Description</th>
+            <th>Date</th>
+            <th>Amount</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <div class="doc-number">Quote RCL-4821</div>
+            </td>
+            <td>Full Install — Front &amp; Back</td>
+            <td style="white-space:nowrap;color:#6b7280;">Apr 2, 2026</td>
+            <td class="amount-cell">$5,600</td>
+            <td><span class="badge badge-green">Signed</span></td>
+            <td style="white-space:nowrap;">
+              <a class="action-link" href="#">
+                <svg width="12" height="12"><use href="#icon-document"/></svg>
+                View
+              </a>
+              <a class="action-link" href="#" style="margin-left:4px;">
+                <svg width="12" height="12"><use href="#icon-download"/></svg>
+                Download
+              </a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <div class="doc-number">Quote RCL-7293</div>
+            </td>
+            <td>Maintenance Plan Add-On</td>
+            <td style="white-space:nowrap;color:#6b7280;">May 1, 2026</td>
+            <td class="amount-cell">$250/yr</td>
+            <td><span class="badge badge-green">Signed</span></td>
+            <td style="white-space:nowrap;">
+              <a class="action-link" href="#">
+                <svg width="12" height="12"><use href="#icon-document"/></svg>
+                View
+              </a>
+              <a class="action-link" href="#" style="margin-left:4px;">
+                <svg width="12" height="12"><use href="#icon-download"/></svg>
+                Download
+              </a>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Invoices -->
+    <div class="section-card">
+      <div class="section-card-head">
+        <div class="section-card-title">
+          <svg width="16" height="16"><use href="#icon-dollar"/></svg>
+          Invoices
+        </div>
+        <a class="section-card-link" href="#">New invoice</a>
+      </div>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Invoice</th>
+            <th>Description</th>
+            <th>Amount</th>
+            <th>Date Sent</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><div class="doc-number">INV-001</div></td>
+            <td>Initial Install Deposit (50%)</td>
+            <td class="amount-cell">$2,800</td>
+            <td style="white-space:nowrap;color:#6b7280;">Mar 1, 2026</td>
+            <td><span class="badge badge-green">Paid</span></td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <td><div class="doc-number">INV-002</div></td>
+            <td>Install Balance</td>
+            <td class="amount-cell">$2,800</td>
+            <td style="white-space:nowrap;color:#6b7280;">Mar 15, 2026</td>
+            <td><span class="badge badge-green">Paid</span></td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <td><div class="doc-number">INV-003</div></td>
+            <td>Annual Maintenance Plan</td>
+            <td class="amount-cell">$250</td>
+            <td style="white-space:nowrap;color:#6b7280;">May 1, 2026</td>
+            <td><span class="badge badge-green">Paid</span></td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <td><div class="doc-number">INV-004</div></td>
+            <td>Service Call — May 2026</td>
+            <td class="amount-cell" style="color:var(--red);">$2,400</td>
+            <td style="white-space:nowrap;color:#6b7280;">May 2, 2026</td>
+            <td>
+              <span class="overdue-text">Overdue 14 days</span>
+            </td>
+            <td>
+              <a class="action-link danger" href="#">
+                <svg width="12" height="12"><use href="#icon-alert"/></svg>
+                Send Reminder
+              </a>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Job History -->
+    <div class="section-card">
+      <div class="section-card-head">
+        <div class="section-card-title">
+          <svg width="16" height="16"><use href="#icon-clock"/></svg>
+          Job History
+        </div>
+      </div>
+      <table class="data-table history-table">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Type</th>
+            <th>Description</th>
+            <th>Duration</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="white-space:nowrap;color:#6b7280;">Mar 3, 2026</td>
+            <td><span class="badge badge-blue">Full Install</span></td>
+            <td>Architectural uplighting, pathway lighting, entry</td>
+            <td style="white-space:nowrap;color:#6b7280;">~6 hrs</td>
+            <td><span class="badge badge-green">Complete</span></td>
+          </tr>
+          <tr>
+            <td style="white-space:nowrap;color:#6b7280;">May 12, 2026</td>
+            <td><span class="badge badge-orange">Touch-up</span></td>
+            <td>Fixture re-aim after tree trimming, 2 bulbs replaced</td>
+            <td style="white-space:nowrap;color:#6b7280;">~1.5 hrs</td>
+            <td><span class="badge badge-green">Complete</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Internal Notes -->
+    <div class="notes-card">
+      <div class="notes-head">
+        <div class="notes-title">
+          <svg width="16" height="16"><use href="#icon-note"/></svg>
+          Internal Notes
+        </div>
+        <a class="notes-edit-link" href="#">
+          <svg width="12" height="12" style="vertical-align:middle;margin-right:3px"><use href="#icon-edit"/></svg>
+          Edit
+        </a>
+      </div>
+      <div class="notes-body">Mark is a great client — very particular about the warm white color temp on the front oaks. Prefers calls over texts. Has a dog (German Shepherd) — gate latch on left side. Referral potential: mentioned his neighbor Dave on Chenal is interested.</div>
+    </div>
+
+  </div><!-- /page-content -->
+</div><!-- /main -->
+
+<!-- Mobile bottom nav -->
+<nav class="mobile-bottom-nav" aria-label="Mobile navigation">
+  <a class="mob-nav-item" href="/admin/dashboard-mockup.html">
+    <svg width="20" height="20"><use href="#icon-home"/></svg>
+    Home
+  </a>
+  <a class="mob-nav-item" href="/admin/schedule-mockup.html">
+    <svg width="20" height="20"><use href="#icon-calendar"/></svg>
+    Schedule
+  </a>
+  <a class="mob-nav-item active" href="/admin/client-mockup.html">
+    <svg width="20" height="20"><use href="#icon-clients"/></svg>
+    Clients
+  </a>
+  <a class="mob-nav-item" href="/admin/quote.html">
+    <svg width="20" height="20"><use href="#icon-document"/></svg>
+    Quotes
+  </a>
+  <a class="mob-nav-item" href="#">
+    <svg width="20" height="20"><use href="#icon-dollar"/></svg>
+    Invoices
+  </a>
+</nav>
+
+<script>
+  function openSidebar() {
+    document.getElementById('sidebar').classList.add('open');
+    document.getElementById('sidebar-overlay').classList.add('open');
+  }
+  function closeSidebar() {
+    document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('sidebar-overlay').classList.remove('open');
+  }
+</script>
+</body>
+</html>

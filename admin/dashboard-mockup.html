@@ -3,168 +3,542 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Admin Dashboard — Rock City Lighting (Mockup)</title>
+<title>Dashboard — Rock City Lighting Admin</title>
 <style>
+  /* ── DESIGN TOKENS ── */
   :root {
-    --navy:   #0d1b2e;
-    --navy2:  #162840;
-    --copper: #b87338;
-    --gold:   #d4a853;
-    --cream:  #f5f0e8;
-    --green:  #2a8a4e;
-    --red:    #c0392b;
-    --orange: #c47a20;
+    --navy:     #0d1b2e;
+    --navy2:    #162840;
+    --copper:   #b87338;
+    --gold:     #d4a853;
+    --cream:    #f5f0e8;
+    --green:    #2a8a4e;
+    --red:      #c0392b;
+    --orange:   #c47a20;
     --sidebar-w: 220px;
+    --topbar-h:  58px;
+    --page-bg:  #f0f2f5;
   }
+
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f0f1f4; color: #1a1a2e; min-height: 100vh; display: flex; }
+
+  body {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    background: var(--page-bg);
+    color: #1a2030;
+    min-height: 100vh;
+    display: flex;
+  }
 
   /* ── SIDEBAR ── */
   .sidebar {
-    width: var(--sidebar-w); background: var(--navy); display: flex; flex-direction: column;
-    position: fixed; top: 0; left: 0; height: 100vh; z-index: 100;
-    transition: transform 0.25s;
+    width: var(--sidebar-w);
+    background: var(--navy);
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0; left: 0;
+    height: 100vh;
+    z-index: 100;
+    transition: transform 0.25s ease;
   }
+
   .sidebar-logo {
-    padding: 20px 20px 16px; border-bottom: 1px solid rgba(255,255,255,0.07);
-    display: flex; align-items: center; gap: 12px;
-  }
-  .sidebar-logo img { width: 36px; height: 36px; object-fit: contain; opacity: 0.9; }
-  .sidebar-logo-text .name { color: var(--copper); font-weight: 800; font-size: 0.85rem; letter-spacing: 0.04em; line-height: 1; }
-  .sidebar-logo-text .sub { color: rgba(255,255,255,0.3); font-size: 0.62rem; letter-spacing: 0.08em; text-transform: uppercase; margin-top: 2px; }
-
-  .sidebar-nav { flex: 1; padding: 12px 0; overflow-y: auto; }
-  .nav-section { padding: 14px 20px 5px; font-size: 0.58rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(255,255,255,0.22); }
-  .nav-item {
-    display: flex; align-items: center; gap: 11px; padding: 10px 20px;
-    color: rgba(255,255,255,0.5); font-size: 0.82rem; cursor: pointer;
-    border-right: 3px solid transparent; transition: all 0.15s; text-decoration: none;
-  }
-  .nav-item:hover { color: rgba(255,255,255,0.85); background: rgba(255,255,255,0.05); }
-  .nav-item.active { color: var(--gold); background: rgba(184,115,56,0.14); border-right-color: var(--copper); }
-  .nav-icon { font-size: 1rem; width: 18px; text-align: center; flex-shrink: 0; }
-  .nav-badge { margin-left: auto; background: var(--copper); color: white; font-size: 0.6rem; font-weight: 700; padding: 2px 6px; border-radius: 10px; }
-
-  /* ── MAIN ── */
-  .main { margin-left: var(--sidebar-w); flex: 1; display: flex; flex-direction: column; min-height: 100vh; }
-
-  .topbar {
-    background: white; border-bottom: 1px solid #e5e5e5;
-    padding: 0 28px; height: 58px; display: flex; align-items: center;
-    position: sticky; top: 0; z-index: 50;
+    padding: 20px 20px 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+    display: flex;
+    align-items: center;
     gap: 12px;
   }
-  .topbar-greeting { font-size: 0.95rem; font-weight: 700; color: var(--navy); flex: 1; }
-  .topbar-date { font-size: 0.78rem; color: #999; }
+  .sidebar-logo img {
+    width: 36px; height: 36px;
+    object-fit: contain; opacity: 0.9;
+  }
+  .sidebar-logo-text .name {
+    font-family: Georgia, serif;
+    color: var(--copper);
+    font-weight: 700;
+    font-size: 0.82rem;
+    letter-spacing: 0.03em;
+    line-height: 1;
+  }
+  .sidebar-logo-text .sub {
+    color: rgba(255,255,255,0.28);
+    font-size: 0.6rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-top: 3px;
+  }
+
+  .sidebar-nav { flex: 1; padding: 10px 0; overflow-y: auto; }
+
+  .nav-section {
+    padding: 14px 20px 5px;
+    font-size: 0.57rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.22);
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 20px;
+    color: rgba(255,255,255,0.48);
+    font-size: 0.8rem;
+    cursor: pointer;
+    border-right: 3px solid transparent;
+    transition: all 0.15s;
+    text-decoration: none;
+  }
+  .nav-item:hover { color: rgba(255,255,255,0.82); background: rgba(255,255,255,0.05); }
+  .nav-item.active {
+    color: var(--gold);
+    background: rgba(184,115,56,0.13);
+    border-right-color: var(--copper);
+  }
+
+  /* SVG icon inside nav */
+  .nav-icon {
+    width: 18px; height: 18px;
+    flex-shrink: 0;
+    color: inherit;
+  }
+  .nav-item.active .nav-icon { color: var(--gold); }
+
+  .nav-badge {
+    margin-left: auto;
+    background: var(--copper);
+    color: white;
+    font-size: 0.6rem;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 10px;
+    min-width: 18px;
+    text-align: center;
+  }
+
+  /* ── MAIN AREA ── */
+  .main {
+    margin-left: var(--sidebar-w);
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+
+  /* ── TOP BAR ── */
+  .topbar {
+    background: white;
+    border-bottom: 1px solid #e4e6ea;
+    padding: 0 28px;
+    height: var(--topbar-h);
+    display: flex;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    gap: 12px;
+  }
+  .hamburger {
+    display: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--navy);
+    padding: 2px;
+    margin-right: 2px;
+  }
+  .topbar-greeting {
+    font-family: Georgia, serif;
+    font-size: 0.96rem;
+    font-weight: 700;
+    color: var(--navy);
+    flex: 1;
+  }
+  .topbar-date { font-size: 0.78rem; color: #9ca3af; }
   .topbar-btn {
-    background: var(--copper); color: white; border: none; border-radius: 6px;
-    padding: 8px 14px; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.04em;
-    cursor: pointer; text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--copper);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 14px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    text-transform: uppercase;
   }
 
   .page-content { padding: 24px 28px; flex: 1; }
 
   /* ── ALERT STRIP ── */
   .alert-strip {
-    background: #fffaf2; border: 1px solid #f0c878; border-radius: 10px;
-    padding: 12px 16px; margin-bottom: 20px; display: flex; gap: 16px; align-items: flex-start;
+    background: #fffbf0;
+    border: 1px solid #f0c96a;
+    border-left: 4px solid var(--orange);
+    border-radius: 8px;
+    padding: 14px 16px;
+    margin-bottom: 20px;
   }
-  .alert-icon { font-size: 1rem; flex-shrink: 0; margin-top: 1px; }
-  .alert-title { font-size: 0.72rem; font-weight: 700; color: var(--copper); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.08em; }
-  .alert-items { display: flex; flex-direction: column; gap: 4px; }
-  .alert-row { display: flex; align-items: center; gap: 8px; font-size: 0.8rem; color: #7a4a10; }
-  .alert-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--copper); flex-shrink: 0; }
-  .alert-action { margin-left: auto; font-size: 0.7rem; font-weight: 600; color: var(--copper); text-decoration: underline; cursor: pointer; white-space: nowrap; }
+  .alert-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+  .alert-header-title {
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--orange);
+  }
+  .alert-items { display: flex; flex-direction: column; gap: 6px; }
+  .alert-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.8rem;
+    color: #6b3a10;
+  }
+  .alert-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--orange);
+    flex-shrink: 0;
+  }
+  .alert-text { flex: 1; }
+  .alert-action {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--copper);
+    text-decoration: underline;
+    cursor: pointer;
+    white-space: nowrap;
+  }
 
-  /* ── PIPELINE ── */
-  .pipeline { display: flex; gap: 12px; margin-bottom: 20px; }
+  /* ── PIPELINE STRIP ── */
+  .pipeline {
+    display: flex;
+    gap: 0;
+    margin-bottom: 20px;
+    background: white;
+    border: 1px solid #e4e6ea;
+    border-radius: 10px;
+    overflow: hidden;
+  }
   .pipe-card {
-    flex: 1; background: white; border-radius: 10px; border: 1px solid #e5e5e5;
-    padding: 16px 18px; position: relative; overflow: hidden;
+    flex: 1;
+    padding: 18px 20px;
+    position: relative;
+    border-right: 1px solid #e4e6ea;
   }
-  .pipe-card::after {
-    content: ''; position: absolute; right: -10px; top: 50%; transform: translateY(-50%);
-    border-left: 10px solid #e5e5e5; border-top: 10px solid transparent; border-bottom: 10px solid transparent;
-    z-index: 1;
+  .pipe-card:last-child { border-right: none; }
+
+  /* Arrow connector between pipeline cards */
+  .pipe-card:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    right: -12px; top: 50%;
+    transform: translateY(-50%);
+    width: 0; height: 0;
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+    border-left: 12px solid #e4e6ea;
+    z-index: 2;
   }
-  .pipe-card:last-child::after { display: none; }
-  .pipe-label { font-size: 0.62rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: #999; margin-bottom: 6px; }
-  .pipe-count { font-size: 1.6rem; font-weight: 800; color: var(--navy); line-height: 1; }
-  .pipe-sub { font-size: 0.75rem; color: var(--copper); font-weight: 600; margin-top: 4px; }
+  .pipe-card:not(:last-child)::before {
+    content: '';
+    position: absolute;
+    right: -10px; top: 50%;
+    transform: translateY(-50%);
+    width: 0; height: 0;
+    border-top: 9px solid transparent;
+    border-bottom: 9px solid transparent;
+    border-left: 11px solid white;
+    z-index: 3;
+  }
+
+  .pipe-label {
+    font-size: 0.6rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: #9ca3af;
+    margin-bottom: 6px;
+  }
+  .pipe-count {
+    font-family: Georgia, serif;
+    font-size: 1.7rem;
+    font-weight: 700;
+    color: var(--navy);
+    line-height: 1;
+  }
+  .pipe-sub {
+    font-size: 0.73rem;
+    color: var(--copper);
+    font-weight: 600;
+    margin-top: 5px;
+  }
   .pipe-card.good .pipe-count { color: var(--green); }
 
-  /* ── TWO-COL CARDS ── */
-  .card-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+  /* ── TWO-COLUMN CARD ROW ── */
+  .card-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
   .card {
-    background: white; border-radius: 10px; border: 1px solid #e5e5e5; overflow: hidden;
+    background: white;
+    border-radius: 10px;
+    border: 1px solid #e4e6ea;
+    overflow: hidden;
   }
   .card-head {
-    padding: 13px 16px 11px; border-bottom: 1px solid #f0f0f0;
-    display: flex; align-items: center; justify-content: space-between;
+    padding: 13px 16px;
+    border-bottom: 1px solid #f0f0f0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
   }
-  .card-head-title { font-size: 0.8rem; font-weight: 700; color: var(--navy); display: flex; align-items: center; gap: 8px; }
-  .card-head-chip { font-size: 0.62rem; font-weight: 600; color: #aaa; background: #f5f5f5; padding: 2px 7px; border-radius: 10px; }
-  .card-head-link { font-size: 0.7rem; color: var(--copper); font-weight: 600; cursor: pointer; }
+  .card-head-title {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--navy);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .card-head-title svg { color: var(--copper); }
+  .card-head-chip {
+    font-size: 0.6rem;
+    font-weight: 600;
+    color: #aaa;
+    background: #f4f5f7;
+    padding: 2px 7px;
+    border-radius: 10px;
+    letter-spacing: 0.04em;
+  }
+  .card-head-link {
+    font-size: 0.72rem;
+    color: var(--copper);
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+  }
 
+  /* Job rows in cards */
   .job-list { padding: 4px 0; }
-  .job-row { display: flex; align-items: center; gap: 10px; padding: 9px 16px; border-bottom: 1px solid #f7f7f7; }
+  .job-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 16px;
+    border-bottom: 1px solid #f7f7f7;
+  }
   .job-row:last-child { border-bottom: none; }
-  .job-row:hover { background: #fafafa; }
-  .job-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-  .dot-green { background: #27ae60; }
-  .dot-orange { background: #e07b2a; }
-  .dot-blue { background: #2980b9; }
-  .dot-red { background: var(--red); }
-  .dot-gray { background: #bbb; }
-  .job-info { flex: 1; min-width: 0; }
-  .job-name { font-size: 0.82rem; font-weight: 600; color: #222; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .job-sub { font-size: 0.7rem; color: #999; margin-top: 1px; }
-  .job-right { text-align: right; flex-shrink: 0; }
-  .job-time { font-size: 0.72rem; color: #666; }
-  .job-amt { font-size: 0.78rem; font-weight: 700; }
-  .amt-red { color: var(--red); }
-  .amt-orange { color: var(--orange); }
-  .amt-green { color: var(--green); }
+  .job-row:hover { background: #fafbfc; }
 
-  .card-footer { padding: 9px 16px; border-top: 1px solid #f5f5f5; text-align: center; font-size: 0.72rem; color: var(--copper); font-weight: 600; cursor: pointer; }
+  /* Status left bar instead of dot */
+  .job-bar {
+    width: 4px;
+    height: 36px;
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+  .bar-green  { background: var(--green); }
+  .bar-orange { background: var(--orange); }
+  .bar-blue   { background: #3b82f6; }
+  .bar-red    { background: var(--red); }
+  .bar-gray   { background: #bbb; }
+
+  .job-info { flex: 1; min-width: 0; }
+  .job-name {
+    font-family: Georgia, serif;
+    font-size: 0.84rem;
+    font-weight: 700;
+    color: #1a2030;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .job-sub { font-size: 0.7rem; color: #9ca3af; margin-top: 2px; }
+  .job-right { text-align: right; flex-shrink: 0; }
+  .job-time { font-size: 0.72rem; color: #6b7280; }
+  .job-amt {
+    font-family: Georgia, serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+  }
+  .amt-red    { color: var(--red); }
+  .amt-orange { color: var(--orange); }
+  .amt-green  { color: var(--green); }
+
+  .card-footer {
+    padding: 10px 16px;
+    border-top: 1px solid #f5f5f5;
+    text-align: center;
+    font-size: 0.72rem;
+    color: var(--copper);
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+  }
 
   /* ── CLIENTS TABLE ── */
-  .clients-card { background: white; border-radius: 10px; border: 1px solid #e5e5e5; overflow: hidden; }
-  .clients-toolbar { padding: 12px 16px; border-bottom: 1px solid #f0f0f0; display: flex; gap: 10px; align-items: center; }
-  .search { flex: 1; border: 1px solid #e0e0e0; border-radius: 7px; padding: 8px 12px; font-size: 0.82rem; color: #aaa; background: #fafafa; }
-  .filter-btn { border: 1px solid #e0e0e0; background: white; border-radius: 7px; padding: 8px 12px; font-size: 0.78rem; color: #666; cursor: pointer; }
-  .filter-btn.primary { background: var(--copper); color: white; border-color: var(--copper); }
+  .clients-card {
+    background: white;
+    border-radius: 10px;
+    border: 1px solid #e4e6ea;
+    overflow: hidden;
+  }
+  .clients-toolbar {
+    padding: 12px 16px;
+    border-bottom: 1px solid #f0f0f0;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+  .search-wrap {
+    flex: 1;
+    position: relative;
+  }
+  .search-icon {
+    position: absolute;
+    left: 10px; top: 50%;
+    transform: translateY(-50%);
+    color: #bbb;
+    pointer-events: none;
+  }
+  .search {
+    width: 100%;
+    border: 1px solid #e4e6ea;
+    border-radius: 7px;
+    padding: 8px 12px 8px 34px;
+    font-size: 0.82rem;
+    color: #444;
+    background: #fafbfc;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    outline: none;
+  }
+  .search::placeholder { color: #aaa; }
+  .search:focus { border-color: var(--copper); }
 
-  .tab-strip { display: flex; border-bottom: 1px solid #ebebeb; padding: 0 16px; }
-  .tab { padding: 9px 14px; font-size: 0.74rem; font-weight: 600; color: #999; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; }
+  .filter-btn {
+    border: 1px solid #e4e6ea;
+    background: white;
+    border-radius: 7px;
+    padding: 8px 12px;
+    font-size: 0.78rem;
+    color: #555;
+    cursor: pointer;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+  }
+  .filter-btn.primary {
+    background: var(--copper);
+    color: white;
+    border-color: var(--copper);
+    font-weight: 600;
+  }
+
+  .tab-strip {
+    display: flex;
+    border-bottom: 1px solid #ebebeb;
+    padding: 0 16px;
+    overflow-x: auto;
+  }
+  .tab {
+    padding: 9px 14px;
+    font-size: 0.74rem;
+    font-weight: 600;
+    color: #9ca3af;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    white-space: nowrap;
+  }
   .tab.active { color: var(--copper); border-bottom-color: var(--copper); }
 
   .data-table { width: 100%; border-collapse: collapse; font-size: 0.78rem; }
-  .data-table th { background: #f8f9fa; border-bottom: 1px solid #ebebeb; padding: 9px 16px; text-align: left; font-size: 0.62rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #888; }
-  .data-table td { padding: 11px 16px; border-bottom: 1px solid #f5f5f5; vertical-align: middle; }
+  .data-table th {
+    background: #f8f9fb;
+    border-bottom: 1px solid #ebebeb;
+    padding: 9px 16px;
+    text-align: left;
+    font-size: 0.6rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+    color: #9ca3af;
+  }
+  .data-table td {
+    padding: 11px 16px;
+    border-bottom: 1px solid #f5f5f5;
+    vertical-align: middle;
+  }
   .data-table tr:last-child td { border-bottom: none; }
-  .data-table tr:hover td { background: #fafafa; cursor: pointer; }
-  .client-name { font-weight: 700; color: #222; font-size: 0.82rem; }
-  .client-phone { font-size: 0.7rem; color: #aaa; margin-top: 2px; }
-  .badge { display: inline-block; padding: 3px 8px; border-radius: 12px; font-size: 0.62rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
-  .badge-green { background: #e6f7ee; color: #1d7a40; }
-  .badge-orange { background: #fff4e0; color: #c47a20; }
-  .badge-gray { background: #f0f0f0; color: #888; }
-  .badge-red { background: #fde8e8; color: var(--red); }
+  .data-table tr:hover td { background: #fafbfc; cursor: pointer; }
 
-  /* ── MOBILE HAMBURGER ── */
-  .hamburger { display: none; background: none; border: none; font-size: 1.4rem; color: var(--navy); cursor: pointer; padding: 0; margin-right: 4px; }
-  .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 99; }
+  .client-name {
+    font-family: Georgia, serif;
+    font-weight: 700;
+    color: #1a2030;
+    font-size: 0.84rem;
+  }
+  .client-phone { font-size: 0.7rem; color: #9ca3af; margin-top: 2px; }
+
+  .badge {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-size: 0.6rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .badge-green  { background: #e6f7ee; color: #1d7a40; }
+  .badge-orange { background: #fff4e0; color: var(--orange); }
+  .badge-gray   { background: #f0f0f0; color: #888; }
+  .badge-red    { background: #fde8e8; color: var(--red); }
+  .badge-blue   { background: #eff6ff; color: #2563eb; }
+
+  /* ── SIDEBAR OVERLAY (mobile) ── */
+  .sidebar-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.45);
+    z-index: 99;
+  }
 
   /* ── MOBILE BOTTOM NAV ── */
   .mobile-bottom-nav { display: none; }
 
   /* ── RESPONSIVE ── */
-  @media (max-width: 900px) {
+  @media (max-width: 960px) {
     .card-row { grid-template-columns: 1fr; }
-    .pipeline { display: grid; grid-template-columns: 1fr 1fr; }
-    .pipe-card::after { display: none; }
-    .data-table th:nth-child(n+4), .data-table td:nth-child(n+4) { display: none; }
+    .pipe-card::before, .pipe-card::after { display: none; }
+    .pipeline {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+    }
+    .pipe-card { border-right: 1px solid #e4e6ea; border-bottom: 1px solid #e4e6ea; }
+    .pipe-card:nth-child(2n) { border-right: none; }
+    .pipe-card:nth-child(3), .pipe-card:nth-child(4) { border-bottom: none; }
+    .data-table th:nth-child(n+4),
+    .data-table td:nth-child(n+4) { display: none; }
   }
 
   @media (max-width: 640px) {
@@ -172,95 +546,189 @@
     .sidebar.open { transform: translateX(0); }
     .sidebar-overlay.open { display: block; }
     .main { margin-left: 0; }
-    .hamburger { display: block; }
-    .topbar { padding: 0 16px; }
+    .hamburger { display: flex; }
+    .topbar { padding: 0 14px; }
     .topbar-date { display: none; }
-    .page-content { padding: 16px; }
-    .pipeline { grid-template-columns: 1fr 1fr; gap: 10px; }
+    .page-content { padding: 14px; }
+    .pipeline { grid-template-columns: 1fr 1fr; }
     .pipe-card { padding: 12px 14px; }
     .pipe-count { font-size: 1.3rem; }
+    .data-table th:nth-child(n+3),
+    .data-table td:nth-child(n+3) { display: none; }
 
-    /* Bottom nav on mobile */
+    /* Mobile bottom nav */
     .mobile-bottom-nav {
-      display: flex; position: fixed; bottom: 0; left: 0; right: 0;
-      background: var(--navy); border-top: 1px solid rgba(255,255,255,0.1);
-      z-index: 100; padding-bottom: env(safe-area-inset-bottom);
+      display: flex;
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      background: var(--navy);
+      border-top: 1px solid rgba(255,255,255,0.09);
+      z-index: 100;
+      padding-bottom: env(safe-area-inset-bottom);
     }
     .mob-nav-item {
-      flex: 1; display: flex; flex-direction: column; align-items: center;
-      padding: 10px 4px 8px; font-size: 0.6rem; font-weight: 600; letter-spacing: 0.05em;
-      text-transform: uppercase; color: rgba(255,255,255,0.4); cursor: pointer; gap: 4px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 10px 4px 8px;
+      font-size: 0.59rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.38);
+      cursor: pointer;
+      gap: 4px;
+      text-decoration: none;
     }
     .mob-nav-item.active { color: var(--copper); }
-    .mob-nav-icon { font-size: 1.2rem; }
-    .main { padding-bottom: 60px; }
+    .mob-nav-item svg { flex-shrink: 0; }
+    .main { padding-bottom: 62px; }
   }
 </style>
 </head>
 <body>
 
+<!-- SVG icon sprite -->
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none">
+  <defs>
+    <!-- home -->
+    <symbol id="icon-home" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M3 9.75L12 3l9 6.75V21a1 1 0 01-1 1H4a1 1 0 01-1-1V9.75z"/><path d="M9 22V12h6v10"/>
+    </symbol>
+    <!-- calendar -->
+    <symbol id="icon-calendar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>
+    </symbol>
+    <!-- person/clients -->
+    <symbol id="icon-clients" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+    </symbol>
+    <!-- document/quote -->
+    <symbol id="icon-document" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="13" y2="17"/>
+    </symbol>
+    <!-- dollar/invoice -->
+    <symbol id="icon-dollar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="12" y1="2" x2="12" y2="22"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/>
+    </symbol>
+    <!-- chevron-right -->
+    <symbol id="icon-chevron-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="9 18 15 12 9 6"/>
+    </symbol>
+    <!-- alert -->
+    <symbol id="icon-alert" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+    </symbol>
+    <!-- check -->
+    <symbol id="icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="20 6 9 17 4 12"/>
+    </symbol>
+    <!-- clock -->
+    <symbol id="icon-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+    </symbol>
+    <!-- x-mark -->
+    <symbol id="icon-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+    </symbol>
+    <!-- plus -->
+    <symbol id="icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+    </symbol>
+    <!-- menu/hamburger -->
+    <symbol id="icon-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+    </symbol>
+    <!-- search -->
+    <symbol id="icon-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+    </symbol>
+  </defs>
+</svg>
+
 <!-- Sidebar overlay (mobile) -->
 <div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
 
 <!-- SIDEBAR -->
-<div class="sidebar" id="sidebar">
+<aside class="sidebar" id="sidebar" role="navigation" aria-label="Main navigation">
   <div class="sidebar-logo">
-    <img src="/assets/brand/logo-lantern.png" alt="RCL" />
+    <img src="/assets/brand/logo-lantern.png" alt="Rock City Lighting" onerror="this.style.display='none'">
     <div class="sidebar-logo-text">
       <div class="name">Rock City Lighting</div>
-      <div class="sub">Admin</div>
+      <div class="sub">Admin Portal</div>
     </div>
   </div>
 
   <nav class="sidebar-nav">
     <div class="nav-section">Main</div>
-    <a class="nav-item active" href="#"><span class="nav-icon">⚡</span> Dashboard</a>
-    <a class="nav-item" href="#"><span class="nav-icon">📅</span> Schedule</a>
-    <a class="nav-item" href="#"><span class="nav-icon">👥</span> Clients</a>
+
+    <a class="nav-item active" href="/admin/dashboard-mockup.html" aria-current="page">
+      <svg class="nav-icon"><use href="#icon-home"/></svg>
+      Dashboard
+    </a>
+    <a class="nav-item" href="/admin/schedule-mockup.html">
+      <svg class="nav-icon"><use href="#icon-calendar"/></svg>
+      Schedule
+    </a>
+    <a class="nav-item" href="/admin/client-mockup.html">
+      <svg class="nav-icon"><use href="#icon-clients"/></svg>
+      Clients
+    </a>
 
     <div class="nav-section">Tools</div>
-    <a class="nav-item" href="/admin/quote.html"><span class="nav-icon">📝</span> Quote Builder</a>
+
+    <a class="nav-item" href="/admin/quote.html">
+      <svg class="nav-icon"><use href="#icon-document"/></svg>
+      Quote Builder
+    </a>
     <a class="nav-item" href="#">
-      <span class="nav-icon">💰</span> Invoices
-      <span class="nav-badge">2</span>
+      <svg class="nav-icon"><use href="#icon-dollar"/></svg>
+      Invoices
+      <span class="nav-badge">3</span>
     </a>
   </nav>
-</div>
+</aside>
 
 <!-- MAIN CONTENT -->
 <div class="main">
 
   <!-- Top bar -->
-  <div class="topbar">
-    <button class="hamburger" onclick="openSidebar()">☰</button>
-    <div class="topbar-greeting">Good morning, Tim 👋</div>
-    <div class="topbar-date">Fri, May 16</div>
-    <button class="topbar-btn">+ New Quote</button>
-  </div>
+  <header class="topbar">
+    <button class="hamburger" onclick="openSidebar()" aria-label="Open navigation">
+      <svg width="22" height="22"><use href="#icon-menu"/></svg>
+    </button>
+    <div class="topbar-greeting">Good morning, Tim</div>
+    <div class="topbar-date">Fri, May 16, 2026</div>
+    <button class="topbar-btn">
+      <svg width="14" height="14"><use href="#icon-plus"/></svg>
+      New Quote
+    </button>
+  </header>
 
   <div class="page-content">
 
     <!-- Alert strip -->
-    <div class="alert-strip">
-      <div class="alert-icon">⚡</div>
-      <div style="flex:1">
-        <div class="alert-title">Needs Attention</div>
-        <div class="alert-items">
-          <div class="alert-row">
-            <span class="alert-dot"></span>
-            Henderson invoice — $2,400 overdue · 14 days
-            <span class="alert-action">Send reminder</span>
-          </div>
-          <div class="alert-row">
-            <span class="alert-dot"></span>
-            Thompson quote — no response in 9 days
-            <span class="alert-action">Follow up</span>
-          </div>
+    <div class="alert-strip" role="alert">
+      <div class="alert-header">
+        <svg width="15" height="15" style="color:var(--orange)"><use href="#icon-alert"/></svg>
+        <span class="alert-header-title">Needs Attention</span>
+      </div>
+      <div class="alert-items">
+        <div class="alert-row">
+          <span class="alert-dot"></span>
+          <span class="alert-text">Henderson invoice — $2,400 overdue · 14 days</span>
+          <a class="alert-action" href="#">Send reminder</a>
+        </div>
+        <div class="alert-row">
+          <span class="alert-dot"></span>
+          <span class="alert-text">Thompson quote — no response in 9 days</span>
+          <a class="alert-action" href="#">Follow up</a>
         </div>
       </div>
     </div>
 
-    <!-- Pipeline -->
+    <!-- Pipeline strip -->
     <div class="pipeline">
       <div class="pipe-card">
         <div class="pipe-label">Quotes Out</div>
@@ -284,57 +752,70 @@
       </div>
     </div>
 
-    <!-- Jobs + Invoices -->
+    <!-- Two-column cards: This Week + Outstanding -->
     <div class="card-row">
 
+      <!-- This Week card -->
       <div class="card">
         <div class="card-head">
-          <div class="card-head-title">📅 This Week <span class="card-head-chip">Google Cal</span></div>
-          <span class="card-head-link">View calendar</span>
+          <div class="card-head-title">
+            <svg width="16" height="16" style="color:var(--copper)"><use href="#icon-calendar"/></svg>
+            This Week
+            <span class="card-head-chip">Google Cal</span>
+          </div>
+          <a class="card-head-link" href="/admin/schedule-mockup.html">View calendar</a>
         </div>
         <div class="job-list">
           <div class="job-row">
-            <div class="job-dot dot-green"></div>
+            <div class="job-bar bar-green"></div>
             <div class="job-info">
               <div class="job-name">Hernandez · Install</div>
               <div class="job-sub">42 Chenal Pkwy · Full install</div>
             </div>
             <div class="job-right">
-              <div class="job-time">Mon 9:00am</div>
+              <div class="job-time">Mon 9:00 am</div>
             </div>
           </div>
           <div class="job-row">
-            <div class="job-dot dot-orange"></div>
+            <div class="job-bar bar-orange"></div>
             <div class="job-info">
               <div class="job-name">Williams · Touch-up</div>
               <div class="job-sub">7 Riverdale Ct · Fixture adjustment</div>
             </div>
             <div class="job-right">
-              <div class="job-time">Wed 2:00pm</div>
+              <div class="job-time">Wed 2:00 pm</div>
             </div>
           </div>
           <div class="job-row">
-            <div class="job-dot dot-blue"></div>
+            <div class="job-bar bar-blue"></div>
             <div class="job-info">
               <div class="job-name">Thompson · Quote Walk</div>
               <div class="job-sub">33 Cantrell Rd · New lead</div>
             </div>
             <div class="job-right">
-              <div class="job-time">Fri 10:00am</div>
+              <div class="job-time">Fri 10:00 am</div>
             </div>
           </div>
         </div>
-        <div class="card-footer">View full schedule →</div>
+        <a class="card-footer" href="/admin/schedule-mockup.html">
+          View full schedule
+          <svg width="14" height="14"><use href="#icon-chevron-right"/></svg>
+        </a>
       </div>
 
+      <!-- Outstanding Invoices card -->
       <div class="card">
         <div class="card-head">
-          <div class="card-head-title">💰 Outstanding <span class="card-head-chip">Stripe</span></div>
-          <span class="card-head-link">View all</span>
+          <div class="card-head-title">
+            <svg width="16" height="16" style="color:var(--copper)"><use href="#icon-dollar"/></svg>
+            Outstanding
+            <span class="card-head-chip">Stripe</span>
+          </div>
+          <a class="card-head-link" href="#">View all</a>
         </div>
         <div class="job-list">
           <div class="job-row">
-            <div class="job-dot dot-red"></div>
+            <div class="job-bar bar-red"></div>
             <div class="job-info">
               <div class="job-name">Henderson, Mark</div>
               <div class="job-sub">14 days overdue</div>
@@ -344,7 +825,7 @@
             </div>
           </div>
           <div class="job-row">
-            <div class="job-dot dot-orange"></div>
+            <div class="job-bar bar-orange"></div>
             <div class="job-info">
               <div class="job-name">Martinez, Lisa</div>
               <div class="job-sub">Sent May 8</div>
@@ -354,7 +835,7 @@
             </div>
           </div>
           <div class="job-row">
-            <div class="job-dot dot-orange"></div>
+            <div class="job-bar bar-orange"></div>
             <div class="job-info">
               <div class="job-name">Davis, Robert</div>
               <div class="job-sub">Sent May 12</div>
@@ -364,24 +845,34 @@
             </div>
           </div>
         </div>
-        <div class="card-footer">View all invoices →</div>
+        <a class="card-footer" href="#">
+          View all invoices
+          <svg width="14" height="14"><use href="#icon-chevron-right"/></svg>
+        </a>
       </div>
 
-    </div>
+    </div><!-- /card-row -->
 
     <!-- Clients Table -->
     <div class="clients-card">
       <div class="clients-toolbar">
-        <input class="search" placeholder="Search clients…" />
-        <button class="filter-btn">Filter ▾</button>
-        <button class="filter-btn primary">+ New Client</button>
+        <div class="search-wrap">
+          <svg class="search-icon" width="15" height="15"><use href="#icon-search"/></svg>
+          <input class="search" type="search" placeholder="Search clients…" aria-label="Search clients">
+        </div>
+        <button class="filter-btn">Filter</button>
+        <button class="filter-btn primary">
+          + New Client
+        </button>
       </div>
-      <div class="tab-strip">
-        <div class="tab active">All (14)</div>
-        <div class="tab">Active Plans (6)</div>
-        <div class="tab">Invoice Pending (3)</div>
-        <div class="tab">Leads (2)</div>
+
+      <div class="tab-strip" role="tablist">
+        <div class="tab active" role="tab" aria-selected="true">All (14)</div>
+        <div class="tab" role="tab">Active Plans (6)</div>
+        <div class="tab" role="tab">Invoice Pending (3)</div>
+        <div class="tab" role="tab">Leads (2)</div>
       </div>
+
       <table class="data-table">
         <thead>
           <tr>
@@ -396,17 +887,17 @@
           <tr>
             <td>
               <div class="client-name">Henderson, Mark</div>
-              <div class="client-phone">501-555-0192</div>
+              <div class="client-phone">(501) 555-0192</div>
             </td>
             <td>Mar 3 · Install</td>
-            <td style="color:#2a8a4e;font-weight:600;">Jun 15 · Annual</td>
+            <td style="color:var(--green);font-weight:600;">Jun 15 · Annual</td>
             <td><span class="badge badge-green">Maintenance</span></td>
-            <td><strong style="color:var(--red);">$2,400 due</strong></td>
+            <td style="color:var(--red);font-weight:700;">$2,400 due</td>
           </tr>
           <tr>
             <td>
               <div class="client-name">Martinez, Lisa</div>
-              <div class="client-phone">501-555-0874</div>
+              <div class="client-phone">(501) 555-0874</div>
             </td>
             <td>Apr 18 · Install</td>
             <td>—</td>
@@ -416,27 +907,27 @@
           <tr>
             <td>
               <div class="client-name">Williams, James</div>
-              <div class="client-phone">501-555-0341</div>
+              <div class="client-phone">(501) 555-0341</div>
             </td>
             <td>May 12 · Touch-up</td>
-            <td style="color:#2a8a4e;font-weight:600;">May 20 · Seasonal</td>
+            <td style="color:var(--green);font-weight:600;">May 20 · Seasonal</td>
             <td><span class="badge badge-green">Seasonal + Maint</span></td>
-            <td style="color:var(--green);font-weight:600;">Paid ✓</td>
+            <td style="color:var(--green);font-weight:600;">Paid</td>
           </tr>
           <tr>
             <td>
               <div class="client-name">Thompson, Rachel</div>
-              <div class="client-phone">501-555-0615</div>
+              <div class="client-phone">(501) 555-0615</div>
             </td>
             <td>—</td>
-            <td style="color:var(--copper);font-weight:600;">Fri 10am · Walk</td>
+            <td style="color:var(--copper);font-weight:600;">Fri 10 am · Walk</td>
             <td><span class="badge badge-orange">Lead</span></td>
             <td>—</td>
           </tr>
           <tr>
             <td>
               <div class="client-name">Davis, Robert</div>
-              <div class="client-phone">501-555-0229</div>
+              <div class="client-phone">(501) 555-0229</div>
             </td>
             <td>May 1 · Install</td>
             <td>—</td>
@@ -451,23 +942,28 @@
 </div><!-- /main -->
 
 <!-- Mobile bottom nav -->
-<div class="mobile-bottom-nav">
-  <div class="mob-nav-item active">
-    <span class="mob-nav-icon">⚡</span>Home
-  </div>
-  <div class="mob-nav-item">
-    <span class="mob-nav-icon">📅</span>Schedule
-  </div>
-  <div class="mob-nav-item">
-    <span class="mob-nav-icon">👥</span>Clients
-  </div>
-  <div class="mob-nav-item">
-    <span class="mob-nav-icon">📝</span>Quotes
-  </div>
-  <div class="mob-nav-item">
-    <span class="mob-nav-icon">💰</span>Invoices
-  </div>
-</div>
+<nav class="mobile-bottom-nav" aria-label="Mobile navigation">
+  <a class="mob-nav-item active" href="/admin/dashboard-mockup.html">
+    <svg width="20" height="20"><use href="#icon-home"/></svg>
+    Home
+  </a>
+  <a class="mob-nav-item" href="/admin/schedule-mockup.html">
+    <svg width="20" height="20"><use href="#icon-calendar"/></svg>
+    Schedule
+  </a>
+  <a class="mob-nav-item" href="/admin/client-mockup.html">
+    <svg width="20" height="20"><use href="#icon-clients"/></svg>
+    Clients
+  </a>
+  <a class="mob-nav-item" href="/admin/quote.html">
+    <svg width="20" height="20"><use href="#icon-document"/></svg>
+    Quotes
+  </a>
+  <a class="mob-nav-item" href="#">
+    <svg width="20" height="20"><use href="#icon-dollar"/></svg>
+    Invoices
+  </a>
+</nav>
 
 <script>
   function openSidebar() {
@@ -478,6 +974,14 @@
     document.getElementById('sidebar').classList.remove('open');
     document.getElementById('sidebar-overlay').classList.remove('open');
   }
+
+  // Tab strip interaction
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+    });
+  });
 </script>
 </body>
 </html>
