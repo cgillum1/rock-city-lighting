@@ -5,6 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Quote Builder — Rock City Lighting</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <!-- Google Places Autocomplete — replace REPLACE_WITH_YOUR_KEY below.
+       Get a free key at console.cloud.google.com → APIs & Services → Places API.
+       Free tier covers 10,000 autocomplete calls/month — more than enough. -->
+  <script src="https://maps.googleapis.com/maps/api/js?key=REPLACE_WITH_YOUR_KEY&libraries=places&callback=initPlaces" async defer></script>
   <style>
     :root {
       --navy:       #0f1f38;
@@ -424,10 +428,10 @@
       </div>
       <div class="field">
         <label>Property Address</label>
-        <input type="text" id="client-address" placeholder="1234 Chenal Pkwy, Little Rock, AR 72212" />
+        <input type="text" id="client-address" placeholder="Start typing an address…" autocomplete="off" />
       </div>
       <div class="field-row">
-        <div class="field"><label>Phone</label><input type="text" id="client-phone" placeholder="(501) 555-0100" /></div>
+        <div class="field"><label>Phone</label><input type="tel" id="client-phone" placeholder="(501) 555-0100" inputmode="tel" /></div>
         <div class="field"><label>Email</label><input type="text" id="client-email" placeholder="client@email.com" /></div>
       </div>
 
@@ -452,7 +456,7 @@
       <div class="zones" id="zones-container">
 
         <div class="zone-item">
-          <div class="zone-header" onclick="toggleZone(this)">
+          <div class="zone-header" onclick="toggleZone(this,event)">
             <input type="checkbox" id="z-entry" /><label for="z-entry">Architectural Uplighting</label>
           </div>
           <div class="zone-body">
@@ -461,7 +465,7 @@
         </div>
 
         <div class="zone-item">
-          <div class="zone-header" onclick="toggleZone(this)">
+          <div class="zone-header" onclick="toggleZone(this,event)">
             <input type="checkbox" id="z-pathway" /><label for="z-pathway">Pathway Lighting</label>
           </div>
           <div class="zone-body">
@@ -470,7 +474,7 @@
         </div>
 
         <div class="zone-item">
-          <div class="zone-header" onclick="toggleZone(this)">
+          <div class="zone-header" onclick="toggleZone(this,event)">
             <input type="checkbox" id="z-porch" /><label for="z-porch">Porch & Entry Lighting</label>
           </div>
           <div class="zone-body">
@@ -479,7 +483,7 @@
         </div>
 
         <div class="zone-item">
-          <div class="zone-header" onclick="toggleZone(this)">
+          <div class="zone-header" onclick="toggleZone(this,event)">
             <input type="checkbox" id="z-landscape" /><label for="z-landscape">Landscape Lighting</label>
           </div>
           <div class="zone-body">
@@ -488,7 +492,7 @@
         </div>
 
         <div class="zone-item">
-          <div class="zone-header" onclick="toggleZone(this)">
+          <div class="zone-header" onclick="toggleZone(this,event)">
             <input type="checkbox" id="z-outdoor" /><label for="z-outdoor">Outdoor Living & Entertaining</label>
           </div>
           <div class="zone-body">
@@ -497,16 +501,7 @@
         </div>
 
         <div class="zone-item">
-          <div class="zone-header" onclick="toggleZone(this)">
-            <input type="checkbox" id="z-maintenance" /><label for="z-maintenance">Maintenance & Bulb Plans</label>
-          </div>
-          <div class="zone-body">
-            <div class="field"><textarea id="z-maintenance-notes" placeholder="e.g. Annual service plan — bulb replacement, fixture cleaning, system check"></textarea></div>
-          </div>
-        </div>
-
-        <div class="zone-item">
-          <div class="zone-header" onclick="toggleZone(this)">
+          <div class="zone-header" onclick="toggleZone(this,event)">
             <input type="checkbox" id="z-other" /><label for="z-other">Other / Custom</label>
           </div>
           <div class="zone-body">
@@ -724,6 +719,33 @@
 </div>
 
 <script>
+  // ── GOOGLE PLACES AUTOCOMPLETE ───────────────────────────
+  // Called by the Google Maps script once it loads (see callback= in script src above)
+  window.initPlaces = function() {
+    const input = document.getElementById('client-address');
+    if (!input || !window.google) return;
+    const ac = new google.maps.places.Autocomplete(input, {
+      types: ['address'],
+      componentRestrictions: { country: 'us' },
+    });
+    ac.addListener('place_changed', () => {
+      const place = ac.getPlace();
+      if (!place.address_components) return;
+      // Build a clean formatted address from components
+      let street = '', city = '', state = '', zip = '';
+      place.address_components.forEach(c => {
+        if (c.types.includes('street_number')) street = c.long_name + ' ';
+        if (c.types.includes('route'))         street += c.long_name;
+        if (c.types.includes('locality'))      city   = c.long_name;
+        if (c.types.includes('administrative_area_level_1')) state = c.short_name;
+        if (c.types.includes('postal_code'))   zip    = c.long_name;
+      });
+      const full = [street.trim(), city, state, zip].filter(Boolean).join(', ');
+      input.value = full || place.formatted_address;
+      liveUpdate();
+    });
+  };
+
   // Quote builder — no password required
   initDate();
   generateQuote();
@@ -750,10 +772,9 @@
 
   // ── INPUT FORMATTING ──────────────────────────────────────
   function formatCurrency(input) {
-    let raw = input.value.replace(/[^0-9.]/g, '');
-    const parts = raw.split('.');
-    if (parts.length > 2) raw = parts[0] + '.' + parts.slice(1).join('');
-    input.value = raw ? '$' + raw : '';
+    const raw = input.value.replace(/[^0-9]/g, '');
+    if (!raw) { input.value = ''; return; }
+    input.value = '$' + parseInt(raw, 10).toLocaleString('en-US');
   }
   function finalizeCurrency(input) {
     const num = parseFloat(input.value.replace(/[^0-9.]/g, ''));
@@ -814,10 +835,17 @@
   });
 
   // ── ZONE TOGGLE ───────────────────────────────────────────
-  function toggleZone(header) {
+  function toggleZone(header, evt) {
     const cb   = header.querySelector('input[type=checkbox]');
     const body = header.closest('.zone-item').querySelector('.zone-body');
-    if (event.target.tagName === 'INPUT') {
+    const tgt  = (evt && evt.target) ? evt.target : null;
+    if (tgt && tgt.tagName === 'LABEL') {
+      // Label click: browser already toggled the checkbox via 'for', just update body
+      // Use timeout so the browser's toggle has applied
+      setTimeout(() => { body.classList.toggle('open', cb.checked); liveUpdate(); }, 0);
+      return;
+    }
+    if (tgt && tgt.tagName === 'INPUT') {
       body.classList.toggle('open', cb.checked);
     } else {
       cb.checked = !cb.checked;
@@ -903,13 +931,12 @@
 
   // ── PRESET ZONES ─────────────────────────────────────────
   const ZONES = [
-    { id: 'entry',       label: 'Architectural Uplighting',       narrative: "Architectural uplighting will highlight the home's key features — trees, columns, facades, and rooflines — bringing depth and drama after dark." },
-    { id: 'pathway',     label: 'Pathway Lighting',               narrative: "Pathway lighting will guide visitors safely along walkways and steps while adding a refined, finished look to the property." },
-    { id: 'porch',       label: 'Porch & Entry Lighting',         narrative: "Porch and entry lighting will create a warm, welcoming first impression at the front door." },
-    { id: 'landscape',   label: 'Landscape Lighting',             narrative: "Landscape lighting will accent garden beds, plantings, and natural features throughout the yard." },
-    { id: 'outdoor',     label: 'Outdoor Living & Entertaining',  narrative: "The outdoor living area will be lit for entertaining and relaxation — extending the warmth of the home into the backyard." },
-    { id: 'maintenance', label: 'Maintenance & Bulb Plans',       narrative: "A maintenance plan will keep the system clean, bright, and working properly year-round." },
-    { id: 'other',       label: 'Other / Custom',                 narrative: "Additional custom lighting elements will be incorporated as detailed in the scope below." },
+    { id: 'entry',     label: 'Architectural Uplighting',      narrative: "Architectural uplighting will highlight the home's key features — trees, columns, facades, and rooflines — bringing depth and drama after dark." },
+    { id: 'pathway',   label: 'Pathway Lighting',              narrative: "Pathway lighting will guide visitors safely along walkways and steps while adding a refined, finished look to the property." },
+    { id: 'porch',     label: 'Porch & Entry Lighting',        narrative: "Porch and entry lighting will create a warm, welcoming first impression at the front door." },
+    { id: 'landscape', label: 'Landscape Lighting',            narrative: "Landscape lighting will accent garden beds, plantings, and natural features throughout the yard." },
+    { id: 'outdoor',   label: 'Outdoor Living & Entertaining', narrative: "The outdoor living area will be lit for entertaining and relaxation — extending the warmth of the home into the backyard." },
+    { id: 'other',     label: 'Other / Custom',                narrative: "Additional custom lighting elements will be incorporated as detailed in the scope below." },
   ];
 
   function autogenNarrative() {
@@ -957,9 +984,6 @@
       case 'outdoor':
         return n ? `For the outdoor living area, we're thinking ${lcFirst(n)}.`
                  : `The outdoor entertaining area will get proper lighting so it's actually usable after dark — whether that's dinner outside or just winding down on the patio.`;
-      case 'maintenance':
-        return n ? `For ongoing service, ${lcFirst(n)}.`
-                 : `A maintenance plan is included to keep everything running right — bulb swaps, fixture cleaning, and an annual check to make sure nothing gets missed.`;
       case 'other':
         return n ? lcFirst(n) : '';
       default:
@@ -1267,7 +1291,19 @@
     ws.classList.toggle('show-preview', tab === 'preview');
     document.getElementById('tab-form').classList.toggle('active',    tab === 'form');
     document.getElementById('tab-preview').classList.toggle('active', tab === 'preview');
-    if (tab === 'preview') { generateQuote(); requestAnimationFrame(applyZoom); }
+    if (tab === 'preview') {
+      generateQuote();
+      // Auto-fit zoom to screen width on mobile/tablet
+      setTimeout(() => {
+        const available = document.getElementById('doc-scroller').clientWidth - 24;
+        if (available < 800) {
+          zoomLevel = Math.max(0.4, Math.floor((available / 800) * 10) / 10);
+          applyZoom();
+        } else {
+          applyZoom();
+        }
+      }, 50);
+    }
   }
 
   document.addEventListener('keydown', e => {
@@ -1283,14 +1319,24 @@
     generateQuote();
     const el   = document.getElementById('quote-doc');
     const name = document.getElementById('client-name').value.trim().replace(/\s+/g, '-') || 'Quote';
+    const filename = `RCL-Quote-${name}.pdf`;
     const opts = {
       margin:      0,
-      filename:    `RCL-Quote-${name}.pdf`,
+      filename,
       image:       { type: 'jpeg', quality: 0.98 },
       html2canvas: { scale: 2, useCORS: true, backgroundColor: '#0f1f38' },
       jsPDF:       { unit: 'px', format: [800, 1300], orientation: 'portrait' },
     };
-    html2pdf().set(opts).from(el).save();
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    if (isIOS) {
+      // iOS Safari doesn't support link.download — output as blob and open in new tab
+      html2pdf().set(opts).from(el).outputPdf('blob').then(blob => {
+        const url = URL.createObjectURL(blob);
+        window.open(url, '_blank');
+      });
+    } else {
+      html2pdf().set(opts).from(el).save();
+    }
 
     // Download .ics for all active add-ons combined
     const activeAddons = getActiveAddons();
