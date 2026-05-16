@@ -299,7 +299,7 @@
     .q-sig-row {
       padding: 28px 60px 32px;
       display: grid; grid-template-columns: 1fr 1fr; gap: 48px;
-      background: white;
+      background: #f7f3ee;
       border-top: 3px solid var(--copper);
     }
     .q-sig-col .q-sig-label { font-size: 0.62rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--copper); font-weight: 700; margin-bottom: 36px; }
@@ -316,8 +316,11 @@
 <div id="gate">
   <img src="/assets/brand/logo-lantern.png" alt="RCL" />
   <h2>Quote Builder</h2>
-  <input type="password" id="pw-input" placeholder="Enter password" />
-  <button onclick="checkPassword()">Enter</button>
+  <form onsubmit="checkPassword(); return false;" autocomplete="on" style="display:contents;">
+    <input type="text" name="username" autocomplete="username" value="admin" style="display:none;" />
+    <input type="password" id="pw-input" name="password" autocomplete="current-password" placeholder="Enter password" />
+    <button type="submit">Enter</button>
+  </form>
   <div class="err" id="pw-err"></div>
 </div>
 
