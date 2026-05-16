@@ -247,6 +247,7 @@ document.getElementById('lead-form')?.addEventListener('submit', async e => {
     email:       form.email.value,
     project:     projectInput ? projectInput.value : '',
     description: form.description?.value || '',
+    timing:      form.timing?.value || '',
   };
 
   try {
