@@ -499,17 +499,32 @@
         </div>
       </div>
 
-      <h3>Annual Service Reminder <span class="opt">(optional)</span></h3>
+      <h3>Service Plan <span class="opt">(optional)</span></h3>
       <label class="payment-option" style="margin-bottom:6px;">
         <input type="checkbox" id="annual-reminder" style="accent-color:var(--copper);width:15px;height:15px;flex-shrink:0;" />
-        <span>Enroll client in annual service follow-up</span>
+        <span>Include a recurring service plan</span>
       </label>
       <div id="reminder-date-wrap" style="display:none;">
         <div class="field" style="margin-top:6px;">
-          <label>Expected completion date</label>
-          <input type="date" id="reminder-date" />
+          <label>Frequency</label>
+          <select id="service-frequency">
+            <option value="monthly">Monthly</option>
+            <option value="quarterly">Quarterly</option>
+            <option value="semi-annual">Semi-Annual</option>
+            <option value="annual" selected>Annual</option>
+          </select>
         </div>
-        <div class="total-hint">A calendar reminder (.ics) downloads with the PDF — set 11 months from this date so you have time to reach out.</div>
+        <div class="field-row">
+          <div class="field">
+            <label>Price per visit</label>
+            <input type="text" id="service-price" placeholder="$0" />
+          </div>
+          <div class="field">
+            <label>Start / completion date</label>
+            <input type="date" id="reminder-date" />
+          </div>
+        </div>
+        <div class="total-hint">A calendar reminder (.ics) downloads with the PDF for each scheduled visit.</div>
       </div>
 
       <h3>Notes for Client <span class="opt">(optional)</span></h3>
@@ -750,17 +765,22 @@
     document.getElementById('quote-num').addEventListener('input', liveUpdate);
     document.getElementById('valid-until').addEventListener('change', liveUpdate);
 
-    // Annual reminder toggle
+    // Service plan toggle
     const reminderCb   = document.getElementById('annual-reminder');
     const reminderWrap = document.getElementById('reminder-date-wrap');
     const reminderDate = document.getElementById('reminder-date');
-    // Default reminder date = today
     reminderDate.value = new Date().toISOString().split('T')[0];
     reminderCb.addEventListener('change', () => {
       reminderWrap.style.display = reminderCb.checked ? 'block' : 'none';
       liveUpdate();
     });
     reminderDate.addEventListener('change', liveUpdate);
+    document.getElementById('service-frequency').addEventListener('change', liveUpdate);
+
+    // Service price formatting
+    const sp = document.getElementById('service-price');
+    sp.addEventListener('input',  () => { formatCurrency(sp); liveUpdate(); });
+    sp.addEventListener('blur',   () => finalizeCurrency(sp));
   });
 
   // ── ZONE TOGGLE ───────────────────────────────────────────
@@ -989,20 +1009,26 @@
     if (extraNotes) { notesEl.textContent = extraNotes; notesEl.style.display = 'block'; }
     else            { notesEl.style.display = 'none'; }
 
-    // Annual service reminder
-    const reminderOn   = document.getElementById('annual-reminder').checked;
-    const reminderWrap = document.getElementById('q-reminder-wrap');
+    // Service plan
+    const reminderOn = document.getElementById('annual-reminder').checked;
+    const qReminderWrap = document.getElementById('q-reminder-wrap');
     if (reminderOn) {
-      const raw = document.getElementById('reminder-date').value;
+      const raw   = document.getElementById('reminder-date').value;
+      const freq  = document.getElementById('service-frequency').value;
+      const price = document.getElementById('service-price').value.trim();
+      const FREQ_LABELS = { monthly: 'Monthly', quarterly: 'Quarterly', 'semi-annual': 'Semi-Annual', annual: 'Annual' };
+      const FREQ_MONTHS = { monthly: 1, quarterly: 3, 'semi-annual': 6, annual: 12 };
       if (raw) {
         const base = new Date(raw + 'T00:00:00');
-        base.setMonth(base.getMonth() + 11);
-        document.getElementById('q-reminder-date').textContent =
-          base.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+        const gap  = FREQ_MONTHS[freq];
+        base.setMonth(base.getMonth() + gap - 1); // first visit slightly before next interval
+        const dateStr = base.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+        const priceStr = price ? ` · ${price}/visit` : '';
+        document.getElementById('q-reminder-date').textContent = `${FREQ_LABELS[freq]}${priceStr} — first visit ${dateStr}`;
       }
-      reminderWrap.style.display = 'flex';
+      qReminderWrap.style.display = 'flex';
     } else {
-      reminderWrap.style.display = 'none';
+      qReminderWrap.style.display = 'none';
     }
 
     // Keep zoom wrapper sized to match any content height change
@@ -1057,35 +1083,46 @@
     };
     html2pdf().set(opts).from(el).save();
 
-    // Also download .ics reminder if enrolled
+    // Also download .ics reminders if service plan enrolled
     if (document.getElementById('annual-reminder').checked) {
-      const raw = document.getElementById('reminder-date').value;
+      const raw  = document.getElementById('reminder-date').value;
+      const freq = document.getElementById('service-frequency').value;
+      const price = document.getElementById('service-price').value.trim();
+      const clientName = document.getElementById('client-name').value.trim() || 'Client';
       if (raw) {
-        const remind = new Date(raw + 'T00:00:00');
-        remind.setMonth(remind.getMonth() + 11);
-        const clientName = document.getElementById('client-name').value.trim() || 'Client';
-        const pad = n => String(n).padStart(2, '0');
-        const dt  = `${remind.getFullYear()}${pad(remind.getMonth()+1)}${pad(remind.getDate())}`;
-        const ics = [
-          'BEGIN:VCALENDAR',
-          'VERSION:2.0',
-          'BEGIN:VEVENT',
-          `DTSTART;VALUE=DATE:${dt}`,
-          `DTEND;VALUE=DATE:${dt}`,
-          `SUMMARY:Annual Service Due — ${clientName}`,
-          `DESCRIPTION:Time to reach out to ${clientName} for their annual lighting system check.`,
-          'BEGIN:VALARM',
-          'TRIGGER:-P14D',
-          'ACTION:DISPLAY',
-          `DESCRIPTION:Reminder: Annual service coming up for ${clientName}`,
-          'END:VALARM',
-          'END:VEVENT',
-          'END:VCALENDAR',
-        ].join('\r\n');
+        const FREQ_MONTHS  = { monthly: 1, quarterly: 3, 'semi-annual': 6, annual: 12 };
+        const FREQ_LABELS  = { monthly: 'Monthly', quarterly: 'Quarterly', 'semi-annual': 'Semi-Annual', annual: 'Annual' };
+        const VISITS       = { monthly: 12, quarterly: 8, 'semi-annual': 4, annual: 2 };
+        const gap   = FREQ_MONTHS[freq];
+        const count = VISITS[freq];
+        const pad   = n => String(n).padStart(2, '0');
+        const priceNote = price ? ` (${price}/visit)` : '';
+        const events = [];
+        for (let i = 1; i <= count; i++) {
+          const d = new Date(raw + 'T00:00:00');
+          d.setMonth(d.getMonth() + gap * i - Math.floor(gap * 0.15)); // slight lead time
+          const dt  = `${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}`;
+          const uid = `rcl-${Date.now()}-${i}@rockcitylighting`;
+          events.push([
+            'BEGIN:VEVENT',
+            `UID:${uid}`,
+            `DTSTART;VALUE=DATE:${dt}`,
+            `DTEND;VALUE=DATE:${dt}`,
+            `SUMMARY:${FREQ_LABELS[freq]} Service — ${clientName}`,
+            `DESCRIPTION:${FREQ_LABELS[freq]} lighting service visit for ${clientName}${priceNote}. Reach out to schedule.`,
+            'BEGIN:VALARM',
+            'TRIGGER:-P7D',
+            'ACTION:DISPLAY',
+            `DESCRIPTION:Service coming up: ${clientName}`,
+            'END:VALARM',
+            'END:VEVENT',
+          ].join('\r\n'));
+        }
+        const ics = ['BEGIN:VCALENDAR', 'VERSION:2.0', ...events, 'END:VCALENDAR'].join('\r\n');
         const blob = new Blob([ics], { type: 'text/calendar' });
         const a = document.createElement('a');
         a.href = URL.createObjectURL(blob);
-        a.download = `RCL-ServiceReminder-${name}.ics`;
+        a.download = `RCL-ServicePlan-${name}.ics`;
         a.click();
       }
     }
