@@ -239,7 +239,10 @@ document.querySelectorAll('#project-type-grid input[type="radio"]').forEach(inpu
 
 // Phone formatter — formats as (501) 412-5972 while typing
 function formatPhone(input) {
-  let v = input.value.replace(/\D/g, '').slice(0, 10);
+  let v = input.value.replace(/\D/g, '');
+  // Strip leading country code 1 if 11 digits
+  if (v.length === 11 && v[0] === '1') v = v.slice(1);
+  v = v.slice(0, 10);
   if (v.length >= 7)      v = `(${v.slice(0,3)}) ${v.slice(3,6)}-${v.slice(6)}`;
   else if (v.length >= 4) v = `(${v.slice(0,3)}) ${v.slice(3)}`;
   else if (v.length > 0)  v = `(${v}`;
@@ -254,19 +257,21 @@ document.getElementById('lead-form')?.addEventListener('submit', async e => {
   btn.textContent = 'Sending…';
   btn.disabled = true;
 
-  // Use form.elements[] for reliable named field access
-  const projectInput = form.querySelector('input[name="project"]:checked');
-  const areas = Array.from(form.querySelectorAll('input[name="areas"]:checked'))
-    .map(cb => cb.value).join(', ');
+  // Use IDs directly — most bulletproof cross-browser approach
+  const projectInput = document.querySelector('#project-type-grid input[type="radio"]:checked');
+  const areaInputs   = document.querySelectorAll('#area-grid input[type="checkbox"]:checked');
+  const areas        = Array.from(areaInputs).map(cb => cb.value).join(', ');
 
   const payload = {
-    name:    form.elements['name']?.value  || '',
-    phone:   form.elements['phone']?.value || '',
-    email:   form.elements['email']?.value || '',
+    name:    document.getElementById('hi-name')?.value   || '',
+    phone:   document.getElementById('hi-phone')?.value  || '',
+    email:   document.getElementById('hi-email')?.value  || '',
     project: projectInput ? projectInput.value : '',
     areas:   areas,
-    timing:  form.elements['timing']?.value || '',
+    timing:  document.getElementById('hi-timing')?.value || '',
   };
+
+  console.log('Submitting payload:', payload); // debug — remove after confirming
 
   try {
     await fetch(SCRIPT_URL, {
