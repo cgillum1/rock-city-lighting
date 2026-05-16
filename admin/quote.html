@@ -158,9 +158,30 @@
 
     /* ── PREVIEW PANEL ── */
     .preview-panel {
-      padding: 32px; overflow-y: auto; background: #d8d8d8;
-      display: flex; flex-direction: column; align-items: center;
+      display: flex; flex-direction: column; overflow: hidden;
+      background: #d8d8d8; height: calc(100vh - 58px);
     }
+    .zoom-bar {
+      background: #222; border-bottom: 1px solid #111;
+      padding: 7px 16px; display: flex; align-items: center;
+      justify-content: center; gap: 6px; flex-shrink: 0;
+    }
+    .zoom-btn {
+      width: 26px; height: 26px; border: 1px solid rgba(255,255,255,0.18);
+      background: rgba(255,255,255,0.08); border-radius: 3px; color: #bbb;
+      font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center;
+      transition: all 0.15s; line-height: 1; font-family: monospace; user-select: none;
+    }
+    .zoom-btn:hover { background: rgba(255,255,255,0.2); color: white; border-color: rgba(255,255,255,0.35); }
+    .zoom-label {
+      color: #999; font-size: 0.75rem; font-family: monospace;
+      min-width: 38px; text-align: center; user-select: none;
+    }
+    #doc-scroller {
+      flex: 1; overflow-y: auto; overflow-x: auto;
+      padding: 32px; display: flex; justify-content: center; align-items: flex-start;
+    }
+    #doc-outer { flex-shrink: 0; position: relative; }
 
     /* ══════════════════════════════════════════
        QUOTE DOCUMENT
@@ -474,6 +495,16 @@
     <!-- PREVIEW PANEL -->
     <div class="preview-panel">
 
+      <div class="zoom-bar">
+        <button class="zoom-btn" onclick="zoomOut()" title="Zoom out (⌘−)">−</button>
+        <span class="zoom-label" id="zoom-label">75%</span>
+        <button class="zoom-btn" onclick="zoomIn()" title="Zoom in (⌘+)">+</button>
+        <button class="zoom-btn" onclick="zoomReset()" title="Actual size (⌘0)" style="font-size:0.6rem;letter-spacing:0.02em;">1:1</button>
+      </div>
+
+      <div id="doc-scroller">
+      <div id="doc-outer">
+
       <div id="quote-doc">
 
         <div class="q-doc-header">
@@ -588,6 +619,10 @@
         </div>
 
       </div>
+
+      </div><!-- /doc-outer -->
+      </div><!-- /doc-scroller -->
+
     </div>
   </div>
 </div>
@@ -601,8 +636,10 @@
     if (val === PASSWORD) {
       document.getElementById('gate').style.display = 'none';
       document.getElementById('app').style.display = 'block';
+      appReady = true;
       initDate();
       generateQuote();
+      applyZoom();
     } else {
       document.getElementById('pw-err').textContent = 'Incorrect password.';
       document.getElementById('pw-input').value = '';
@@ -905,7 +942,44 @@
     const notesEl = document.getElementById('q-notes');
     if (extraNotes) { notesEl.textContent = extraNotes; notesEl.style.display = 'block'; }
     else            { notesEl.style.display = 'none'; }
+
+    // Keep zoom wrapper sized to match any content height change
+    requestAnimationFrame(applyZoom);
   }
+
+  // ── ZOOM ──────────────────────────────────────────────────
+  let zoomLevel = 0.75;
+  const ZOOM_STEPS = [0.50, 0.60, 0.75, 1.00, 1.25, 1.50];
+  let appReady = false;
+
+  function applyZoom() {
+    if (!appReady) return;
+    const doc   = document.getElementById('quote-doc');
+    const outer = document.getElementById('doc-outer');
+    doc.style.transform       = `scale(${zoomLevel})`;
+    doc.style.transformOrigin = '0 0';
+    outer.style.width  = (800 * zoomLevel) + 'px';
+    outer.style.height = (doc.scrollHeight * zoomLevel) + 'px';
+    document.getElementById('zoom-label').textContent = Math.round(zoomLevel * 100) + '%';
+  }
+
+  function zoomIn() {
+    const next = ZOOM_STEPS.find(s => s > zoomLevel + 0.001);
+    if (next) { zoomLevel = next; applyZoom(); }
+  }
+  function zoomOut() {
+    const prev = [...ZOOM_STEPS].reverse().find(s => s < zoomLevel - 0.001);
+    if (prev !== undefined) { zoomLevel = prev; applyZoom(); }
+  }
+  function zoomReset() { zoomLevel = 1.0; applyZoom(); }
+
+  document.addEventListener('keydown', e => {
+    if (e.metaKey || e.ctrlKey) {
+      if (e.key === '=' || e.key === '+') { e.preventDefault(); zoomIn(); }
+      else if (e.key === '-')             { e.preventDefault(); zoomOut(); }
+      else if (e.key === '0')             { e.preventDefault(); zoomReset(); }
+    }
+  });
 
   // ── DOWNLOAD PDF ──────────────────────────────────────────
   function downloadPDF() {
