@@ -261,11 +261,15 @@
     .q-total-wrap { margin: 0; padding: 0 60px 28px; background: var(--navy-body); display: flex; justify-content: flex-end; }
     .q-total-box {
       background: var(--navy);
-      padding: 18px 32px; display: flex; align-items: center; gap: 48px; min-width: 340px;
+      padding: 18px 32px; display: flex; align-items: center; gap: 0;
       border-radius: 3px; margin-top: 20px;
     }
-    .q-total-label { font-size: 0.62rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--copper); font-weight: 700; }
-    .q-total-amount { font-family: var(--font-serif); font-size: 2.2rem; color: var(--cream); margin-left: auto; }
+    .q-total-col { display: flex; flex-direction: column; align-items: flex-end; padding: 0 28px; }
+    .q-total-col:first-child { padding-left: 0; border-right: 1px solid rgba(184,115,56,0.3); }
+    .q-total-col:last-child { padding-right: 0; }
+    .q-total-label { font-size: 0.62rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--copper); font-weight: 700; margin-bottom: 6px; }
+    .q-total-amount { font-family: var(--font-serif); font-size: 2rem; color: var(--cream); }
+    .q-total-amount.deposit { font-size: 1.6rem; color: rgba(245,240,232,0.75); }
 
     .q-payment {
       padding: 18px 60px 20px;
@@ -595,8 +599,14 @@
 
         <div class="q-total-wrap">
           <div class="q-total-box">
-            <span class="q-total-label">Total Investment</span>
-            <span class="q-total-amount" id="q-total">—</span>
+            <div class="q-total-col" id="q-deposit-col">
+              <span class="q-total-label">Due at Signing</span>
+              <span class="q-total-amount deposit" id="q-deposit">—</span>
+            </div>
+            <div class="q-total-col">
+              <span class="q-total-label">Project Investment</span>
+              <span class="q-total-amount" id="q-total">—</span>
+            </div>
           </div>
         </div>
 
@@ -1041,6 +1051,19 @@
       grandTotal = parsePrice(manualTotal);
     }
     document.getElementById('q-total').textContent = grandTotal > 0 ? formatPrice(grandTotal) : (manualTotal || '—');
+
+    // Due at Signing
+    const depositCol = document.getElementById('q-deposit-col');
+    const depositEl  = document.getElementById('q-deposit');
+    const payValDep  = document.querySelector('input[name=payment]:checked')?.value || '50-50';
+    const depositMultipliers = { '50-50': 0.5, 'thirds': 1/3, 'full': 1 };
+    const mult = depositMultipliers[payValDep];
+    if (mult !== undefined && grandTotal > 0) {
+      depositEl.textContent = formatPrice(Math.round(grandTotal * mult));
+      depositCol.style.display = 'flex';
+    } else {
+      depositCol.style.display = 'none';
+    }
 
     // Payment schedule
     const payVal  = document.querySelector('input[name=payment]:checked')?.value || '50-50';
