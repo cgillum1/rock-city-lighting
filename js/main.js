@@ -185,24 +185,20 @@ function lfUpdateDots(step) {
   if (dots) dots.dataset.step = step;
 }
 
-function showStep(step, direction = 'forward') {
-  const current = document.querySelector('.lf-panel.active');
-  const next    = document.getElementById(`step-${step}`);
-  if (!next || current === next) return;
-
-  if (current) {
-    current.classList.add('slide-out');
-    current.addEventListener('animationend', () => {
-      current.classList.remove('active', 'slide-out');
-    }, { once: true });
-  }
-
-  next.style.display = 'block';
-  next.classList.remove('active', 'slide-in-back');
-  void next.offsetWidth;
-  if (direction === 'back') next.classList.add('slide-in-back');
-  next.classList.add('active');
-
+// Core step switch — dead simple, no inline styles, no animationend callbacks.
+// CSS handles display via .lf-panel { display:none } / .lf-panel.active { display:block }.
+// Animation is a CSS @keyframes on .active, direction set via .lf-going-back.
+function showStep(step, direction) {
+  const panels = document.querySelectorAll('.lf-panel');
+  panels.forEach(p => {
+    p.classList.remove('active', 'lf-going-back');
+    // Ensure no stale inline display style interferes
+    p.style.display = '';
+  });
+  const target = document.getElementById('step-' + step);
+  if (!target) return;
+  if (direction === 'back') target.classList.add('lf-going-back');
+  target.classList.add('active');
   _lfCurrentStep = step;
   lfUpdateDots(step);
 }
@@ -210,12 +206,17 @@ function showStep(step, direction = 'forward') {
 function formNext(currentStep) {
   if (currentStep === 1) {
     const grid     = document.getElementById('project-type-grid');
-    const selected = grid?.querySelector('input[type="radio"]:checked');
+    const selected = grid && grid.querySelector('input[type="radio"]:checked');
     if (!selected) {
       grid.classList.remove('needs-selection');
-      void grid.offsetWidth;
-      grid.classList.add('needs-selection');
-      grid.addEventListener('animationend', () => grid.classList.remove('needs-selection'), { once: true });
+      // Tiny timeout so removing+re-adding triggers the shake
+      setTimeout(() => {
+        grid.classList.add('needs-selection');
+        grid.addEventListener('animationend', function h() {
+          grid.classList.remove('needs-selection');
+          grid.removeEventListener('animationend', h);
+        });
+      }, 10);
       return;
     }
   }
@@ -226,8 +227,8 @@ function formBack(currentStep) {
   showStep(currentStep - 1, 'back');
 }
 
-// Init dots on load
-lfUpdateDots(1);
+// Init
+showStep(1);
 
 // Lead form submission
 document.getElementById('lead-form')?.addEventListener('submit', async e => {
@@ -258,7 +259,7 @@ document.getElementById('lead-form')?.addEventListener('submit', async e => {
     btn.textContent = "Sent! We'll be in touch soon.";
     btn.style.opacity = '0.7';
     form.reset();
-    showStep(1, 'back');
+    showStep(1);
     setTimeout(() => {
       btn.textContent  = 'Request a Consultation';
       btn.disabled     = false;
