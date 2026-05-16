@@ -284,15 +284,28 @@
     .q-payment-label { font-size: 0.62rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--copper); font-weight: 700; margin-bottom: 4px; }
     .q-payment-text { font-size: 0.85rem; color: rgba(245,240,232,0.7); line-height: 1.65; }
 
-    .q-service-reminder {
-      padding: 14px 60px;
-      background: var(--navy-body);
-      border-top: 1px solid rgba(184,115,56,0.15);
-      display: flex; align-items: center; gap: 12px;
+    /* Addon cards in form */
+    .addon-card { border: 1px solid #e8e8e8; border-radius: 5px; overflow: hidden; margin-bottom: 6px; }
+    .addon-header { display: flex; align-items: center; gap: 10px; padding: 9px 12px; background: #fafafa; cursor: pointer; user-select: none; }
+    .addon-header input[type=checkbox] { accent-color: var(--copper); width: 15px; height: 15px; cursor: pointer; flex-shrink: 0; }
+    .addon-header label { font-size: 0.86rem; font-weight: 600; color: #333; cursor: pointer; flex: 1; }
+    .addon-header .addon-hint { font-size: 0.72rem; color: #aaa; font-weight: 400; }
+    .addon-body { padding: 10px 12px; display: none; border-top: 1px solid #eee; }
+    .addon-body.open { display: block; }
+    .addon-body .field-row { margin-bottom: 0; }
+
+    /* Service plans section on quote doc */
+    #q-addons-wrap {
+      background: var(--navy-deep);
+      border-top: 1px solid rgba(184,115,56,0.2);
+      border-bottom: 1px solid rgba(184,115,56,0.2);
+      padding: 16px 60px;
     }
-    .q-service-reminder-icon { color: var(--copper); font-size: 0.85rem; flex-shrink: 0; }
-    .q-service-reminder-text { font-size: 0.78rem; color: rgba(245,240,232,0.6); }
-    .q-service-reminder-text strong { color: var(--copper); font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; font-size: 0.68rem; margin-right: 6px; }
+    .q-addons-header { font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--copper); font-weight: 700; margin-bottom: 10px; }
+    .q-addon-row { display: flex; align-items: baseline; gap: 10px; margin-bottom: 6px; }
+    .q-addon-row:last-child { margin-bottom: 0; }
+    .q-addon-name { font-size: 0.82rem; color: var(--cream); font-weight: 600; }
+    .q-addon-detail { font-size: 0.78rem; color: rgba(245,240,232,0.55); }
 
     .q-bottom-row {
       padding: 32px 60px;
@@ -499,33 +512,13 @@
         </div>
       </div>
 
-      <h3>Service Plan <span class="opt">(optional)</span></h3>
-      <label class="payment-option" style="margin-bottom:6px;">
-        <input type="checkbox" id="annual-reminder" style="accent-color:var(--copper);width:15px;height:15px;flex-shrink:0;" />
-        <span>Include a recurring service plan</span>
-      </label>
-      <div id="reminder-date-wrap" style="display:none;">
-        <div class="field" style="margin-top:6px;">
-          <label>Frequency</label>
-          <select id="service-frequency">
-            <option value="monthly">Monthly</option>
-            <option value="quarterly">Quarterly</option>
-            <option value="semi-annual">Semi-Annual</option>
-            <option value="annual" selected>Annual</option>
-          </select>
-        </div>
-        <div class="field-row">
-          <div class="field">
-            <label>Price per visit</label>
-            <input type="text" id="service-price" placeholder="$0" />
-          </div>
-          <div class="field">
-            <label>Start / completion date</label>
-            <input type="date" id="reminder-date" />
-          </div>
-        </div>
-        <div class="total-hint">A calendar reminder (.ics) downloads with the PDF for each scheduled visit.</div>
+      <h3>Service Add-Ons <span class="opt">(optional)</span></h3>
+      <div class="field">
+        <label>Start / completion date</label>
+        <input type="date" id="addon-start-date" />
       </div>
+      <div id="addons-list"></div>
+      <div class="total-hint" style="margin-top:4px;">Calendar reminders (.ics) for all active add-ons download with the PDF.</div>
 
       <h3>Notes for Client <span class="opt">(optional)</span></h3>
       <div class="field">
@@ -625,9 +618,9 @@
           </div>
         </div>
 
-        <div class="q-service-reminder" id="q-reminder-wrap" style="display:none;">
-          <div class="q-service-reminder-icon">↻</div>
-          <div class="q-service-reminder-text"><strong>Annual Service</strong> Complimentary system check scheduled for <span id="q-reminder-date"></span> — we'll reach out to confirm.</div>
+        <div id="q-addons-wrap" style="display:none;">
+          <div class="q-addons-header">Service Plans Included</div>
+          <div id="q-addons-list"></div>
         </div>
 
         <div class="q-bottom-row">
@@ -765,22 +758,10 @@
     document.getElementById('quote-num').addEventListener('input', liveUpdate);
     document.getElementById('valid-until').addEventListener('change', liveUpdate);
 
-    // Service plan toggle
-    const reminderCb   = document.getElementById('annual-reminder');
-    const reminderWrap = document.getElementById('reminder-date-wrap');
-    const reminderDate = document.getElementById('reminder-date');
-    reminderDate.value = new Date().toISOString().split('T')[0];
-    reminderCb.addEventListener('change', () => {
-      reminderWrap.style.display = reminderCb.checked ? 'block' : 'none';
-      liveUpdate();
-    });
-    reminderDate.addEventListener('change', liveUpdate);
-    document.getElementById('service-frequency').addEventListener('change', liveUpdate);
-
-    // Service price formatting
-    const sp = document.getElementById('service-price');
-    sp.addEventListener('input',  () => { formatCurrency(sp); liveUpdate(); });
-    sp.addEventListener('blur',   () => finalizeCurrency(sp));
+    // Service add-ons
+    document.getElementById('addon-start-date').value = new Date().toISOString().split('T')[0];
+    document.getElementById('addon-start-date').addEventListener('change', liveUpdate);
+    initAddons();
   });
 
   // ── ZONE TOGGLE ───────────────────────────────────────────
@@ -794,6 +775,81 @@
       body.classList.toggle('open', cb.checked);
     }
     liveUpdate();
+  }
+
+  // ── SERVICE ADD-ONS ──────────────────────────────────────
+  const ADDONS = [
+    { id: 'maintenance', label: 'Maintenance Visit',             defaultFreq: 'annual',      hint: 'System check, re-aiming, cleaning' },
+    { id: 'seasonal',    label: 'Seasonal Timer Adjustment',     defaultFreq: 'semi-annual', hint: 'Spring & fall timer / schedule updates' },
+    { id: 'holiday',     label: 'Holiday Lighting',              defaultFreq: 'annual',      hint: 'Install + takedown each season' },
+    { id: 'bulb',        label: 'Bulb & Fixture Replacement',    defaultFreq: 'monthly',     hint: 'Any burnouts replaced within the week' },
+    { id: 'landscape',   label: 'Landscape Change Assessment',   defaultFreq: 'annual',      hint: 'Re-aim & recommend as landscaping evolves' },
+  ];
+  const FREQ_LABELS = { monthly: 'Monthly', quarterly: 'Quarterly', 'semi-annual': 'Semi-Annual', annual: 'Annual' };
+  const FREQ_MONTHS = { monthly: 1, quarterly: 3, 'semi-annual': 6, annual: 12 };
+
+  function initAddons() {
+    const list = document.getElementById('addons-list');
+    ADDONS.forEach(addon => {
+      const card = document.createElement('div');
+      card.className = 'addon-card';
+      card.innerHTML = `
+        <div class="addon-header" onclick="toggleAddon('${addon.id}', event)">
+          <input type="checkbox" id="addon-cb-${addon.id}" />
+          <label for="addon-cb-${addon.id}">${addon.label}</label>
+          <span class="addon-hint">${addon.hint}</span>
+        </div>
+        <div class="addon-body" id="addon-body-${addon.id}">
+          <div class="field-row">
+            <div class="field">
+              <label>Frequency</label>
+              <select id="addon-freq-${addon.id}">
+                <option value="monthly" ${addon.defaultFreq==='monthly'?'selected':''}>Monthly</option>
+                <option value="quarterly" ${addon.defaultFreq==='quarterly'?'selected':''}>Quarterly</option>
+                <option value="semi-annual" ${addon.defaultFreq==='semi-annual'?'selected':''}>Semi-Annual</option>
+                <option value="annual" ${addon.defaultFreq==='annual'?'selected':''}>Annual</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Price per visit</label>
+              <input type="text" id="addon-price-${addon.id}" placeholder="$0" />
+            </div>
+          </div>
+        </div>
+      `;
+      list.appendChild(card);
+
+      const cb    = card.querySelector(`#addon-cb-${addon.id}`);
+      const body  = card.querySelector(`#addon-body-${addon.id}`);
+      const price = card.querySelector(`#addon-price-${addon.id}`);
+      const freq  = card.querySelector(`#addon-freq-${addon.id}`);
+
+      cb.addEventListener('change', () => {
+        body.classList.toggle('open', cb.checked);
+        liveUpdate();
+      });
+      freq.addEventListener('change', liveUpdate);
+      price.addEventListener('input',  () => { formatCurrency(price); liveUpdate(); });
+      price.addEventListener('blur',   () => finalizeCurrency(price));
+    });
+  }
+
+  function toggleAddon(id, e) {
+    if (e.target.tagName === 'INPUT') return;
+    const cb   = document.getElementById(`addon-cb-${id}`);
+    const body = document.getElementById(`addon-body-${id}`);
+    cb.checked = !cb.checked;
+    body.classList.toggle('open', cb.checked);
+    liveUpdate();
+  }
+
+  function getActiveAddons() {
+    return ADDONS.filter(a => document.getElementById(`addon-cb-${a.id}`)?.checked).map(a => ({
+      ...a,
+      freq:      document.getElementById(`addon-freq-${a.id}`).value,
+      freqLabel: FREQ_LABELS[document.getElementById(`addon-freq-${a.id}`).value],
+      price:     document.getElementById(`addon-price-${a.id}`).value.trim(),
+    }));
   }
 
   // ── PRESET ZONES ─────────────────────────────────────────
@@ -1009,26 +1065,22 @@
     if (extraNotes) { notesEl.textContent = extraNotes; notesEl.style.display = 'block'; }
     else            { notesEl.style.display = 'none'; }
 
-    // Service plan
-    const reminderOn = document.getElementById('annual-reminder').checked;
-    const qReminderWrap = document.getElementById('q-reminder-wrap');
-    if (reminderOn) {
-      const raw   = document.getElementById('reminder-date').value;
-      const freq  = document.getElementById('service-frequency').value;
-      const price = document.getElementById('service-price').value.trim();
-      const FREQ_LABELS = { monthly: 'Monthly', quarterly: 'Quarterly', 'semi-annual': 'Semi-Annual', annual: 'Annual' };
-      const FREQ_MONTHS = { monthly: 1, quarterly: 3, 'semi-annual': 6, annual: 12 };
-      if (raw) {
-        const base = new Date(raw + 'T00:00:00');
-        const gap  = FREQ_MONTHS[freq];
-        base.setMonth(base.getMonth() + gap - 1); // first visit slightly before next interval
-        const dateStr = base.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
-        const priceStr = price ? ` · ${price}/visit` : '';
-        document.getElementById('q-reminder-date').textContent = `${FREQ_LABELS[freq]}${priceStr} — first visit ${dateStr}`;
-      }
-      qReminderWrap.style.display = 'flex';
+    // Service add-ons
+    const activeAddons = getActiveAddons();
+    const qAddonsWrap = document.getElementById('q-addons-wrap');
+    const qAddonsList = document.getElementById('q-addons-list');
+    qAddonsList.innerHTML = '';
+    if (activeAddons.length) {
+      activeAddons.forEach(a => {
+        const row = document.createElement('div');
+        row.className = 'q-addon-row';
+        const priceStr = a.price ? ` · ${a.price}/visit` : '';
+        row.innerHTML = `<span class="q-addon-name">✦ ${a.label}</span><span class="q-addon-detail">${a.freqLabel}${priceStr}</span>`;
+        qAddonsList.appendChild(row);
+      });
+      qAddonsWrap.style.display = 'block';
     } else {
-      qReminderWrap.style.display = 'none';
+      qAddonsWrap.style.display = 'none';
     }
 
     // Keep zoom wrapper sized to match any content height change
@@ -1083,48 +1135,46 @@
     };
     html2pdf().set(opts).from(el).save();
 
-    // Also download .ics reminders if service plan enrolled
-    if (document.getElementById('annual-reminder').checked) {
-      const raw  = document.getElementById('reminder-date').value;
-      const freq = document.getElementById('service-frequency').value;
-      const price = document.getElementById('service-price').value.trim();
+    // Download .ics for all active add-ons combined
+    const activeAddons = getActiveAddons();
+    const raw = document.getElementById('addon-start-date').value;
+    if (activeAddons.length && raw) {
       const clientName = document.getElementById('client-name').value.trim() || 'Client';
-      if (raw) {
-        const FREQ_MONTHS  = { monthly: 1, quarterly: 3, 'semi-annual': 6, annual: 12 };
-        const FREQ_LABELS  = { monthly: 'Monthly', quarterly: 'Quarterly', 'semi-annual': 'Semi-Annual', annual: 'Annual' };
-        const VISITS       = { monthly: 12, quarterly: 8, 'semi-annual': 4, annual: 2 };
-        const gap   = FREQ_MONTHS[freq];
-        const count = VISITS[freq];
-        const pad   = n => String(n).padStart(2, '0');
-        const priceNote = price ? ` (${price}/visit)` : '';
-        const events = [];
+      const pad  = n => String(n).padStart(2, '0');
+      const FREQ_MONTHS = { monthly: 1, quarterly: 3, 'semi-annual': 6, annual: 12 };
+      const VISITS      = { monthly: 12, quarterly: 8, 'semi-annual': 4, annual: 2 };
+      const events = [];
+      activeAddons.forEach(addon => {
+        const gap   = FREQ_MONTHS[addon.freq];
+        const count = VISITS[addon.freq];
+        const priceNote = addon.price ? ` (${addon.price})` : '';
         for (let i = 1; i <= count; i++) {
           const d = new Date(raw + 'T00:00:00');
-          d.setMonth(d.getMonth() + gap * i - Math.floor(gap * 0.15)); // slight lead time
+          d.setMonth(d.getMonth() + gap * i);
           const dt  = `${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}`;
-          const uid = `rcl-${Date.now()}-${i}@rockcitylighting`;
+          const uid = `rcl-${addon.id}-${Date.now()}-${i}@rockcitylighting`;
           events.push([
             'BEGIN:VEVENT',
             `UID:${uid}`,
             `DTSTART;VALUE=DATE:${dt}`,
             `DTEND;VALUE=DATE:${dt}`,
-            `SUMMARY:${FREQ_LABELS[freq]} Service — ${clientName}`,
-            `DESCRIPTION:${FREQ_LABELS[freq]} lighting service visit for ${clientName}${priceNote}. Reach out to schedule.`,
+            `SUMMARY:${addon.label} — ${clientName}`,
+            `DESCRIPTION:${addon.label}${priceNote} for ${clientName}. Reach out to schedule.`,
             'BEGIN:VALARM',
             'TRIGGER:-P7D',
             'ACTION:DISPLAY',
-            `DESCRIPTION:Service coming up: ${clientName}`,
+            `DESCRIPTION:Coming up: ${addon.label} for ${clientName}`,
             'END:VALARM',
             'END:VEVENT',
           ].join('\r\n'));
         }
-        const ics = ['BEGIN:VCALENDAR', 'VERSION:2.0', ...events, 'END:VCALENDAR'].join('\r\n');
-        const blob = new Blob([ics], { type: 'text/calendar' });
-        const a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
-        a.download = `RCL-ServicePlan-${name}.ics`;
-        a.click();
-      }
+      });
+      const ics  = ['BEGIN:VCALENDAR', 'VERSION:2.0', ...events, 'END:VCALENDAR'].join('\r\n');
+      const blob = new Blob([ics], { type: 'text/calendar' });
+      const a    = document.createElement('a');
+      a.href     = URL.createObjectURL(blob);
+      a.download = `RCL-ServicePlan-${name}.ics`;
+      a.click();
     }
   }
 </script>
