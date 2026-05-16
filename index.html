@@ -94,22 +94,24 @@
       <p class="hero-intro-sub reveal reveal-delay-2">Tell us about your property and what you're hoping to achieve. We'll get back to you within one business day.</p>
 
       <div class="lf-wrap" style="margin-top:32px;">
+
+        <!-- ── FORM ── -->
         <form id="lead-form" novalidate>
 
-          <!-- Step dot progress indicator -->
+          <!-- Dot progress indicator -->
           <div class="lf-dots" aria-hidden="true" id="lf-dots">
             <div class="lf-dot-pip"></div>
             <div class="lf-dot-pip"></div>
             <div class="lf-dot-pip"></div>
-            <div class="lf-dot-pill" id="lf-dot-pill"></div>
+            <div class="lf-dot-pill"></div>
           </div>
 
-          <!-- Step 1: Project type -->
+          <!-- Step 1: Project type — auto-advances on selection -->
           <div class="lf-panel active" id="step-1">
             <p class="lf-question">What brings you here?</p>
             <div class="lf-options" id="project-type-grid">
               <label class="lf-option">
-                <input type="radio" name="project" value="New Install" />
+                <input type="radio" name="project" value="New Installation" />
                 <span class="lf-option-inner">
                   <span class="lf-option-check"></span>
                   <span class="lf-option-body">
@@ -159,18 +161,69 @@
                 </span>
               </label>
             </div>
-            <div class="lf-btn-row" id="lf-btn-row-1">
-              <button type="button" class="lf-continue" onclick="formNext(1)">Continue</button>
-            </div>
+            <!-- No button on step 1 — tile selection auto-advances -->
           </div>
 
-          <!-- Step 2: Optional description -->
+          <!-- Step 2: Area checkboxes — multi-select, no typing required -->
           <div class="lf-panel" id="step-2">
-            <p class="lf-question">Tell us about the property <span class="lf-optional">— optional</span></p>
-            <div class="form-group">
-              <textarea id="hi-desc" name="description" placeholder="Front entry, backyard, pool, trees, driveway — whatever you're thinking..."></textarea>
+            <p class="lf-question">What areas are you thinking about? <span class="lf-optional">— pick all that apply</span></p>
+            <div class="lf-options lf-cb-options" id="area-grid">
+              <label class="lf-option lf-cb-option">
+                <input type="checkbox" name="areas" value="Front entry / driveway" />
+                <span class="lf-option-inner">
+                  <span class="lf-cb-check"></span>
+                  <span class="lf-option-body">
+                    <span class="lf-option-title">Front Entry / Driveway</span>
+                  </span>
+                </span>
+              </label>
+              <label class="lf-option lf-cb-option">
+                <input type="checkbox" name="areas" value="Backyard / patio" />
+                <span class="lf-option-inner">
+                  <span class="lf-cb-check"></span>
+                  <span class="lf-option-body">
+                    <span class="lf-option-title">Backyard / Patio</span>
+                  </span>
+                </span>
+              </label>
+              <label class="lf-option lf-cb-option">
+                <input type="checkbox" name="areas" value="Landscape / trees" />
+                <span class="lf-option-inner">
+                  <span class="lf-cb-check"></span>
+                  <span class="lf-option-body">
+                    <span class="lf-option-title">Landscape / Trees</span>
+                  </span>
+                </span>
+              </label>
+              <label class="lf-option lf-cb-option">
+                <input type="checkbox" name="areas" value="Pool or water feature" />
+                <span class="lf-option-inner">
+                  <span class="lf-cb-check"></span>
+                  <span class="lf-option-body">
+                    <span class="lf-option-title">Pool or Water Feature</span>
+                  </span>
+                </span>
+              </label>
+              <label class="lf-option lf-cb-option">
+                <input type="checkbox" name="areas" value="Full property" />
+                <span class="lf-option-inner">
+                  <span class="lf-cb-check"></span>
+                  <span class="lf-option-body">
+                    <span class="lf-option-title">Full Property</span>
+                  </span>
+                </span>
+              </label>
+              <label class="lf-option lf-cb-option">
+                <input type="checkbox" name="areas" value="Not sure yet" />
+                <span class="lf-option-inner">
+                  <span class="lf-cb-check"></span>
+                  <span class="lf-option-body">
+                    <span class="lf-option-title">Not Sure Yet</span>
+                  </span>
+                </span>
+              </label>
             </div>
-            <div class="lf-btn-row lf-btn-row--split" id="lf-btn-row-2">
+            <div class="lf-btn-row lf-btn-row--split">
               <button type="button" class="lf-back" onclick="formBack(2)">Back</button>
               <button type="button" class="lf-continue" onclick="formNext(2)">Continue</button>
             </div>
@@ -178,7 +231,7 @@
 
           <!-- Step 3: Contact info -->
           <div class="lf-panel" id="step-3">
-            <p class="lf-question">How do we reach you?</p>
+            <p class="lf-question">Last step — how do we reach you?</p>
             <div class="form-group">
               <label for="hi-name">Name</label>
               <input type="text" id="hi-name" name="name" autocomplete="name" autocorrect="off" autocapitalize="words" placeholder="Your name" required />
@@ -186,33 +239,64 @@
             <div class="form-group">
               <label for="hi-phone">Phone</label>
               <input type="text" inputmode="tel" id="hi-phone" name="phone" autocomplete="tel" placeholder="(501) 555-0000" required oninput="formatPhone(this)" />
+              <span class="lf-field-note">We only call during the window you choose below</span>
             </div>
             <div class="form-group">
               <label for="hi-email">Email</label>
               <input type="email" id="hi-email" name="email" autocomplete="email" placeholder="you@email.com" required />
+              <span class="lf-field-note">Just project updates — no marketing emails</span>
             </div>
             <div class="form-group">
               <label for="hi-timing">Best time to call you</label>
-              <select id="hi-timing" name="timing">
+              <select id="hi-timing" name="timing" required>
                 <option value="" disabled selected>Pick a window</option>
                 <option value="Morning (8am–Noon)">Morning (8am – Noon)</option>
                 <option value="Afternoon (Noon–5pm)">Afternoon (Noon – 5pm)</option>
                 <option value="Evening (5pm–8pm)">Evening (5pm – 8pm)</option>
               </select>
             </div>
-            <div class="lf-btn-row lf-btn-row--split" id="lf-btn-row-3">
+            <div class="lf-btn-row lf-btn-row--split">
               <button type="button" class="lf-back" onclick="formBack(3)">Back</button>
               <button type="submit" class="lf-continue form-submit">
                 <span class="lf-check-icon" aria-hidden="true">
                   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
                 </span>
-                Request a Consultation
+                Get My Free Consultation
               </button>
             </div>
-            <p class="lf-microcopy">We'll be in touch within one business day. No pressure, no obligation.</p>
+            <p class="lf-microcopy">No pressure, no obligation. Just a conversation about your property.</p>
           </div>
 
         </form>
+
+        <!-- ── CONFIRMATION (shown after submission) ── -->
+        <div class="lf-confirm" id="lf-confirm" style="display:none;">
+          <div class="lf-confirm-icon">✦</div>
+          <h3 class="lf-confirm-heading">You're all set, <span id="lf-confirm-name">there</span>.</h3>
+          <p class="lf-confirm-body">Tim will reach out personally — usually within a few hours during business hours. He'll call during the window you selected.</p>
+          <p class="lf-confirm-body">The next step is a short conversation about your property, then if it's a good fit, he'll schedule a complimentary site visit to see your space and talk through ideas.</p>
+          <a href="tel:5014125972" class="lf-confirm-phone">(501) 412-5972</a>
+          <p class="lf-confirm-note">Or just call Tim directly — he picks up.</p>
+        </div>
+
+      </div>
+
+      <!-- What happens next -->
+      <div class="lf-next-steps reveal">
+        <div class="lf-ns-step">
+          <span class="lf-ns-num">1</span>
+          <span class="lf-ns-text">We review your request</span>
+        </div>
+        <div class="lf-ns-arrow">→</div>
+        <div class="lf-ns-step">
+          <span class="lf-ns-num">2</span>
+          <span class="lf-ns-text">Tim calls you personally</span>
+        </div>
+        <div class="lf-ns-arrow">→</div>
+        <div class="lf-ns-step">
+          <span class="lf-ns-num">3</span>
+          <span class="lf-ns-text">Complimentary site visit</span>
+        </div>
       </div>
     </div>
 

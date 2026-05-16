@@ -230,6 +230,13 @@ function formBack(currentStep) {
 // Init
 showStep(1);
 
+// Auto-advance on step 1 radio selection (280ms micro-delay feels intentional)
+document.querySelectorAll('#project-type-grid input[type="radio"]').forEach(input => {
+  input.addEventListener('change', () => {
+    setTimeout(() => formNext(1), 280);
+  });
+});
+
 // Lead form submission
 document.getElementById('lead-form')?.addEventListener('submit', async e => {
   e.preventDefault();
@@ -241,13 +248,17 @@ document.getElementById('lead-form')?.addEventListener('submit', async e => {
   // Collect the radio value from the named group
   const projectInput = form.querySelector('input[name="project"]:checked');
 
+  // Collect multi-select checkbox areas
+  const areas = Array.from(form.querySelectorAll('input[name="areas"]:checked'))
+    .map(cb => cb.value).join(', ');
+
   const payload = {
-    name:        form.name.value,
-    phone:       form.phone.value,
-    email:       form.email.value,
-    project:     projectInput ? projectInput.value : '',
-    description: form.description?.value || '',
-    timing:      form.timing?.value || '',
+    name:    form.name.value,
+    phone:   form.phone.value,
+    email:   form.email.value,
+    project: projectInput ? projectInput.value : '',
+    areas:   areas,
+    timing:  form.timing?.value || '',
   };
 
   try {
@@ -257,15 +268,21 @@ document.getElementById('lead-form')?.addEventListener('submit', async e => {
       headers: { 'Content-Type': 'application/json' },
       body:   JSON.stringify(payload),
     });
-    btn.textContent = "Sent! We'll be in touch soon.";
-    btn.style.opacity = '0.7';
+
+    // Show confirmation panel
+    const firstName = (form.name.value || '').trim().split(' ')[0] || 'there';
+    const confirmName = document.getElementById('lf-confirm-name');
+    if (confirmName) confirmName.textContent = firstName;
+
+    const confirmPanel = document.getElementById('lf-confirm');
+    const formEl = document.getElementById('lead-form');
+    const dotsEl = document.getElementById('lf-dots');
+    if (formEl) formEl.style.display = 'none';
+    if (dotsEl) dotsEl.style.display = 'none';
+    if (confirmPanel) confirmPanel.style.display = 'block';
+
     form.reset();
-    showStep(1);
-    setTimeout(() => {
-      btn.textContent  = 'Request a Consultation';
-      btn.disabled     = false;
-      btn.style.opacity = '';
-    }, 5000);
+
   } catch {
     btn.textContent = 'Something went wrong — please call us.';
     btn.disabled = false;
