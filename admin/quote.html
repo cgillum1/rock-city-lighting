@@ -15,16 +15,12 @@
       --font-serif: 'Georgia', serif;
       --font-sans:  'Arial', sans-serif;
     }
-
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
-    /* ── PASSWORD GATE ── */
+    /* ── GATE ── */
     #gate {
-      position: fixed; inset: 0;
-      background: var(--navy);
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      z-index: 999;
+      position: fixed; inset: 0; background: var(--navy);
+      display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 999;
     }
     #gate img { width: 80px; margin-bottom: 24px; opacity: 0.85; }
     #gate h2 { color: var(--cream); font-family: var(--font-serif); font-size: 1.3rem; margin-bottom: 20px; letter-spacing: 0.05em; }
@@ -36,201 +32,174 @@
     }
     #gate input::placeholder { color: rgba(245,240,232,0.35); letter-spacing: 0; }
     #gate button {
-      margin-top: 14px; padding: 12px 32px;
-      background: var(--copper); color: white;
-      border: none; border-radius: 4px;
-      font-family: var(--font-sans); font-size: 0.9rem;
-      letter-spacing: 0.08em; text-transform: uppercase;
-      cursor: pointer; width: 260px;
+      margin-top: 14px; padding: 12px 32px; background: var(--copper); color: white;
+      border: none; border-radius: 4px; font-family: var(--font-sans); font-size: 0.9rem;
+      letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; width: 260px;
     }
     #gate button:hover { background: var(--gold); }
     #gate .err { color: #e07070; font-size: 0.85rem; margin-top: 10px; min-height: 18px; }
 
-    /* ── APP LAYOUT ── */
-    body { background: #eee; font-family: var(--font-sans); }
+    /* ── APP ── */
+    body { background: #e8e8e8; font-family: var(--font-sans); }
     #app { display: none; min-height: 100vh; }
 
     .builder-header {
       background: var(--navy); color: var(--cream);
       padding: 16px 32px; display: flex; align-items: center; gap: 16px;
+      position: sticky; top: 0; z-index: 10;
     }
     .builder-header img { width: 40px; opacity: 0.9; }
     .builder-header h1 { font-family: var(--font-serif); font-size: 1.2rem; letter-spacing: 0.06em; }
     .builder-header span { margin-left: auto; color: var(--copper); font-size: 0.8rem; letter-spacing: 0.06em; }
 
-    .workspace { display: grid; grid-template-columns: 420px 1fr; min-height: calc(100vh - 58px); }
+    .workspace { display: grid; grid-template-columns: 440px 1fr; min-height: calc(100vh - 58px); }
 
     /* ── FORM PANEL ── */
     .form-panel {
       background: white; padding: 28px 24px;
       border-right: 1px solid #ddd;
-      overflow-y: auto; max-height: calc(100vh - 58px);
+      overflow-y: auto; height: calc(100vh - 58px);
+      position: sticky; top: 58px;
     }
-    .form-panel h3 { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--copper); margin-bottom: 14px; margin-top: 24px; }
+    .form-panel h3 {
+      font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.14em;
+      color: var(--copper); margin-bottom: 12px; margin-top: 28px;
+      display: flex; align-items: baseline; gap: 8px;
+    }
     .form-panel h3:first-child { margin-top: 0; }
+    .form-panel h3 .opt {
+      font-size: 0.72rem; color: #aaa; text-transform: none;
+      letter-spacing: 0; font-weight: 400;
+    }
 
-    .field { margin-bottom: 14px; }
-    .field label { display: block; font-size: 0.78rem; color: #555; margin-bottom: 5px; }
+    .field { margin-bottom: 12px; }
+    .field label { display: block; font-size: 0.76rem; color: #555; margin-bottom: 4px; }
     .field input, .field select, .field textarea {
-      width: 100%; padding: 9px 12px;
-      border: 1px solid #ddd; border-radius: 4px;
-      font-size: 0.9rem; font-family: var(--font-sans);
-      color: #222; outline: none; transition: border 0.2s;
+      width: 100%; padding: 8px 11px; border: 1px solid #ddd; border-radius: 4px;
+      font-size: 0.88rem; font-family: var(--font-sans); color: #222; outline: none; transition: border 0.2s;
     }
     .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--copper); }
-    .field textarea { resize: vertical; min-height: 70px; }
-    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    .field-row3 { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 10px; }
+    .field textarea { resize: vertical; min-height: 64px; }
+    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 
-    .zones { display: flex; flex-direction: column; gap: 10px; }
-    .zone-item { border: 1px solid #e5e5e5; border-radius: 6px; overflow: hidden; }
+    /* Zones */
+    .zones { display: flex; flex-direction: column; gap: 8px; }
+    .zone-item { border: 1px solid #e8e8e8; border-radius: 5px; overflow: hidden; }
     .zone-header {
       display: flex; align-items: center; gap: 10px;
-      padding: 10px 14px; background: #f9f9f9;
-      cursor: pointer; user-select: none;
+      padding: 9px 12px; background: #fafafa; cursor: pointer; user-select: none;
     }
-    .zone-header input[type=checkbox] { accent-color: var(--copper); width: 16px; height: 16px; cursor: pointer; }
-    .zone-header label { font-size: 0.88rem; font-weight: 600; color: #333; cursor: pointer; flex: 1; }
-    .zone-body { padding: 10px 14px; display: none; border-top: 1px solid #e5e5e5; }
+    .zone-header input[type=checkbox] { accent-color: var(--copper); width: 15px; height: 15px; cursor: pointer; flex-shrink: 0; }
+    .zone-header label { font-size: 0.86rem; font-weight: 600; color: #333; cursor: pointer; flex: 1; }
+    .zone-body { padding: 10px 12px; display: none; border-top: 1px solid #eee; }
     .zone-body.open { display: block; }
-    .zone-body .field { margin-bottom: 8px; }
-    .zone-body label { font-size: 0.76rem; }
+    .zone-body .field { margin-bottom: 0; }
+    .zone-body textarea { min-height: 52px; font-size: 0.82rem; }
 
-    .add-item-btn {
-      width: 100%; padding: 9px;
-      background: transparent; color: #666;
-      border: 1px dashed #ccc; border-radius: 4px;
-      font-size: 0.82rem; cursor: pointer;
-      font-family: var(--font-sans); transition: all 0.2s;
-      margin-bottom: 4px;
+    /* Dynamic add buttons */
+    .add-btn {
+      width: 100%; padding: 8px; background: transparent; color: #888;
+      border: 1px dashed #ccc; border-radius: 4px; font-size: 0.8rem;
+      cursor: pointer; font-family: var(--font-sans); transition: all 0.2s; margin-top: 6px;
     }
-    .add-item-btn:hover { border-color: var(--copper); color: var(--copper); }
+    .add-btn:hover { border-color: var(--copper); color: var(--copper); }
 
+    /* Line items */
     .line-item-row {
-      display: grid; grid-template-columns: 1fr 52px 90px 28px;
-      gap: 8px; align-items: start; margin-bottom: 8px;
+      display: grid; grid-template-columns: 1fr 48px 84px 26px;
+      gap: 6px; align-items: start; margin-bottom: 6px;
     }
-    .line-item-row input { padding: 8px 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 0.85rem; font-family: var(--font-sans); color: #222; outline: none; width: 100%; }
+    .line-item-row input {
+      padding: 7px 9px; border: 1px solid #ddd; border-radius: 4px;
+      font-size: 0.83rem; font-family: var(--font-sans); color: #222; outline: none; width: 100%;
+    }
     .line-item-row input:focus { border-color: var(--copper); }
-    .remove-item-btn {
-      background: none; border: none; color: #bbb;
-      font-size: 1.1rem; cursor: pointer; padding: 8px 4px;
-      line-height: 1; transition: color 0.15s;
+    .li-col-heads {
+      display: grid; grid-template-columns: 1fr 48px 84px 26px;
+      gap: 6px; margin-bottom: 4px;
     }
-    .remove-item-btn:hover { color: #e05050; }
+    .li-col-heads span { font-size: 0.68rem; color: #aaa; text-transform: uppercase; letter-spacing: 0.08em; }
+    .remove-btn {
+      background: none; border: none; color: #ccc; font-size: 1.1rem;
+      cursor: pointer; padding: 6px 2px; line-height: 1; transition: color 0.15s;
+    }
+    .remove-btn:hover { color: #e05050; }
 
+    /* Payment schedule */
+    .payment-options { display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px; }
+    .payment-option {
+      display: flex; align-items: center; gap: 8px;
+      padding: 8px 10px; border: 1px solid #e5e5e5; border-radius: 4px; cursor: pointer;
+    }
+    .payment-option input[type=radio] { accent-color: var(--copper); flex-shrink: 0; }
+    .payment-option label { font-size: 0.84rem; color: #333; cursor: pointer; line-height: 1.3; }
+    .payment-option:has(input:checked) { border-color: var(--copper); background: #fff8f2; }
+
+    /* Autogen */
     .autogen-btn {
-      padding: 7px 14px;
-      background: transparent; color: var(--copper);
-      border: 1px solid var(--copper); border-radius: 4px;
-      font-size: 0.72rem; letter-spacing: 0.08em;
-      text-transform: uppercase; cursor: pointer;
-      font-family: var(--font-sans); transition: all 0.2s;
-      margin-bottom: 8px;
+      padding: 6px 12px; background: transparent; color: var(--copper);
+      border: 1px solid var(--copper); border-radius: 4px; font-size: 0.7rem;
+      letter-spacing: 0.06em; text-transform: uppercase; cursor: pointer;
+      font-family: var(--font-sans); transition: all 0.2s; margin-bottom: 6px;
     }
     .autogen-btn:hover { background: var(--copper); color: white; }
-    #narrative-field { min-height: 110px; }
+    #narrative-field { min-height: 100px; }
 
-    .generate-btn {
-      margin-top: 24px; width: 100%; padding: 14px;
-      background: var(--navy); color: var(--cream);
-      border: none; border-radius: 6px;
-      font-size: 0.9rem; letter-spacing: 0.08em;
-      text-transform: uppercase; cursor: pointer;
-      font-family: var(--font-sans); transition: background 0.2s;
-    }
-    .generate-btn:hover { background: var(--copper); }
+    /* Action buttons */
     .pdf-btn {
-      margin-top: 10px; width: 100%; padding: 12px;
-      background: var(--copper); color: white;
-      border: none; border-radius: 6px;
-      font-size: 0.85rem; letter-spacing: 0.08em;
-      text-transform: uppercase; cursor: pointer;
-      font-family: var(--font-sans); transition: background 0.2s;
+      margin-top: 20px; width: 100%; padding: 13px; background: var(--copper); color: white;
+      border: none; border-radius: 6px; font-size: 0.88rem; letter-spacing: 0.08em;
+      text-transform: uppercase; cursor: pointer; font-family: var(--font-sans); transition: background 0.2s;
     }
     .pdf-btn:hover { background: var(--gold); }
 
+    /* Total field */
+    .total-hint { font-size: 0.74rem; color: #aaa; line-height: 1.5; margin-top: 4px; }
+
     /* ── PREVIEW PANEL ── */
     .preview-panel {
-      padding: 32px; overflow-y: auto;
-      max-height: calc(100vh - 58px);
-      background: #d8d8d8;
+      padding: 32px; overflow-y: auto; background: #d8d8d8;
       display: flex; flex-direction: column; align-items: center;
-    }
-    .preview-panel .hint {
-      color: #999; font-size: 0.9rem; margin: auto;
-      text-align: center; line-height: 1.8;
     }
 
     /* ══════════════════════════════════════════
        QUOTE DOCUMENT
     ══════════════════════════════════════════ */
     #quote-doc {
-      width: 800px;
-      background: var(--navy);
+      width: 800px; background: var(--navy);
       box-shadow: 0 4px 40px rgba(0,0,0,0.3);
-      font-family: var(--font-sans);
-      color: var(--cream);
+      font-family: var(--font-sans); color: var(--cream);
     }
 
-    /* ── Doc Header ── */
     .q-doc-header {
       padding: 48px 60px 36px;
       display: flex; flex-direction: column; align-items: center;
       border-bottom: 1px solid rgba(184,115,56,0.25);
     }
     .q-doc-header img { width: 64px; margin-bottom: 16px; }
-    .q-brand-name {
-      font-family: var(--font-serif); font-size: 2rem;
-      color: var(--cream); letter-spacing: 0.06em;
-      line-height: 1;
-    }
+    .q-brand-name { font-family: var(--font-serif); font-size: 2rem; color: var(--cream); letter-spacing: 0.06em; line-height: 1; }
     .q-brand-name em { color: var(--copper); font-style: normal; }
-    .q-brand-sub {
-      font-size: 0.65rem; letter-spacing: 0.22em;
-      text-transform: uppercase; color: rgba(245,240,232,0.5);
-      margin-top: 6px;
-    }
-    .q-diamond {
-      width: 8px; height: 8px; background: var(--copper);
-      transform: rotate(45deg); margin: 20px auto;
-    }
-    .q-doc-title {
-      font-family: var(--font-serif); font-size: 3.8rem;
-      color: var(--cream); letter-spacing: 0.28em;
-      text-transform: uppercase; line-height: 1;
-    }
-    .q-title-rule {
-      width: 100%; display: flex; align-items: center; gap: 14px; margin-top: 18px;
-    }
+    .q-brand-sub { font-size: 0.65rem; letter-spacing: 0.22em; text-transform: uppercase; color: rgba(245,240,232,0.5); margin-top: 6px; }
+    .q-diamond { width: 8px; height: 8px; background: var(--copper); transform: rotate(45deg); margin: 20px auto; }
+    .q-doc-title { font-family: var(--font-serif); font-size: 3.8rem; color: var(--cream); letter-spacing: 0.28em; text-transform: uppercase; line-height: 1; }
+    .q-title-rule { width: 100%; display: flex; align-items: center; gap: 14px; margin-top: 18px; }
     .q-title-rule span { flex: 1; height: 1px; background: rgba(184,115,56,0.35); }
 
-    /* ── Client / Project block ── */
     .q-info-block {
       display: grid; grid-template-columns: 1fr 1px 1fr;
-      gap: 0; margin: 0 60px; padding: 36px 0;
+      margin: 0 60px; padding: 36px 0;
       border-bottom: 1px solid rgba(184,115,56,0.2);
     }
     .q-info-divider { background: rgba(184,115,56,0.2); }
     .q-info-col { padding: 0 32px; }
     .q-info-col:first-child { padding-left: 0; }
     .q-info-col:last-child { padding-right: 0; }
-    .q-info-label {
-      font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.2em;
-      color: var(--copper); font-weight: 700; margin-bottom: 14px;
-    }
-    .q-info-name {
-      font-family: var(--font-serif); font-size: 1.45rem;
-      color: var(--cream); margin-bottom: 8px; line-height: 1.2;
-    }
-    .q-info-detail {
-      font-size: 0.9rem; color: rgba(245,240,232,0.75);
-      line-height: 1.85;
-    }
+    .q-info-label { font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.2em; color: var(--copper); font-weight: 700; margin-bottom: 12px; }
+    .q-info-name { font-family: var(--font-serif); font-size: 1.45rem; color: var(--cream); margin-bottom: 8px; line-height: 1.2; }
+    .q-info-detail { font-size: 0.88rem; color: rgba(245,240,232,0.72); line-height: 1.85; }
 
-    /* ── Quote # / Date row ── */
     .q-meta-row {
-      margin: 0 60px; padding: 18px 0;
+      margin: 0 60px; padding: 16px 0;
       display: flex; justify-content: space-between;
       border-bottom: 1px solid rgba(184,115,56,0.2);
     }
@@ -238,80 +207,49 @@
     .q-meta-label { font-size: 0.62rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--copper); font-weight: 700; }
     .q-meta-value { font-family: var(--font-serif); font-size: 1rem; color: var(--cream); }
 
-    /* ── Line items table ── */
-    .q-scope-card {
-      padding: 14px 18px; margin-bottom: 10px;
-      border-left: 3px solid var(--copper);
-      background: rgba(255,255,255,0.04);
-      border-radius: 0 4px 4px 0;
+    .q-section {
+      margin: 32px 60px 0; padding-bottom: 32px;
+      border-bottom: 1px solid rgba(184,115,56,0.2);
     }
-    .q-scope-card-title {
-      font-size: 0.78rem; font-weight: 700; letter-spacing: 0.06em;
-      text-transform: uppercase; color: var(--cream); margin-bottom: 5px;
-    }
-    .q-scope-card-desc { font-size: 0.85rem; color: rgba(245,240,232,0.65); line-height: 1.65; }
+    .q-section-label { font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.2em; color: var(--copper); font-weight: 700; margin-bottom: 14px; }
+    .q-narrative { font-size: 0.92rem; color: rgba(245,240,232,0.82); line-height: 1.85; }
 
-    .q-table-wrap { margin: 36px 60px 0; }
-    .q-table {
-      width: 100%; border-collapse: collapse;
-    }
-    .q-table thead tr {
-      border-bottom: 1px solid rgba(184,115,56,0.4);
-    }
-    .q-table thead th {
-      font-size: 0.62rem; letter-spacing: 0.2em; text-transform: uppercase;
-      color: var(--copper); font-weight: 700; padding-bottom: 12px;
-      text-align: left;
-    }
+    .q-scope-card { padding: 14px 18px; margin-bottom: 10px; border-left: 3px solid var(--copper); background: rgba(255,255,255,0.04); border-radius: 0 4px 4px 0; }
+    .q-scope-card:last-child { margin-bottom: 0; }
+    .q-scope-card-title { font-size: 0.76rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--cream); margin-bottom: 5px; }
+    .q-scope-card-desc { font-size: 0.85rem; color: rgba(245,240,232,0.62); line-height: 1.65; }
+
+    .q-table-wrap { margin: 32px 60px 0; padding-bottom: 0; }
+    .q-table { width: 100%; border-collapse: collapse; }
+    .q-table thead tr { border-bottom: 1px solid rgba(184,115,56,0.4); }
+    .q-table thead th { font-size: 0.62rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--copper); font-weight: 700; padding-bottom: 12px; text-align: left; }
     .q-table thead th:not(:first-child) { text-align: center; }
     .q-table thead th:last-child { text-align: right; }
-    .q-table tbody tr {
-      border-bottom: 1px solid rgba(245,240,232,0.08);
-    }
-    .q-table tbody td {
-      padding: 16px 0; font-size: 0.92rem;
-      color: rgba(245,240,232,0.88); vertical-align: top;
-    }
+    .q-table tbody tr { border-bottom: 1px solid rgba(245,240,232,0.07); }
+    .q-table tbody td { padding: 15px 0; font-size: 0.9rem; color: rgba(245,240,232,0.85); vertical-align: top; }
     .q-table tbody td:not(:first-child) { text-align: center; }
     .q-table tbody td:last-child { text-align: right; }
     .q-table-desc { font-weight: 600; color: var(--cream); }
-    .q-table-notes { font-size: 0.8rem; color: rgba(245,240,232,0.5); margin-top: 4px; line-height: 1.5; }
 
-    /* ── Total block ── */
-    .q-total-wrap {
-      margin: 0 60px; padding: 24px 0 36px;
-      display: flex; justify-content: flex-end;
-    }
+    .q-total-wrap { margin: 0 60px; padding: 24px 0 32px; display: flex; justify-content: flex-end; }
     .q-total-box {
       border: 1px solid var(--copper); border-radius: 2px;
-      padding: 16px 28px; display: flex; align-items: center; gap: 48px;
-      min-width: 320px;
+      padding: 16px 28px; display: flex; align-items: center; gap: 48px; min-width: 320px;
     }
-    .q-total-label {
-      font-size: 0.62rem; letter-spacing: 0.2em; text-transform: uppercase;
-      color: var(--copper); font-weight: 700;
-    }
-    .q-total-amount {
-      font-family: var(--font-serif); font-size: 2.2rem; color: var(--cream);
-      margin-left: auto;
-    }
+    .q-total-label { font-size: 0.62rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--copper); font-weight: 700; }
+    .q-total-amount { font-family: var(--font-serif); font-size: 2.2rem; color: var(--cream); margin-left: auto; }
 
-    /* ── Deposit notice ── */
-    .q-deposit {
-      margin: 0 60px 36px;
-      display: flex; align-items: flex-start; gap: 14px;
+    .q-payment {
+      margin: 0 60px 32px;
       padding: 16px 20px;
       background: rgba(184,115,56,0.08);
       border: 1px solid rgba(184,115,56,0.2); border-radius: 4px;
+      display: flex; align-items: flex-start; gap: 14px;
     }
-    .q-deposit-icon { color: var(--copper); font-size: 1.2rem; flex-shrink: 0; margin-top: 1px; }
-    .q-deposit-label {
-      font-size: 0.62rem; letter-spacing: 0.18em; text-transform: uppercase;
-      color: var(--copper); font-weight: 700; margin-bottom: 4px;
-    }
-    .q-deposit-text { font-size: 0.85rem; color: rgba(245,240,232,0.7); line-height: 1.6; }
+    .q-payment-icon { color: var(--copper); font-size: 1.1rem; flex-shrink: 0; margin-top: 2px; }
+    .q-payment-label { font-size: 0.62rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--copper); font-weight: 700; margin-bottom: 5px; }
+    .q-payment-text { font-size: 0.85rem; color: rgba(245,240,232,0.7); line-height: 1.65; }
 
-    /* ── Guarantee + Notes row ── */
     .q-bottom-row {
       margin: 0 60px; padding: 32px 0;
       display: grid; grid-template-columns: 1fr 1px 1fr; gap: 0;
@@ -321,43 +259,27 @@
     .q-bottom-col { padding: 0 32px; }
     .q-bottom-col:first-child { padding-left: 0; }
     .q-bottom-col:last-child { padding-right: 0; }
-    .q-bottom-label {
-      font-size: 0.62rem; letter-spacing: 0.2em; text-transform: uppercase;
-      color: var(--copper); font-weight: 700; margin-bottom: 12px;
-      display: flex; align-items: center; gap: 8px;
-    }
+    .q-bottom-label { font-size: 0.62rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--copper); font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
     .q-bottom-text { font-size: 0.85rem; color: rgba(245,240,232,0.7); line-height: 1.7; }
     .q-notes-lines { margin-top: 8px; }
-    .q-notes-line { border-bottom: 1px solid rgba(245,240,232,0.15); height: 28px; }
+    .q-notes-line { border-bottom: 1px solid rgba(245,240,232,0.12); height: 28px; }
 
-    /* ── Signature ── */
     .q-sig-row {
       margin: 0 60px; padding: 32px 0;
       display: grid; grid-template-columns: 1fr 1fr; gap: 48px;
       border-top: 1px solid rgba(184,115,56,0.2);
     }
-    .q-sig-col .q-sig-label {
-      font-size: 0.62rem; letter-spacing: 0.18em; text-transform: uppercase;
-      color: var(--copper); font-weight: 700; margin-bottom: 36px;
-    }
+    .q-sig-col .q-sig-label { font-size: 0.62rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--copper); font-weight: 700; margin-bottom: 36px; }
     .q-sig-line { border-bottom: 1px solid rgba(245,240,232,0.3); padding-bottom: 8px; }
-    .q-sig-sublabel { font-size: 0.78rem; color: rgba(245,240,232,0.45); margin-top: 8px; text-align: center; }
+    .q-sig-sublabel { font-size: 0.78rem; color: rgba(245,240,232,0.4); margin-top: 8px; text-align: center; }
 
-    /* ── Doc Footer ── */
-    .q-doc-footer {
-      padding: 20px 60px;
-      border-top: 1px solid rgba(184,115,56,0.2);
-      display: flex; justify-content: center; align-items: center;
-    }
-    .q-footer-text {
-      font-size: 0.68rem; letter-spacing: 0.2em; text-transform: uppercase;
-      color: rgba(245,240,232,0.35);
-    }
+    .q-doc-footer { padding: 20px 60px; border-top: 1px solid rgba(184,115,56,0.2); display: flex; justify-content: center; }
+    .q-footer-text { font-size: 0.68rem; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(245,240,232,0.3); }
   </style>
 </head>
 <body>
 
-<!-- PASSWORD GATE -->
+<!-- GATE -->
 <div id="gate">
   <img src="/assets/brand/logo-lantern.png" alt="RCL" />
   <h2>Quote Builder</h2>
@@ -389,14 +311,8 @@
         <input type="text" id="client-address" placeholder="1234 Chenal Pkwy, Little Rock, AR 72212" />
       </div>
       <div class="field-row">
-        <div class="field">
-          <label>Phone</label>
-          <input type="text" id="client-phone" placeholder="(501) 555-0100" />
-        </div>
-        <div class="field">
-          <label>Email</label>
-          <input type="text" id="client-email" placeholder="client@email.com" />
-        </div>
+        <div class="field"><label>Phone</label><input type="text" id="client-phone" placeholder="(501) 555-0100" /></div>
+        <div class="field"><label>Email</label><input type="text" id="client-email" placeholder="client@email.com" /></div>
       </div>
 
       <h3>Project Name / Location</h3>
@@ -404,13 +320,24 @@
         <input type="text" id="project-name" placeholder="e.g. Chenal Valley Residence" />
       </div>
 
+      <h3>Quote Details</h3>
+      <div class="field-row">
+        <div class="field">
+          <label>Quote #</label>
+          <input type="text" id="quote-num" placeholder="RC-2026-001" />
+        </div>
+        <div class="field">
+          <label>Valid Until</label>
+          <input type="date" id="valid-until" />
+        </div>
+      </div>
+
       <h3>Scope of Work</h3>
       <div class="zones" id="zones-container">
 
         <div class="zone-item">
           <div class="zone-header" onclick="toggleZone(this)">
-            <input type="checkbox" id="z-entry" />
-            <label for="z-entry">Architectural Uplighting</label>
+            <input type="checkbox" id="z-entry" /><label for="z-entry">Architectural Uplighting</label>
           </div>
           <div class="zone-body">
             <div class="field"><textarea id="z-entry-notes" placeholder="e.g. Uplighting on front columns, oak trees, and stone facade — warm white 3000K"></textarea></div>
@@ -419,8 +346,7 @@
 
         <div class="zone-item">
           <div class="zone-header" onclick="toggleZone(this)">
-            <input type="checkbox" id="z-pathway" />
-            <label for="z-pathway">Pathway Lighting</label>
+            <input type="checkbox" id="z-pathway" /><label for="z-pathway">Pathway Lighting</label>
           </div>
           <div class="zone-body">
             <div class="field"><textarea id="z-pathway-notes" placeholder="e.g. 8 step lights on front staircase, pathway fixtures from driveway to side gate"></textarea></div>
@@ -429,8 +355,7 @@
 
         <div class="zone-item">
           <div class="zone-header" onclick="toggleZone(this)">
-            <input type="checkbox" id="z-porch" />
-            <label for="z-porch">Porch & Entry Lighting</label>
+            <input type="checkbox" id="z-porch" /><label for="z-porch">Porch & Entry Lighting</label>
           </div>
           <div class="zone-body">
             <div class="field"><textarea id="z-porch-notes" placeholder="e.g. Downlights on covered porch ceiling, wall-wash on front door surround"></textarea></div>
@@ -439,8 +364,7 @@
 
         <div class="zone-item">
           <div class="zone-header" onclick="toggleZone(this)">
-            <input type="checkbox" id="z-landscape" />
-            <label for="z-landscape">Landscape Lighting</label>
+            <input type="checkbox" id="z-landscape" /><label for="z-landscape">Landscape Lighting</label>
           </div>
           <div class="zone-body">
             <div class="field"><textarea id="z-landscape-notes" placeholder="e.g. Bed lighting along front border, accent fixtures on ornamental grasses"></textarea></div>
@@ -449,18 +373,25 @@
 
         <div class="zone-item">
           <div class="zone-header" onclick="toggleZone(this)">
-            <input type="checkbox" id="z-patio" />
-            <label for="z-patio">Back Patio & Outdoor Living</label>
+            <input type="checkbox" id="z-outdoor" /><label for="z-outdoor">Outdoor Living & Entertaining</label>
           </div>
           <div class="zone-body">
-            <div class="field"><textarea id="z-patio-notes" placeholder="e.g. String lights over pergola, downlights on covered patio ceiling"></textarea></div>
+            <div class="field"><textarea id="z-outdoor-notes" placeholder="e.g. String lights over pergola, downlights on covered patio ceiling"></textarea></div>
           </div>
         </div>
 
         <div class="zone-item">
           <div class="zone-header" onclick="toggleZone(this)">
-            <input type="checkbox" id="z-other" />
-            <label for="z-other">Other / Custom</label>
+            <input type="checkbox" id="z-maintenance" /><label for="z-maintenance">Maintenance & Bulb Plans</label>
+          </div>
+          <div class="zone-body">
+            <div class="field"><textarea id="z-maintenance-notes" placeholder="e.g. Annual service plan — bulb replacement, fixture cleaning, system check"></textarea></div>
+          </div>
+        </div>
+
+        <div class="zone-item">
+          <div class="zone-header" onclick="toggleZone(this)">
+            <input type="checkbox" id="z-other" /><label for="z-other">Other / Custom</label>
           </div>
           <div class="zone-body">
             <div class="field"><textarea id="z-other-notes" placeholder="Describe any additional work..."></textarea></div>
@@ -468,48 +399,71 @@
         </div>
 
       </div>
-
-      <h3>Line Items <span style="font-size:0.7em;color:#aaa;text-transform:none;letter-spacing:0;font-weight:400;">(optional)</span></h3>
-      <div id="line-items-list"></div>
-      <button class="add-item-btn" onclick="addLineItem()">+ Add Line Item</button>
-
-      <h3>Total</h3>
-      <div class="field-row">
-        <div class="field">
-          <label>Total Amount</label>
-          <input type="text" id="manual-total" placeholder="$0" />
-        </div>
-        <div class="field" style="display:flex;align-items:flex-end;padding-bottom:1px;">
-          <small style="color:#888;font-size:0.75rem;line-height:1.4;">Auto-fills from line items.<br>Override here if not itemizing.</small>
-        </div>
-      </div>
+      <div id="custom-zones-list"></div>
+      <button class="add-btn" onclick="addCustomZone()">+ Add Custom Scope Item</button>
 
       <h3>Project Overview Paragraph</h3>
-      <button class="autogen-btn" onclick="autogenNarrative()">Auto-Generate from Zones</button>
+      <button class="autogen-btn" onclick="autogenNarrative()">Auto-Generate from Scope</button>
       <div class="field">
-        <textarea id="narrative-field" placeholder="Write or auto-generate a project overview paragraph — this appears on the quote above the line items..."></textarea>
+        <textarea id="narrative-field" placeholder="Write or auto-generate a paragraph — appears on the quote above the scope of work..."></textarea>
       </div>
 
-      <h3>Notes for Client</h3>
+      <h3>Line Items <span class="opt">(optional — leave blank to just send a total)</span></h3>
+      <div class="li-col-heads">
+        <span>Description</span><span>Qty</span><span>Price</span><span></span>
+      </div>
+      <div id="line-items-list"></div>
+      <button class="add-btn" onclick="addLineItem()">+ Add Line Item</button>
+
+      <h3>Total</h3>
       <div class="field">
-        <textarea id="extra-notes" placeholder="Any additional notes to display on the quote..."></textarea>
+        <input type="text" id="manual-total" placeholder="$0" />
+        <div class="total-hint">Auto-fills from line items. Type a number here if you're not itemizing.</div>
       </div>
 
-      <button class="generate-btn" onclick="generateQuote()">Preview Quote</button>
+      <h3>Payment Schedule <span class="opt">(optional)</span></h3>
+      <div class="payment-options">
+        <label class="payment-option">
+          <input type="radio" name="payment" value="50-50" checked />
+          <span>50% deposit to start — balance due on completion</span>
+        </label>
+        <label class="payment-option">
+          <input type="radio" name="payment" value="thirds" />
+          <span>⅓ deposit · ⅓ at midpoint · ⅓ on completion</span>
+        </label>
+        <label class="payment-option">
+          <input type="radio" name="payment" value="full" />
+          <span>Payment in full due before work begins</span>
+        </label>
+        <label class="payment-option">
+          <input type="radio" name="payment" value="none" />
+          <span>No payment schedule (hide from quote)</span>
+        </label>
+        <label class="payment-option">
+          <input type="radio" name="payment" value="custom" />
+          <span>Custom…</span>
+        </label>
+      </div>
+      <div id="custom-payment-wrap" style="display:none;">
+        <div class="field">
+          <textarea id="custom-payment-text" placeholder="e.g. 25% deposit · 50% upon fixture delivery · 25% on completion"></textarea>
+        </div>
+      </div>
+
+      <h3>Notes for Client <span class="opt">(optional)</span></h3>
+      <div class="field">
+        <textarea id="extra-notes" placeholder="Any additional notes to include on the quote..."></textarea>
+      </div>
+
       <button class="pdf-btn" onclick="downloadPDF()">Download PDF</button>
 
     </div>
 
     <!-- PREVIEW PANEL -->
-    <div class="preview-panel" id="preview-panel">
-      <div class="hint">
-        Fill out the form and click<br><strong>Preview Quote</strong><br>to see the client-ready proposal.
-      </div>
+    <div class="preview-panel">
 
-      <!-- QUOTE DOCUMENT -->
-      <div id="quote-doc" style="display:none;">
+      <div id="quote-doc">
 
-        <!-- Header -->
         <div class="q-doc-header">
           <img src="/assets/brand/logo-lantern.png" onerror="this.style.display='none'" alt="Rock City Lighting" />
           <div class="q-brand-name">Rock City <em>Lighting</em></div>
@@ -523,77 +477,70 @@
           </div>
         </div>
 
-        <!-- Client / Project -->
         <div class="q-info-block">
           <div class="q-info-col">
             <div class="q-info-label">Prepared For</div>
-            <div class="q-info-name" id="q-client-name">—</div>
-            <div class="q-info-detail" id="q-client-detail">—</div>
+            <div class="q-info-name" id="q-client-name">Client Name</div>
+            <div class="q-info-detail" id="q-client-detail" style="white-space:pre-line;color:rgba(245,240,232,0.45);">Address · Phone · Email</div>
           </div>
           <div class="q-info-divider"></div>
           <div class="q-info-col">
             <div class="q-info-label">Project</div>
-            <div class="q-info-name" id="q-project-name">—</div>
+            <div class="q-info-name" id="q-project-name" style="color:rgba(245,240,232,0.45);">Project Name</div>
           </div>
         </div>
 
-        <!-- Quote # / Date -->
         <div class="q-meta-row">
           <div class="q-meta-item">
             <span class="q-meta-label">Quote #</span>
-            <span class="q-meta-value" id="q-num">RC-2026-0001</span>
+            <span class="q-meta-value" id="q-num" style="color:rgba(245,240,232,0.45);">—</span>
           </div>
           <div class="q-meta-item">
             <span class="q-meta-label">Date</span>
             <span class="q-meta-value" id="q-date"></span>
           </div>
+          <div class="q-meta-item" id="q-valid-wrap" style="display:none;">
+            <span class="q-meta-label">Valid Until</span>
+            <span class="q-meta-value" id="q-valid"></span>
+          </div>
         </div>
 
-        <!-- Project Overview Paragraph -->
-        <div id="q-narrative-wrap" style="display:none; margin: 32px 60px 0; padding-bottom: 32px; border-bottom: 1px solid rgba(184,115,56,0.2);">
-          <div style="font-size:0.62rem;text-transform:uppercase;letter-spacing:0.2em;color:#b87338;font-weight:700;margin-bottom:12px;">Project Overview</div>
-          <div id="q-narrative" style="font-size:0.92rem;color:rgba(245,240,232,0.82);line-height:1.85;"></div>
+        <div class="q-section" id="q-narrative-wrap" style="display:none;">
+          <div class="q-section-label">Project Overview</div>
+          <div class="q-narrative" id="q-narrative"></div>
         </div>
 
-        <!-- Scope of Work cards -->
-        <div id="q-scope-wrap" style="display:none; margin: 32px 60px 0; padding-bottom: 32px; border-bottom: 1px solid rgba(184,115,56,0.2);">
-          <div style="font-size:0.62rem;text-transform:uppercase;letter-spacing:0.2em;color:#b87338;font-weight:700;margin-bottom:16px;">Scope of Work</div>
+        <div class="q-section" id="q-scope-wrap" style="display:none;">
+          <div class="q-section-label">Scope of Work</div>
           <div id="q-scope-list"></div>
         </div>
 
-        <!-- Line Items Table (optional) -->
         <div id="q-table-wrap" style="display:none;" class="q-table-wrap">
           <table class="q-table">
             <thead>
               <tr>
-                <th>Description</th>
-                <th>Qty</th>
-                <th>Unit Price</th>
-                <th>Total</th>
+                <th>Description</th><th>Qty</th><th>Unit Price</th><th>Total</th>
               </tr>
             </thead>
             <tbody id="q-table-body"></tbody>
           </table>
         </div>
 
-        <!-- Total -->
         <div class="q-total-wrap">
           <div class="q-total-box">
             <span class="q-total-label">Total Investment</span>
-            <span class="q-total-amount" id="q-total">$0.00</span>
+            <span class="q-total-amount" id="q-total">—</span>
           </div>
         </div>
 
-        <!-- Deposit notice -->
-        <div class="q-deposit">
-          <div class="q-deposit-icon">✦</div>
+        <div class="q-payment" id="q-payment-wrap">
+          <div class="q-payment-icon">✦</div>
           <div>
-            <div class="q-deposit-label">50% Deposit Due to Secure Your Project</div>
-            <div class="q-deposit-text">Remaining balance due upon completion.</div>
+            <div class="q-payment-label" id="q-payment-label">Payment Schedule</div>
+            <div class="q-payment-text" id="q-payment-text"></div>
           </div>
         </div>
 
-        <!-- Guarantee + Notes -->
         <div class="q-bottom-row">
           <div class="q-bottom-col">
             <div class="q-bottom-label">
@@ -614,7 +561,6 @@
           </div>
         </div>
 
-        <!-- Signature -->
         <div class="q-sig-row">
           <div class="q-sig-col">
             <div class="q-sig-label">Approved By</div>
@@ -627,14 +573,12 @@
           </div>
         </div>
 
-        <!-- Footer -->
         <div class="q-doc-footer">
           <div class="q-footer-text">Thank you for choosing Rock City Lighting</div>
         </div>
 
       </div>
     </div>
-
   </div>
 </div>
 
@@ -647,6 +591,8 @@
     if (val === PASSWORD) {
       document.getElementById('gate').style.display = 'none';
       document.getElementById('app').style.display = 'block';
+      initDate();
+      generateQuote();
     } else {
       document.getElementById('pw-err').textContent = 'Incorrect password.';
       document.getElementById('pw-input').value = '';
@@ -656,16 +602,21 @@
     if (e.key === 'Enter') checkPassword();
   });
 
-  // ── INPUT FORMATTING ─────────────────────────────────────
+  function initDate() {
+    const now = new Date();
+    document.getElementById('q-date').textContent = now.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+    // Default valid-until = 30 days from now
+    const exp = new Date(now); exp.setDate(exp.getDate() + 30);
+    document.getElementById('valid-until').value = exp.toISOString().split('T')[0];
+  }
 
+  // ── INPUT FORMATTING ──────────────────────────────────────
   function formatCurrency(input) {
-    // Strip everything except digits and one decimal
     let raw = input.value.replace(/[^0-9.]/g, '');
     const parts = raw.split('.');
     if (parts.length > 2) raw = parts[0] + '.' + parts.slice(1).join('');
     input.value = raw ? '$' + raw : '';
   }
-
   function finalizeCurrency(input) {
     const num = parseFloat(input.value.replace(/[^0-9.]/g, ''));
     if (!isNaN(num) && num > 0) {
@@ -673,23 +624,50 @@
     } else {
       input.value = '';
     }
+    generateQuote();
   }
-
   function formatPhone(input) {
-    let digits = input.value.replace(/\D/g, '').slice(0, 10);
-    if (digits.length === 0) { input.value = ''; return; }
-    if (digits.length <= 3)       input.value = '(' + digits;
-    else if (digits.length <= 6)  input.value = '(' + digits.slice(0,3) + ') ' + digits.slice(3);
-    else                          input.value = '(' + digits.slice(0,3) + ') ' + digits.slice(3,6) + '-' + digits.slice(6);
+    let d = input.value.replace(/\D/g, '').slice(0, 10);
+    if (!d.length) { input.value = ''; return; }
+    if (d.length <= 3)      input.value = '(' + d;
+    else if (d.length <= 6) input.value = '(' + d.slice(0,3) + ') ' + d.slice(3);
+    else                    input.value = '(' + d.slice(0,3) + ') ' + d.slice(3,6) + '-' + d.slice(6);
   }
+  function parsePrice(str) { return parseFloat((str||'').replace(/[^0-9.]/g,'')) || 0; }
+  function formatPrice(n) { return '$' + n.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 }); }
 
-  // Wire up formatters after DOM is ready
+  // ── LIVE UPDATE ───────────────────────────────────────────
+  let debounceTimer;
+  function liveUpdate() { clearTimeout(debounceTimer); debounceTimer = setTimeout(generateQuote, 180); }
+
   document.addEventListener('DOMContentLoaded', () => {
-    const phoneEl = document.getElementById('client-phone');
-    phoneEl.addEventListener('input', () => formatPhone(phoneEl));
-    const manualTotal = document.getElementById('manual-total');
-    manualTotal.addEventListener('input', () => formatCurrency(manualTotal));
-    manualTotal.addEventListener('blur',  () => finalizeCurrency(manualTotal));
+    // Phone
+    const ph = document.getElementById('client-phone');
+    ph.addEventListener('input', () => { formatPhone(ph); liveUpdate(); });
+
+    // Manual total
+    const mt = document.getElementById('manual-total');
+    mt.addEventListener('input', () => { formatCurrency(mt); liveUpdate(); });
+    mt.addEventListener('blur',  () => finalizeCurrency(mt));
+
+    // All text inputs & textareas in form
+    document.querySelectorAll('.form-panel input[type=text], .form-panel input[type=date], .form-panel textarea').forEach(el => {
+      el.addEventListener('input', liveUpdate);
+    });
+
+    // Payment radio
+    document.querySelectorAll('input[name=payment]').forEach(r => {
+      r.addEventListener('change', () => {
+        document.getElementById('custom-payment-wrap').style.display = r.value === 'custom' && r.checked ? 'block' : 'none';
+        if (document.querySelector('input[name=payment]:checked').value !== 'custom') {
+          document.getElementById('custom-payment-wrap').style.display = 'none';
+        }
+        liveUpdate();
+      });
+    });
+    document.getElementById('custom-payment-text').addEventListener('input', liveUpdate);
+    document.getElementById('quote-num').addEventListener('input', liveUpdate);
+    document.getElementById('valid-until').addEventListener('change', liveUpdate);
   });
 
   // ── ZONE TOGGLE ───────────────────────────────────────────
@@ -702,80 +680,99 @@
       cb.checked = !cb.checked;
       body.classList.toggle('open', cb.checked);
     }
+    liveUpdate();
   }
 
-  // ── ZONE DEFINITIONS ──────────────────────────────────────
+  // ── PRESET ZONES ─────────────────────────────────────────
   const ZONES = [
-    { id: 'entry',     label: 'Architectural Uplighting' },
-    { id: 'pathway',   label: 'Pathway Lighting' },
-    { id: 'porch',     label: 'Porch & Entry Lighting' },
-    { id: 'landscape', label: 'Landscape Lighting' },
-    { id: 'patio',     label: 'Back Patio & Outdoor Living' },
-    { id: 'other',     label: 'Other / Custom' },
+    { id: 'entry',       label: 'Architectural Uplighting',       narrative: "Architectural uplighting will highlight the home's key features — trees, columns, facades, and rooflines — bringing depth and drama after dark." },
+    { id: 'pathway',     label: 'Pathway Lighting',               narrative: "Pathway lighting will guide visitors safely along walkways and steps while adding a refined, finished look to the property." },
+    { id: 'porch',       label: 'Porch & Entry Lighting',         narrative: "Porch and entry lighting will create a warm, welcoming first impression at the front door." },
+    { id: 'landscape',   label: 'Landscape Lighting',             narrative: "Landscape lighting will accent garden beds, plantings, and natural features throughout the yard." },
+    { id: 'outdoor',     label: 'Outdoor Living & Entertaining',  narrative: "The outdoor living area will be lit for entertaining and relaxation — extending the warmth of the home into the backyard." },
+    { id: 'maintenance', label: 'Maintenance & Bulb Plans',       narrative: "A maintenance plan will keep the system clean, bright, and working properly year-round." },
+    { id: 'other',       label: 'Other / Custom',                 narrative: "Additional custom lighting elements will be incorporated as detailed in the scope below." },
   ];
 
-  const ZONE_NARRATIVES = {
-    entry:     "Architectural uplighting will highlight the home's key features — trees, columns, facades, and rooflines — bringing depth and drama after dark.",
-    pathway:   "Pathway lighting will guide visitors safely along walkways and steps while adding a refined, finished look to the property.",
-    porch:     "Porch and entry lighting will create a warm, welcoming first impression at the front door.",
-    landscape: "Landscape lighting will accent garden beds, plantings, and natural features throughout the yard.",
-    patio:     "The outdoor living area will be lit for entertaining and relaxation — extending the warmth of the home into the backyard.",
-    other:     "Additional custom lighting elements will be incorporated as detailed in the scope below.",
-  };
-
   function autogenNarrative() {
-    const active = ZONES.filter(z => document.getElementById(`z-${z.id}`).checked);
-    if (!active.length) { alert('Check at least one scope zone first.'); return; }
-    document.getElementById('narrative-field').value = active.map(z => ZONE_NARRATIVES[z.id]).join(' ');
+    const presetSentences = ZONES.filter(z => document.getElementById(`z-${z.id}`).checked).map(z => z.narrative);
+    const customSentences = Array.from(document.querySelectorAll('.custom-zone-item')).filter(el => el.querySelector('.cz-cb').checked).map(el => '').filter(Boolean);
+    const all = [...presetSentences, ...customSentences];
+    if (!all.length) { alert('Check at least one scope zone first.'); return; }
+    document.getElementById('narrative-field').value = all.join(' ');
+    liveUpdate();
+  }
+
+  // ── CUSTOM SCOPE ZONES ────────────────────────────────────
+  let customZoneCount = 0;
+  function addCustomZone() {
+    const id   = ++customZoneCount;
+    const list = document.getElementById('custom-zones-list');
+    const item = document.createElement('div');
+    item.className = 'zone-item custom-zone-item'; item.dataset.id = id;
+    item.innerHTML = `
+      <div class="zone-header" style="cursor:default;">
+        <input type="checkbox" class="cz-cb" checked style="accent-color:var(--copper);width:15px;height:15px;flex-shrink:0;" />
+        <input type="text" class="cz-title" placeholder="Custom scope title..." style="flex:1;border:none;background:transparent;font-size:0.86rem;font-weight:600;color:#333;outline:none;padding:0;" />
+        <button class="remove-btn" onclick="removeCustomZone(${id})">×</button>
+      </div>
+      <div class="zone-body open">
+        <div class="field"><textarea class="cz-notes" placeholder="Describe what's included..."></textarea></div>
+      </div>
+    `;
+    list.appendChild(item);
+    item.querySelector('.cz-title').addEventListener('input', liveUpdate);
+    item.querySelector('.cz-notes').addEventListener('input', liveUpdate);
+    item.querySelector('.cz-cb').addEventListener('change', liveUpdate);
+  }
+  function removeCustomZone(id) {
+    document.querySelector(`.custom-zone-item[data-id="${id}"]`).remove();
+    liveUpdate();
   }
 
   // ── DYNAMIC LINE ITEMS ────────────────────────────────────
   let lineItemCount = 0;
-
-  function addLineItem(desc = '', qty = '', price = '') {
-    const id  = ++lineItemCount;
+  function addLineItem(desc='', qty='', price='') {
+    const id   = ++lineItemCount;
     const list = document.getElementById('line-items-list');
     const row  = document.createElement('div');
-    row.className = 'line-item-row';
-    row.dataset.id = id;
+    row.className = 'line-item-row'; row.dataset.id = id;
     row.innerHTML = `
       <input type="text"   class="li-desc"  placeholder="Description" value="${desc}" />
-      <input type="number" class="li-qty"   placeholder="Qty" value="${qty}" min="1" />
+      <input type="number" class="li-qty"   placeholder="1" value="${qty}" min="1" />
       <input type="text"   class="li-price" placeholder="$0" value="${price}" />
-      <button class="remove-item-btn" onclick="removeLineItem(${id})">×</button>
+      <button class="remove-btn" onclick="removeLineItem(${id})">×</button>
     `;
     list.appendChild(row);
-    const priceEl = row.querySelector('.li-price');
-    priceEl.addEventListener('input', () => formatCurrency(priceEl));
-    priceEl.addEventListener('blur',  () => { finalizeCurrency(priceEl); recalcTotal(); });
-    row.querySelector('.li-qty').addEventListener('input', recalcTotal);
+    const pe = row.querySelector('.li-price');
+    pe.addEventListener('input', () => { formatCurrency(pe); liveUpdate(); });
+    pe.addEventListener('blur',  () => { finalizeCurrency(pe); recalcTotal(); });
+    row.querySelector('.li-qty').addEventListener('input', () => { recalcTotal(); liveUpdate(); });
+    row.querySelector('.li-desc').addEventListener('input', liveUpdate);
   }
-
   function removeLineItem(id) {
-    const row = document.querySelector(`.line-item-row[data-id="${id}"]`);
-    if (row) { row.remove(); recalcTotal(); }
+    document.querySelector(`.line-item-row[data-id="${id}"]`).remove();
+    recalcTotal(); liveUpdate();
   }
-
   function recalcTotal() {
     const rows = document.querySelectorAll('.line-item-row');
     if (!rows.length) return;
     let sum = 0;
-    rows.forEach(row => {
-      const qty   = parseFloat(row.querySelector('.li-qty').value) || 1;
-      const price = parsePrice(row.querySelector('.li-price').value);
-      sum += qty * price;
+    rows.forEach(r => {
+      const qty = parseFloat(r.querySelector('.li-qty').value) || 1;
+      sum += qty * parsePrice(r.querySelector('.li-price').value);
     });
-    const manualEl = document.getElementById('manual-total');
-    manualEl.value = sum > 0 ? formatPriceStr(sum) : '';
+    const mt = document.getElementById('manual-total');
+    mt.value = sum > 0 ? formatPrice(sum) : '';
   }
 
-  function parsePrice(str) {
-    return parseFloat((str || '').replace(/[^0-9.]/g, '')) || 0;
-  }
-  function formatPriceStr(n) {
-    return '$' + n.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
-  }
-  function formatPrice(n) { return formatPriceStr(n); }
+  // ── PAYMENT SCHEDULE ──────────────────────────────────────
+  const PAYMENT_TEXTS = {
+    '50-50': '50% deposit due to secure your project. Remaining balance due upon completion.',
+    'thirds': '⅓ deposit due to secure your project · ⅓ due at project midpoint · ⅓ due upon completion.',
+    'full':   'Payment in full is due before work begins.',
+    'none':   null,
+  };
 
   // ── GENERATE QUOTE ────────────────────────────────────────
   function generateQuote() {
@@ -784,47 +781,68 @@
     const phone       = document.getElementById('client-phone').value.trim();
     const email       = document.getElementById('client-email').value.trim();
     const projectName = document.getElementById('project-name').value.trim();
-    const extraNotes  = document.getElementById('extra-notes').value.trim();
+    const quoteNum    = document.getElementById('quote-num').value.trim();
+    const validUntil  = document.getElementById('valid-until').value;
     const narrative   = document.getElementById('narrative-field').value.trim();
+    const extraNotes  = document.getElementById('extra-notes').value.trim();
     const manualTotal = document.getElementById('manual-total').value.trim();
 
-    // Quote number & date
-    const now     = new Date();
-    const qNum    = `RC-${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}`;
-    const dateStr = now.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-    document.getElementById('q-num').textContent  = qNum;
-    document.getElementById('q-date').textContent = dateStr;
+    // Client
+    const nameEl = document.getElementById('q-client-name');
+    nameEl.textContent = name || 'Client Name';
+    nameEl.style.color = name ? '' : 'rgba(245,240,232,0.3)';
 
-    // Client info
-    document.getElementById('q-client-name').textContent = name || '—';
     const detailEl = document.getElementById('q-client-detail');
-    detailEl.style.whiteSpace = 'pre-line';
-    detailEl.textContent = [address, phone, email].filter(Boolean).join('\n') || '—';
+    const details = [address, phone, email].filter(Boolean).join('\n');
+    detailEl.textContent = details || 'Address · Phone · Email';
+    detailEl.style.color = details ? 'rgba(245,240,232,0.72)' : 'rgba(245,240,232,0.3)';
 
-    // Project
-    document.getElementById('q-project-name').textContent = projectName || '—';
+    const projEl = document.getElementById('q-project-name');
+    projEl.textContent = projectName || 'Project Name';
+    projEl.style.color = projectName ? '' : 'rgba(245,240,232,0.3)';
 
-    // Narrative
-    const narrativeWrap = document.getElementById('q-narrative-wrap');
-    const narrativeEl   = document.getElementById('q-narrative');
-    if (narrative) {
-      narrativeEl.textContent = narrative;
-      narrativeWrap.style.display = 'block';
+    // Quote # & valid until
+    const numEl = document.getElementById('q-num');
+    numEl.textContent = quoteNum || '—';
+    numEl.style.color = quoteNum ? '' : 'rgba(245,240,232,0.3)';
+
+    const validWrap = document.getElementById('q-valid-wrap');
+    if (validUntil) {
+      const d = new Date(validUntil + 'T00:00:00');
+      document.getElementById('q-valid').textContent = d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+      validWrap.style.display = 'flex';
     } else {
-      narrativeWrap.style.display = 'none';
+      validWrap.style.display = 'none';
     }
 
-    // Scope of work cards
+    // Narrative
+    const nWrap = document.getElementById('q-narrative-wrap');
+    if (narrative) {
+      document.getElementById('q-narrative').textContent = narrative;
+      nWrap.style.display = 'block';
+    } else {
+      nWrap.style.display = 'none';
+    }
+
+    // Scope cards — preset zones
     const scopeWrap = document.getElementById('q-scope-wrap');
     const scopeList = document.getElementById('q-scope-list');
     scopeList.innerHTML = '';
-    const activeZones = ZONES.filter(z => document.getElementById(`z-${z.id}`).checked);
-    if (activeZones.length) {
-      activeZones.forEach(z => {
+    const activePreset = ZONES.filter(z => document.getElementById(`z-${z.id}`).checked);
+    const activeCustom = Array.from(document.querySelectorAll('.custom-zone-item')).filter(el => el.querySelector('.cz-cb').checked);
+    const hasScope = activePreset.length || activeCustom.length;
+    if (hasScope) {
+      activePreset.forEach(z => {
         const desc = document.getElementById(`z-${z.id}-notes`).value.trim();
-        const card = document.createElement('div');
-        card.className = 'q-scope-card';
+        const card = document.createElement('div'); card.className = 'q-scope-card';
         card.innerHTML = `<div class="q-scope-card-title">${z.label}</div>${desc ? `<div class="q-scope-card-desc">${desc}</div>` : ''}`;
+        scopeList.appendChild(card);
+      });
+      activeCustom.forEach(el => {
+        const title = el.querySelector('.cz-title').value.trim() || 'Custom Scope';
+        const desc  = el.querySelector('.cz-notes').value.trim();
+        const card  = document.createElement('div'); card.className = 'q-scope-card';
+        card.innerHTML = `<div class="q-scope-card-title">${title}</div>${desc ? `<div class="q-scope-card-desc">${desc}</div>` : ''}`;
         scopeList.appendChild(card);
       });
       scopeWrap.style.display = 'block';
@@ -832,27 +850,21 @@
       scopeWrap.style.display = 'none';
     }
 
-    // Line items table (optional)
+    // Line items table
     const tableWrap = document.getElementById('q-table-wrap');
     const tbody     = document.getElementById('q-table-body');
     tbody.innerHTML = '';
     const itemRows  = document.querySelectorAll('.line-item-row');
     let grandTotal  = 0;
-
     if (itemRows.length) {
       itemRows.forEach(row => {
-        const desc  = row.querySelector('.li-desc').value.trim()  || '—';
+        const desc  = row.querySelector('.li-desc').value.trim() || '—';
         const qty   = parseFloat(row.querySelector('.li-qty').value) || 1;
         const price = parsePrice(row.querySelector('.li-price').value);
         const line  = qty * price;
         grandTotal += line;
         const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td><div class="q-table-desc">${desc}</div></td>
-          <td>${qty}</td>
-          <td>${formatPrice(price)}</td>
-          <td>${formatPrice(line)}</td>
-        `;
+        tr.innerHTML = `<td><div class="q-table-desc">${desc}</div></td><td>${qty}</td><td>${formatPrice(price)}</td><td>${formatPrice(line)}</td>`;
         tbody.appendChild(tr);
       });
       tableWrap.style.display = 'block';
@@ -860,18 +872,29 @@
       tableWrap.style.display = 'none';
       grandTotal = parsePrice(manualTotal);
     }
-
     document.getElementById('q-total').textContent = grandTotal > 0 ? formatPrice(grandTotal) : (manualTotal || '—');
+
+    // Payment schedule
+    const payVal  = document.querySelector('input[name=payment]:checked')?.value || '50-50';
+    const payWrap = document.getElementById('q-payment-wrap');
+    if (payVal === 'none') {
+      payWrap.style.display = 'none';
+    } else {
+      const payText = payVal === 'custom'
+        ? document.getElementById('custom-payment-text').value.trim()
+        : PAYMENT_TEXTS[payVal];
+      if (payText) {
+        document.getElementById('q-payment-text').textContent = payText;
+        payWrap.style.display = 'flex';
+      } else {
+        payWrap.style.display = 'none';
+      }
+    }
 
     // Notes
     const notesEl = document.getElementById('q-notes');
     if (extraNotes) { notesEl.textContent = extraNotes; notesEl.style.display = 'block'; }
     else            { notesEl.style.display = 'none'; }
-
-    document.getElementById('quote-doc').style.display = 'block';
-    const hint = document.querySelector('.hint');
-    if (hint) hint.style.display = 'none';
-    document.getElementById('quote-doc').scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
   // ── DOWNLOAD PDF ──────────────────────────────────────────
@@ -884,7 +907,7 @@
       filename:    `RCL-Quote-${name}.pdf`,
       image:       { type: 'jpeg', quality: 0.98 },
       html2canvas: { scale: 2, useCORS: true, backgroundColor: '#0f1f38' },
-      jsPDF:       { unit: 'px', format: [800, 1200], orientation: 'portrait' },
+      jsPDF:       { unit: 'px', format: [800, 1300], orientation: 'portrait' },
     };
     html2pdf().set(opts).from(el).save();
   }
