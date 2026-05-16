@@ -77,14 +77,16 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
   });
 });
 
-// Form submit
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwNarhgPjLV86aeos486Vhkb6Uf-yJ2KsbtyZLYna8QGY1qxKcuyfN4k4720kM6n67uoQ/exec';
+// ── LEAD FORM ─────────────────────────────────────────────────
+// Submissions go to tim@rockcitylighting.com via Formspree.
+// Replace FORMSPREE_ID with the 8-character ID from your Formspree dashboard.
+const FORMSPREE_ID = 'REPLACE_WITH_YOUR_ID';
 
 document.querySelector('.contact-form form')?.addEventListener('submit', async e => {
   e.preventDefault();
   const form = e.target;
-  const btn = form.querySelector('.form-submit');
-  btn.textContent = 'Sending...';
+  const btn  = form.querySelector('.form-submit');
+  btn.textContent = 'Sending…';
   btn.disabled = true;
 
   const payload = {
@@ -97,21 +99,26 @@ document.querySelector('.contact-form form')?.addEventListener('submit', async e
   };
 
   try {
-    await fetch(SCRIPT_URL, {
-      method: 'POST',
-      mode: 'no-cors',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
+    const res  = await fetch(`https://formspree.io/f/${FORMSPREE_ID}`, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body:    JSON.stringify(payload),
     });
-    btn.textContent = 'Sent! We\'ll be in touch soon.';
-    btn.style.opacity = '0.7';
-    form.reset();
-    setTimeout(() => {
-      btn.textContent = 'Send My Request';
-      btn.disabled = false;
-      btn.style.opacity = '';
-    }, 5000);
-  } catch {
+    const data = await res.json();
+    if (res.ok && data.ok) {
+      btn.textContent = "Sent! We'll be in touch soon.";
+      btn.style.opacity = '0.7';
+      form.reset();
+      setTimeout(() => {
+        btn.textContent = 'Send My Request';
+        btn.disabled    = false;
+        btn.style.opacity = '';
+      }, 5000);
+    } else {
+      throw new Error(data.error || 'Submission failed');
+    }
+  } catch (err) {
+    console.error('Form error:', err);
     btn.textContent = 'Something went wrong — please call us.';
     btn.disabled = false;
   }
