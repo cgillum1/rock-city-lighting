@@ -18,6 +18,7 @@
 /* ===== RESET ===== */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; }
+html { background: var(--navy-deep); }
 body {
   font-family: var(--font-sans);
   background: var(--navy);
@@ -1240,7 +1241,8 @@ footer::before {
   .about-inner { grid-template-columns: 1fr; gap: 56px; }
   .about-image { aspect-ratio: 16/9; }
   .about-badge { right: 0; bottom: -20px; width: 140px; height: 140px; }
-  .hero-intro-inner { grid-template-columns: 1fr; gap: 56px; }
+  .hero-intro-inner { grid-template-columns: 1fr 1fr; gap: 40px; }
+  .hero-intro-about .about-image { aspect-ratio: 3/4; }
   .portfolio-item:nth-child(1) { grid-column: span 12; }
   .portfolio-item:nth-child(2) { grid-column: span 6; }
   .portfolio-item:nth-child(3) { grid-column: span 6; }
@@ -1257,6 +1259,7 @@ footer::before {
   #guarantees, #process, #about, #testimonials,
   #social, #contact, footer { padding-left: 20px; padding-right: 20px; }
 
+  .hero-intro-inner { grid-template-columns: 1fr; gap: 40px; }
   .benefits-grid { grid-template-columns: 1fr; }
   .services-grid { grid-template-columns: 1fr; }
   .portfolio-grid { display: grid; grid-template-columns: 1fr 1fr; }
