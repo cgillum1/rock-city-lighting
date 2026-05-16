@@ -109,7 +109,7 @@ document.querySelector('.contact-form form')?.addEventListener('submit', async e
     btn.style.opacity = '0.7';
     form.reset();
     setTimeout(() => {
-      btn.textContent  = 'Send My Request';
+      btn.textContent  = "Let's Get Started";
       btn.disabled     = false;
       btn.style.opacity = '';
     }, 5000);
