@@ -351,6 +351,62 @@
 
     .q-doc-footer { padding: 18px 60px; background: var(--navy); display: flex; justify-content: center; }
     .q-footer-text { font-size: 0.68rem; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(245,240,232,0.3); }
+
+    /* ── MOBILE ── */
+    .mobile-tab-bar { display: none; }
+
+    @media (max-width: 768px) {
+      .builder-header { padding: 12px 16px; }
+      .builder-header h1 { font-size: 1rem; }
+      .builder-header span { display: none; }
+
+      .workspace {
+        display: block;
+        min-height: unset;
+      }
+
+      .form-panel {
+        height: auto;
+        position: static;
+        overflow-y: visible;
+        padding: 20px 16px;
+        border-right: none;
+        border-bottom: 1px solid #ddd;
+      }
+
+      .preview-panel {
+        height: auto;
+        position: static;
+        overflow: visible;
+      }
+
+      .zoom-bar { padding: 8px 12px; }
+
+      #doc-scroller {
+        padding: 16px 12px;
+        overflow-x: auto;
+      }
+
+      /* Mobile tab switcher */
+      .mobile-tab-bar {
+        display: flex;
+        background: var(--navy);
+        position: sticky;
+        top: 53px;
+        z-index: 9;
+        border-bottom: 1px solid rgba(184,115,56,0.3);
+      }
+      .mobile-tab {
+        flex: 1; padding: 11px; text-align: center;
+        font-size: 0.78rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase;
+        color: rgba(245,240,232,0.45); cursor: pointer; border-bottom: 2px solid transparent;
+        transition: all 0.15s;
+      }
+      .mobile-tab.active { color: var(--copper); border-bottom-color: var(--copper); }
+
+      .workspace.show-preview .form-panel { display: none; }
+      .workspace.show-form .preview-panel { display: none; }
+    }
   </style>
 </head>
 <body>
@@ -375,7 +431,12 @@
     <span>ROCK CITY LIGHTING — ADMIN</span>
   </div>
 
-  <div class="workspace">
+  <div class="mobile-tab-bar">
+    <div class="mobile-tab active" id="tab-form" onclick="switchMobileTab('form')">✏️ Edit</div>
+    <div class="mobile-tab" id="tab-preview" onclick="switchMobileTab('preview')">👁 Preview</div>
+  </div>
+
+  <div class="workspace show-form" id="workspace">
 
     <!-- FORM PANEL -->
     <div class="form-panel">
@@ -551,7 +612,7 @@
 
       <div class="zoom-bar">
         <button class="zoom-btn" onclick="zoomOut()" title="Zoom out (⌘−)">−</button>
-        <span class="zoom-label" id="zoom-label">75%</span>
+        <span class="zoom-label" id="zoom-label">100%</span>
         <button class="zoom-btn" onclick="zoomIn()" title="Zoom in (⌘+)">+</button>
         <button class="zoom-btn" onclick="zoomReset()" title="Actual size (⌘0)" style="font-size:0.6rem;letter-spacing:0.02em;">1:1</button>
       </div>
@@ -890,12 +951,64 @@
   ];
 
   function autogenNarrative() {
-    const presetSentences = ZONES.filter(z => document.getElementById(`z-${z.id}`).checked).map(z => z.narrative);
-    const customSentences = Array.from(document.querySelectorAll('.custom-zone-item')).filter(el => el.querySelector('.cz-cb').checked).map(el => '').filter(Boolean);
-    const all = [...presetSentences, ...customSentences];
-    if (!all.length) { alert('Check at least one scope zone first.'); return; }
-    document.getElementById('narrative-field').value = all.join(' ');
+    const selectedZones = ZONES.filter(z => document.getElementById(`z-${z.id}`).checked);
+    const customZones   = Array.from(document.querySelectorAll('.custom-zone-item')).filter(el => el.querySelector('.cz-cb').checked);
+    if (!selectedZones.length && !customZones.length) { alert('Check at least one scope zone first.'); return; }
+
+    const clientFirst = (document.getElementById('client-name').value.trim().split(/[\s,&]/)[0]) || '';
+    const project     = document.getElementById('project-name').value.trim();
+    const location    = project || (clientFirst ? clientFirst + "'s property" : 'this property');
+
+    const sentences = [];
+
+    for (const z of selectedZones) {
+      const notes = document.getElementById(`z-${z.id}-notes`).value.trim();
+      sentences.push(buildZoneSentence(z.id, notes));
+    }
+    for (const el of customZones) {
+      const title = el.querySelector('.cz-title')?.value.trim() || '';
+      const notes = el.querySelector('.cz-notes')?.value.trim() || '';
+      if (title && notes) sentences.push(`For ${title.toLowerCase()}, we'll ${notes.charAt(0).toLowerCase() + notes.slice(1).replace(/\.$/,'')}.`);
+      else if (title)     sentences.push(`${title} will also be part of this project.`);
+    }
+
+    const intro = `This quote covers the full outdoor lighting scope for ${location}.`;
+    document.getElementById('narrative-field').value = intro + ' ' + sentences.join(' ');
     liveUpdate();
+  }
+
+  function buildZoneSentence(id, notes) {
+    const n = notes;
+    switch(id) {
+      case 'entry':
+        return n ? `For the architectural lighting, we're planning to work with ${lcFirst(n)}.`
+                 : `Architectural uplighting will bring out what makes the home stand out after dark — trees, columns, facades, rooflines.`;
+      case 'pathway':
+        return n ? `Along the pathways and walks, the plan is ${lcFirst(n)}.`
+                 : `Pathway lighting will guide people safely from the driveway to the door and give the front of the property a clean, finished look.`;
+      case 'porch':
+        return n ? `At the porch and entry, we're going with ${lcFirst(n)}.`
+                 : `The porch and front entry will be lit to make a strong first impression — warm and welcoming from the street.`;
+      case 'landscape':
+        return n ? `In the landscape beds, we'll be doing ${lcFirst(n)}.`
+                 : `Landscape lighting will pick out the best features in the yard — beds, specimen plants, and anything else worth putting on display.`;
+      case 'outdoor':
+        return n ? `For the outdoor living area, we're thinking ${lcFirst(n)}.`
+                 : `The outdoor entertaining area will get proper lighting so it's actually usable after dark — whether that's dinner outside or just winding down on the patio.`;
+      case 'maintenance':
+        return n ? `For ongoing service, ${lcFirst(n)}.`
+                 : `A maintenance plan is included to keep everything running right — bulb swaps, fixture cleaning, and an annual check to make sure nothing gets missed.`;
+      case 'other':
+        return n ? lcFirst(n) : '';
+      default:
+        return n ? lcFirst(n) : '';
+    }
+  }
+
+  function lcFirst(s) {
+    if (!s) return s;
+    s = s.trim().replace(/\.+$/, '');
+    return s.charAt(0).toLowerCase() + s.slice(1) + '.';
   }
 
   // ── CUSTOM SCOPE ZONES ────────────────────────────────────
@@ -1163,7 +1276,7 @@
   }
 
   // ── ZOOM ──────────────────────────────────────────────────
-  let zoomLevel = 0.75;
+  let zoomLevel = 1.0;
   const ZOOM_STEPS = [0.50, 0.60, 0.75, 1.00, 1.25, 1.50];
   let appReady = false;
 
@@ -1187,6 +1300,16 @@
     if (prev !== undefined) { zoomLevel = prev; applyZoom(); }
   }
   function zoomReset() { zoomLevel = 1.0; applyZoom(); }
+
+  // ── MOBILE TAB SWITCHER ────────────────────────────────────
+  function switchMobileTab(tab) {
+    const ws = document.getElementById('workspace');
+    ws.classList.toggle('show-form',    tab === 'form');
+    ws.classList.toggle('show-preview', tab === 'preview');
+    document.getElementById('tab-form').classList.toggle('active',    tab === 'form');
+    document.getElementById('tab-preview').classList.toggle('active', tab === 'preview');
+    if (tab === 'preview') { generateQuote(); requestAnimationFrame(applyZoom); }
+  }
 
   document.addEventListener('keydown', e => {
     if (e.metaKey || e.ctrlKey) {
