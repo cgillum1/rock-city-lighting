@@ -96,6 +96,29 @@
     .zone-body .field { margin-bottom: 8px; }
     .zone-body label { font-size: 0.76rem; }
 
+    .add-item-btn {
+      width: 100%; padding: 9px;
+      background: transparent; color: #666;
+      border: 1px dashed #ccc; border-radius: 4px;
+      font-size: 0.82rem; cursor: pointer;
+      font-family: var(--font-sans); transition: all 0.2s;
+      margin-bottom: 4px;
+    }
+    .add-item-btn:hover { border-color: var(--copper); color: var(--copper); }
+
+    .line-item-row {
+      display: grid; grid-template-columns: 1fr 52px 90px 28px;
+      gap: 8px; align-items: start; margin-bottom: 8px;
+    }
+    .line-item-row input { padding: 8px 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 0.85rem; font-family: var(--font-sans); color: #222; outline: none; width: 100%; }
+    .line-item-row input:focus { border-color: var(--copper); }
+    .remove-item-btn {
+      background: none; border: none; color: #bbb;
+      font-size: 1.1rem; cursor: pointer; padding: 8px 4px;
+      line-height: 1; transition: color 0.15s;
+    }
+    .remove-item-btn:hover { color: #e05050; }
+
     .autogen-btn {
       padding: 7px 14px;
       background: transparent; color: var(--copper);
@@ -216,6 +239,18 @@
     .q-meta-value { font-family: var(--font-serif); font-size: 1rem; color: var(--cream); }
 
     /* ── Line items table ── */
+    .q-scope-card {
+      padding: 14px 18px; margin-bottom: 10px;
+      border-left: 3px solid var(--copper);
+      background: rgba(255,255,255,0.04);
+      border-radius: 0 4px 4px 0;
+    }
+    .q-scope-card-title {
+      font-size: 0.78rem; font-weight: 700; letter-spacing: 0.06em;
+      text-transform: uppercase; color: var(--cream); margin-bottom: 5px;
+    }
+    .q-scope-card-desc { font-size: 0.85rem; color: rgba(245,240,232,0.65); line-height: 1.65; }
+
     .q-table-wrap { margin: 36px 60px 0; }
     .q-table {
       width: 100%; border-collapse: collapse;
@@ -369,7 +404,7 @@
         <input type="text" id="project-name" placeholder="e.g. Chenal Valley Residence" />
       </div>
 
-      <h3>Line Items</h3>
+      <h3>Scope of Work</h3>
       <div class="zones" id="zones-container">
 
         <div class="zone-item">
@@ -378,11 +413,7 @@
             <label for="z-entry">Architectural Uplighting</label>
           </div>
           <div class="zone-body">
-            <div class="field-row">
-              <div class="field"><label>Qty</label><input type="number" id="z-entry-qty" value="1" min="1" /></div>
-              <div class="field"><label>Unit Price</label><input type="text" id="z-entry-price" placeholder="$0.00" /></div>
-            </div>
-            <div class="field"><label>Notes (optional)</label><textarea id="z-entry-notes" placeholder="e.g. 4 uplights on entry columns, trees in front yard"></textarea></div>
+            <div class="field"><textarea id="z-entry-notes" placeholder="e.g. Uplighting on front columns, oak trees, and stone facade — warm white 3000K"></textarea></div>
           </div>
         </div>
 
@@ -392,11 +423,7 @@
             <label for="z-pathway">Pathway Lighting</label>
           </div>
           <div class="zone-body">
-            <div class="field-row">
-              <div class="field"><label>Qty</label><input type="number" id="z-pathway-qty" value="1" min="1" /></div>
-              <div class="field"><label>Unit Price</label><input type="text" id="z-pathway-price" placeholder="$0.00" /></div>
-            </div>
-            <div class="field"><label>Notes (optional)</label><textarea id="z-pathway-notes" placeholder="e.g. 8 step lights, pathway fixtures to side gate"></textarea></div>
+            <div class="field"><textarea id="z-pathway-notes" placeholder="e.g. 8 step lights on front staircase, pathway fixtures from driveway to side gate"></textarea></div>
           </div>
         </div>
 
@@ -406,11 +433,7 @@
             <label for="z-porch">Porch & Entry Lighting</label>
           </div>
           <div class="zone-body">
-            <div class="field-row">
-              <div class="field"><label>Qty</label><input type="number" id="z-porch-qty" value="1" min="1" /></div>
-              <div class="field"><label>Unit Price</label><input type="text" id="z-porch-price" placeholder="$0.00" /></div>
-            </div>
-            <div class="field"><label>Notes (optional)</label><textarea id="z-porch-notes" placeholder="e.g. downlights on covered porch, wall sconces"></textarea></div>
+            <div class="field"><textarea id="z-porch-notes" placeholder="e.g. Downlights on covered porch ceiling, wall-wash on front door surround"></textarea></div>
           </div>
         </div>
 
@@ -420,28 +443,45 @@
             <label for="z-landscape">Landscape Lighting</label>
           </div>
           <div class="zone-body">
-            <div class="field-row">
-              <div class="field"><label>Qty</label><input type="number" id="z-landscape-qty" value="1" min="1" /></div>
-              <div class="field"><label>Unit Price</label><input type="text" id="z-landscape-price" placeholder="$0.00" /></div>
-            </div>
-            <div class="field"><label>Notes (optional)</label><textarea id="z-landscape-notes" placeholder="e.g. bed lighting, garden features"></textarea></div>
+            <div class="field"><textarea id="z-landscape-notes" placeholder="e.g. Bed lighting along front border, accent fixtures on ornamental grasses"></textarea></div>
+          </div>
+        </div>
+
+        <div class="zone-item">
+          <div class="zone-header" onclick="toggleZone(this)">
+            <input type="checkbox" id="z-patio" />
+            <label for="z-patio">Back Patio & Outdoor Living</label>
+          </div>
+          <div class="zone-body">
+            <div class="field"><textarea id="z-patio-notes" placeholder="e.g. String lights over pergola, downlights on covered patio ceiling"></textarea></div>
           </div>
         </div>
 
         <div class="zone-item">
           <div class="zone-header" onclick="toggleZone(this)">
             <input type="checkbox" id="z-other" />
-            <label for="z-other">Additional Services / Notes</label>
+            <label for="z-other">Other / Custom</label>
           </div>
           <div class="zone-body">
-            <div class="field-row">
-              <div class="field"><label>Qty</label><input type="number" id="z-other-qty" value="1" min="1" /></div>
-              <div class="field"><label>Unit Price</label><input type="text" id="z-other-price" placeholder="$0.00" /></div>
-            </div>
-            <div class="field"><label>Description</label><textarea id="z-other-notes" placeholder="Any additional work, phasing, or special requests..."></textarea></div>
+            <div class="field"><textarea id="z-other-notes" placeholder="Describe any additional work..."></textarea></div>
           </div>
         </div>
 
+      </div>
+
+      <h3>Line Items <span style="font-size:0.7em;color:#aaa;text-transform:none;letter-spacing:0;font-weight:400;">(optional)</span></h3>
+      <div id="line-items-list"></div>
+      <button class="add-item-btn" onclick="addLineItem()">+ Add Line Item</button>
+
+      <h3>Total</h3>
+      <div class="field-row">
+        <div class="field">
+          <label>Total Amount</label>
+          <input type="text" id="manual-total" placeholder="$0" />
+        </div>
+        <div class="field" style="display:flex;align-items:flex-end;padding-bottom:1px;">
+          <small style="color:#888;font-size:0.75rem;line-height:1.4;">Auto-fills from line items.<br>Override here if not itemizing.</small>
+        </div>
       </div>
 
       <h3>Project Overview Paragraph</h3>
@@ -515,8 +555,14 @@
           <div id="q-narrative" style="font-size:0.92rem;color:rgba(245,240,232,0.82);line-height:1.85;"></div>
         </div>
 
-        <!-- Line Items Table -->
-        <div class="q-table-wrap">
+        <!-- Scope of Work cards -->
+        <div id="q-scope-wrap" style="display:none; margin: 32px 60px 0; padding-bottom: 32px; border-bottom: 1px solid rgba(184,115,56,0.2);">
+          <div style="font-size:0.62rem;text-transform:uppercase;letter-spacing:0.2em;color:#b87338;font-weight:700;margin-bottom:16px;">Scope of Work</div>
+          <div id="q-scope-list"></div>
+        </div>
+
+        <!-- Line Items Table (optional) -->
+        <div id="q-table-wrap" style="display:none;" class="q-table-wrap">
           <table class="q-table">
             <thead>
               <tr>
@@ -639,16 +685,11 @@
 
   // Wire up formatters after DOM is ready
   document.addEventListener('DOMContentLoaded', () => {
-    // Phone
     const phoneEl = document.getElementById('client-phone');
     phoneEl.addEventListener('input', () => formatPhone(phoneEl));
-
-    // Price fields
-    ['z-entry-price','z-pathway-price','z-porch-price','z-landscape-price','z-other-price'].forEach(id => {
-      const el = document.getElementById(id);
-      el.addEventListener('input', () => formatCurrency(el));
-      el.addEventListener('blur',  () => finalizeCurrency(el));
-    });
+    const manualTotal = document.getElementById('manual-total');
+    manualTotal.addEventListener('input', () => formatCurrency(manualTotal));
+    manualTotal.addEventListener('blur',  () => finalizeCurrency(manualTotal));
   });
 
   // ── ZONE TOGGLE ───────────────────────────────────────────
@@ -663,40 +704,78 @@
     }
   }
 
-  // ── ZONE NARRATIVE SENTENCES ──────────────────────────────
-  const ZONE_NARRATIVES = {
-    entry:     'Architectural uplighting will highlight the home\'s key features — trees, columns, facades, and rooflines — bringing depth and drama after dark.',
-    pathway:   'Pathway lighting will guide visitors safely along walkways and steps while adding a refined, finished look to the property.',
-    porch:     'Porch and entry lighting will create a warm, welcoming first impression at the front door.',
-    landscape: 'Landscape lighting will accent garden beds, plantings, and natural features throughout the yard.',
-    other:     'Additional custom lighting elements will be incorporated as detailed in the scope below.',
-  };
-
-  function autogenNarrative() {
-    const active = ZONES.filter(z => document.getElementById(`z-${z.id}`).checked);
-    if (!active.length) {
-      alert('Check at least one line item first so I know what to write about.');
-      return;
-    }
-    const sentences = active.map(z => ZONE_NARRATIVES[z.id]).filter(Boolean);
-    document.getElementById('narrative-field').value = sentences.join(' ');
-  }
-
   // ── ZONE DEFINITIONS ──────────────────────────────────────
   const ZONES = [
     { id: 'entry',     label: 'Architectural Uplighting' },
     { id: 'pathway',   label: 'Pathway Lighting' },
     { id: 'porch',     label: 'Porch & Entry Lighting' },
     { id: 'landscape', label: 'Landscape Lighting' },
-    { id: 'other',     label: 'Additional Services / Notes' },
+    { id: 'patio',     label: 'Back Patio & Outdoor Living' },
+    { id: 'other',     label: 'Other / Custom' },
   ];
 
-  function parsePrice(str) {
-    return parseFloat(str.replace(/[^0-9.]/g, '')) || 0;
+  const ZONE_NARRATIVES = {
+    entry:     "Architectural uplighting will highlight the home's key features — trees, columns, facades, and rooflines — bringing depth and drama after dark.",
+    pathway:   "Pathway lighting will guide visitors safely along walkways and steps while adding a refined, finished look to the property.",
+    porch:     "Porch and entry lighting will create a warm, welcoming first impression at the front door.",
+    landscape: "Landscape lighting will accent garden beds, plantings, and natural features throughout the yard.",
+    patio:     "The outdoor living area will be lit for entertaining and relaxation — extending the warmth of the home into the backyard.",
+    other:     "Additional custom lighting elements will be incorporated as detailed in the scope below.",
+  };
+
+  function autogenNarrative() {
+    const active = ZONES.filter(z => document.getElementById(`z-${z.id}`).checked);
+    if (!active.length) { alert('Check at least one scope zone first.'); return; }
+    document.getElementById('narrative-field').value = active.map(z => ZONE_NARRATIVES[z.id]).join(' ');
   }
-  function formatPrice(n) {
+
+  // ── DYNAMIC LINE ITEMS ────────────────────────────────────
+  let lineItemCount = 0;
+
+  function addLineItem(desc = '', qty = '', price = '') {
+    const id  = ++lineItemCount;
+    const list = document.getElementById('line-items-list');
+    const row  = document.createElement('div');
+    row.className = 'line-item-row';
+    row.dataset.id = id;
+    row.innerHTML = `
+      <input type="text"   class="li-desc"  placeholder="Description" value="${desc}" />
+      <input type="number" class="li-qty"   placeholder="Qty" value="${qty}" min="1" />
+      <input type="text"   class="li-price" placeholder="$0" value="${price}" />
+      <button class="remove-item-btn" onclick="removeLineItem(${id})">×</button>
+    `;
+    list.appendChild(row);
+    const priceEl = row.querySelector('.li-price');
+    priceEl.addEventListener('input', () => formatCurrency(priceEl));
+    priceEl.addEventListener('blur',  () => { finalizeCurrency(priceEl); recalcTotal(); });
+    row.querySelector('.li-qty').addEventListener('input', recalcTotal);
+  }
+
+  function removeLineItem(id) {
+    const row = document.querySelector(`.line-item-row[data-id="${id}"]`);
+    if (row) { row.remove(); recalcTotal(); }
+  }
+
+  function recalcTotal() {
+    const rows = document.querySelectorAll('.line-item-row');
+    if (!rows.length) return;
+    let sum = 0;
+    rows.forEach(row => {
+      const qty   = parseFloat(row.querySelector('.li-qty').value) || 1;
+      const price = parsePrice(row.querySelector('.li-price').value);
+      sum += qty * price;
+    });
+    const manualEl = document.getElementById('manual-total');
+    manualEl.value = sum > 0 ? formatPriceStr(sum) : '';
+  }
+
+  function parsePrice(str) {
+    return parseFloat((str || '').replace(/[^0-9.]/g, '')) || 0;
+  }
+  function formatPriceStr(n) {
     return '$' + n.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
   }
+  function formatPrice(n) { return formatPriceStr(n); }
 
   // ── GENERATE QUOTE ────────────────────────────────────────
   function generateQuote() {
@@ -707,54 +786,25 @@
     const projectName = document.getElementById('project-name').value.trim();
     const extraNotes  = document.getElementById('extra-notes').value.trim();
     const narrative   = document.getElementById('narrative-field').value.trim();
+    const manualTotal = document.getElementById('manual-total').value.trim();
 
     // Quote number & date
-    const now    = new Date();
-    const qNum   = `RC-${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}`;
+    const now     = new Date();
+    const qNum    = `RC-${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}`;
     const dateStr = now.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-
     document.getElementById('q-num').textContent  = qNum;
     document.getElementById('q-date').textContent = dateStr;
 
     // Client info
     document.getElementById('q-client-name').textContent = name || '—';
-    const details = [address, phone, email].filter(Boolean).join('\n');
     const detailEl = document.getElementById('q-client-detail');
     detailEl.style.whiteSpace = 'pre-line';
-    detailEl.textContent = details || '—';
+    detailEl.textContent = [address, phone, email].filter(Boolean).join('\n') || '—';
 
     // Project
     document.getElementById('q-project-name').textContent = projectName || '—';
 
-    // Line items
-    const tbody = document.getElementById('q-table-body');
-    tbody.innerHTML = '';
-    let grandTotal = 0;
-
-    ZONES.forEach(z => {
-      if (!document.getElementById(`z-${z.id}`).checked) return;
-      const qty   = parseInt(document.getElementById(`z-${z.id}-qty`).value) || 1;
-      const price = parsePrice(document.getElementById(`z-${z.id}-price`).value);
-      const notes = document.getElementById(`z-${z.id}-notes`).value.trim();
-      const line  = qty * price;
-      grandTotal += line;
-
-      const tr = document.createElement('tr');
-      tr.innerHTML = `
-        <td>
-          <div class="q-table-desc">${z.label}</div>
-          ${notes ? `<div class="q-table-notes">${notes}</div>` : ''}
-        </td>
-        <td>${qty}</td>
-        <td>${formatPrice(price)}</td>
-        <td>${formatPrice(line)}</td>
-      `;
-      tbody.appendChild(tr);
-    });
-
-    document.getElementById('q-total').textContent = formatPrice(grandTotal);
-
-    // Narrative paragraph
+    // Narrative
     const narrativeWrap = document.getElementById('q-narrative-wrap');
     const narrativeEl   = document.getElementById('q-narrative');
     if (narrative) {
@@ -764,14 +814,59 @@
       narrativeWrap.style.display = 'none';
     }
 
+    // Scope of work cards
+    const scopeWrap = document.getElementById('q-scope-wrap');
+    const scopeList = document.getElementById('q-scope-list');
+    scopeList.innerHTML = '';
+    const activeZones = ZONES.filter(z => document.getElementById(`z-${z.id}`).checked);
+    if (activeZones.length) {
+      activeZones.forEach(z => {
+        const desc = document.getElementById(`z-${z.id}-notes`).value.trim();
+        const card = document.createElement('div');
+        card.className = 'q-scope-card';
+        card.innerHTML = `<div class="q-scope-card-title">${z.label}</div>${desc ? `<div class="q-scope-card-desc">${desc}</div>` : ''}`;
+        scopeList.appendChild(card);
+      });
+      scopeWrap.style.display = 'block';
+    } else {
+      scopeWrap.style.display = 'none';
+    }
+
+    // Line items table (optional)
+    const tableWrap = document.getElementById('q-table-wrap');
+    const tbody     = document.getElementById('q-table-body');
+    tbody.innerHTML = '';
+    const itemRows  = document.querySelectorAll('.line-item-row');
+    let grandTotal  = 0;
+
+    if (itemRows.length) {
+      itemRows.forEach(row => {
+        const desc  = row.querySelector('.li-desc').value.trim()  || '—';
+        const qty   = parseFloat(row.querySelector('.li-qty').value) || 1;
+        const price = parsePrice(row.querySelector('.li-price').value);
+        const line  = qty * price;
+        grandTotal += line;
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><div class="q-table-desc">${desc}</div></td>
+          <td>${qty}</td>
+          <td>${formatPrice(price)}</td>
+          <td>${formatPrice(line)}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+      tableWrap.style.display = 'block';
+    } else {
+      tableWrap.style.display = 'none';
+      grandTotal = parsePrice(manualTotal);
+    }
+
+    document.getElementById('q-total').textContent = grandTotal > 0 ? formatPrice(grandTotal) : (manualTotal || '—');
+
     // Notes
     const notesEl = document.getElementById('q-notes');
-    if (extraNotes) {
-      notesEl.textContent = extraNotes;
-      notesEl.style.display = 'block';
-    } else {
-      notesEl.style.display = 'none';
-    }
+    if (extraNotes) { notesEl.textContent = extraNotes; notesEl.style.display = 'block'; }
+    else            { notesEl.style.display = 'none'; }
 
     document.getElementById('quote-doc').style.display = 'block';
     const hint = document.querySelector('.hint');
