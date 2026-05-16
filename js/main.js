@@ -237,6 +237,15 @@ document.querySelectorAll('#project-type-grid input[type="radio"]').forEach(inpu
   });
 });
 
+// Phone formatter — formats as (501) 412-5972 while typing
+function formatPhone(input) {
+  let v = input.value.replace(/\D/g, '').slice(0, 10);
+  if (v.length >= 7)      v = `(${v.slice(0,3)}) ${v.slice(3,6)}-${v.slice(6)}`;
+  else if (v.length >= 4) v = `(${v.slice(0,3)}) ${v.slice(3)}`;
+  else if (v.length > 0)  v = `(${v}`;
+  input.value = v;
+}
+
 // Lead form submission
 document.getElementById('lead-form')?.addEventListener('submit', async e => {
   e.preventDefault();
@@ -245,20 +254,18 @@ document.getElementById('lead-form')?.addEventListener('submit', async e => {
   btn.textContent = 'Sending…';
   btn.disabled = true;
 
-  // Collect the radio value from the named group
+  // Use form.elements[] for reliable named field access
   const projectInput = form.querySelector('input[name="project"]:checked');
-
-  // Collect multi-select checkbox areas
   const areas = Array.from(form.querySelectorAll('input[name="areas"]:checked'))
     .map(cb => cb.value).join(', ');
 
   const payload = {
-    name:    form.name.value,
-    phone:   form.phone.value,
-    email:   form.email.value,
+    name:    form.elements['name']?.value  || '',
+    phone:   form.elements['phone']?.value || '',
+    email:   form.elements['email']?.value || '',
     project: projectInput ? projectInput.value : '',
     areas:   areas,
-    timing:  form.timing?.value || '',
+    timing:  form.elements['timing']?.value || '',
   };
 
   try {
