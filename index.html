@@ -50,7 +50,7 @@
     <li><a href="#contact">Contact</a></li>
   </ul>
   <a href="tel:5014125972" class="nav-phone">(501) 412-5972</a>
-  <a href="#hero-intro" class="btn btn-primary nav-cta">Free Quote</a>
+  <a href="#hero-intro" class="btn btn-primary nav-cta">Start Your Project</a>
   <button class="nav-hamburger" aria-label="Open menu">
     <span></span><span></span><span></span>
   </button>
@@ -61,7 +61,6 @@
   <div class="hero-bg"></div>
   <div class="hero-overlay"></div>
   <div class="hero-glow"></div>
-  <!-- Large badge watermark — brand presence behind hero content -->
   <img src="assets/brand/logo-badge.png" alt="" aria-hidden="true" class="hero-badge-watermark" />
   <div class="hero-content">
     <img src="assets/brand/logo-lantern.png" alt="" aria-hidden="true" class="hero-lantern reveal" />
@@ -73,7 +72,7 @@
     <p class="hero-body reveal reveal-delay-4">Custom residential lighting for entries, pathways, landscapes, and outdoor living spaces across Little Rock and Central Arkansas.</p>
     <div class="hero-ctas reveal reveal-delay-5">
       <a href="tel:5014125972" class="btn btn-primary">Call (501) 412-5972</a>
-      <a href="#hero-intro" class="btn btn-outline">Schedule a Consultation</a>
+      <a href="#hero-intro" class="btn btn-outline">Schedule a Design Consultation</a>
     </div>
   </div>
   <div class="hero-scroll">
@@ -85,59 +84,239 @@
 <!-- ===== HERO INTRO ===== -->
 <section id="hero-intro">
   <div class="hero-intro-inner">
+
     <div class="hero-intro-form reveal">
-      <div class="section-label" style="justify-content:flex-start;margin-bottom:24px;"><span>Get started</span></div>
-      <h2 class="reveal reveal-delay-1">Get a Free<br><span class="quote-word">Quote</span></h2>
-      <p class="hero-intro-sub reveal reveal-delay-2">Tell us about your property and what you're hoping to achieve. We'll get back to you quickly to schedule a complimentary consultation.</p>
-      <div class="contact-form" style="margin-top:32px;">
-        <form novalidate>
-          <div class="form-row">
+      <div class="section-label" style="justify-content:flex-start;margin-bottom:20px;"><span>Get started</span></div>
+      <h2 class="reveal reveal-delay-1">Most Homes Go Dark<br>at Night. <em class="quote-word">Yours Doesn't Have To.</em></h2>
+      <p class="hero-intro-trust reveal reveal-delay-2">
+        ✦ 30+ Little Rock homes illuminated &nbsp;·&nbsp; Heights · Hillcrest · Chenal · West Little Rock
+      </p>
+      <p class="hero-intro-sub reveal reveal-delay-2">Tell us about your property and what you're hoping to achieve. We'll get back to you within one business day.</p>
+
+      <div class="contact-form" style="margin-top:28px;">
+        <form id="lead-form" novalidate>
+
+          <!-- Step indicator -->
+          <div class="form-steps">
+            <div class="form-step-dot active" data-step="1">1</div>
+            <div class="form-step-line"></div>
+            <div class="form-step-dot" data-step="2">2</div>
+            <div class="form-step-line"></div>
+            <div class="form-step-dot" data-step="3">3</div>
+          </div>
+
+          <!-- Step 1: Project type -->
+          <div class="form-step-panel active" id="step-1">
+            <p class="form-step-label">What kind of project?</p>
+            <div class="project-type-grid" id="project-type-grid">
+              <label class="project-tile">
+                <input type="radio" name="project" value="New Install" />
+                <span class="tile-inner">
+                  <span class="tile-title">New Install</span>
+                  <span class="tile-sub">Light your property from scratch</span>
+                </span>
+              </label>
+              <label class="project-tile">
+                <input type="radio" name="project" value="Upgrade Existing System" />
+                <span class="tile-inner">
+                  <span class="tile-title">Upgrade Existing</span>
+                  <span class="tile-sub">Update or expand what you have</span>
+                </span>
+              </label>
+              <label class="project-tile">
+                <input type="radio" name="project" value="Seasonal Color Change" />
+                <span class="tile-inner">
+                  <span class="tile-title">Seasonal Colors</span>
+                  <span class="tile-sub">Swap to holiday or seasonal color</span>
+                </span>
+              </label>
+              <label class="project-tile">
+                <input type="radio" name="project" value="Maintenance / Tune-Up" />
+                <span class="tile-inner">
+                  <span class="tile-title">Maintenance</span>
+                  <span class="tile-sub">Service or tune-up existing lights</span>
+                </span>
+              </label>
+              <label class="project-tile project-tile-full">
+                <input type="radio" name="project" value="Not Sure Yet" />
+                <span class="tile-inner">
+                  <span class="tile-title">Not Sure Yet</span>
+                  <span class="tile-sub">Just exploring — that's totally fine</span>
+                </span>
+              </label>
+            </div>
+            <button type="button" class="btn btn-primary form-next-btn" onclick="formNext(1)">Next &rarr;</button>
+          </div>
+
+          <!-- Step 2: Optional description -->
+          <div class="form-step-panel" id="step-2">
+            <p class="form-step-label">Tell us about it <span class="form-optional">(optional)</span></p>
+            <div class="form-group">
+              <label for="hi-desc">What are you hoping to light up?</label>
+              <textarea id="hi-desc" name="description" placeholder="Front of house, backyard, pool area, driveway, trees..."></textarea>
+            </div>
+            <div class="form-nav-row">
+              <button type="button" class="btn btn-outline form-back-btn" onclick="formBack(2)">&larr; Back</button>
+              <button type="button" class="btn btn-primary form-next-btn" onclick="formNext(2)">Next &rarr;</button>
+            </div>
+          </div>
+
+          <!-- Step 3: Contact info -->
+          <div class="form-step-panel" id="step-3">
+            <p class="form-step-label">How do we reach you?</p>
             <div class="form-group">
               <label for="hi-name">Your Name</label>
-              <input type="text" id="hi-name" name="name" placeholder="Tim Smith" required />
+              <input type="text" id="hi-name" name="name" autocomplete="name" autocorrect="off" autocapitalize="words" placeholder="Tim Smith" required />
+            </div>
+            <div class="form-group">
+              <label for="hi-email">Email Address</label>
+              <input type="email" id="hi-email" name="email" autocomplete="email" placeholder="you@email.com" required />
             </div>
             <div class="form-group">
               <label for="hi-phone">Phone Number</label>
-              <input type="tel" id="hi-phone" name="phone" placeholder="(501) 555-0000" required />
+              <input type="text" inputmode="tel" id="hi-phone" name="phone" autocomplete="tel" placeholder="(501) 555-0000" required oninput="formatPhone(this)" />
+              <span class="form-field-note">We call you — no sales robots, no spam texts.</span>
             </div>
+            <div class="form-nav-row">
+              <button type="button" class="btn btn-outline form-back-btn" onclick="formBack(3)">&larr; Back</button>
+              <button type="submit" class="btn btn-primary form-submit">Get My Free Design Consultation</button>
+            </div>
+            <p class="form-microcopy">We respond within 1 business day. No obligation — just a conversation about your property.</p>
           </div>
-          <div class="form-group">
-            <label for="hi-email">Email Address</label>
-            <input type="email" id="hi-email" name="email" placeholder="you@email.com" required />
-          </div>
-          <div class="form-group">
-            <label for="hi-address">Property Address</label>
-            <input type="text" id="hi-address" name="address" placeholder="123 Main St, Little Rock, AR" />
-          </div>
-          <div class="form-group">
-            <label for="hi-project">Tell Us About Your Project</label>
-            <textarea id="hi-project" name="project" placeholder="What areas would you like lit? Any specific goals — curb appeal, safety, outdoor living..."></textarea>
-          </div>
-          <div class="form-group">
-            <label for="hi-timing">Best Time to Reach You</label>
-            <select id="hi-timing" name="timing">
-              <option value="" disabled selected>Select a time...</option>
-              <option>Morning (8am – 12pm)</option>
-              <option>Afternoon (12pm – 5pm)</option>
-              <option>Evening (5pm – 8pm)</option>
-              <option>Anytime</option>
-            </select>
-          </div>
-          <button type="submit" class="btn btn-primary form-submit">Let's Get Started</button>
+
         </form>
       </div>
     </div>
-    <div class="hero-intro-about reveal reveal-delay-2">
+
+    <div id="about" class="hero-intro-about reveal reveal-delay-2">
       <div class="about-image">
         <img src="assets/bw pic of tim.png" alt="Tim Barnett — Rock City Lighting" />
       </div>
       <div class="hero-intro-bio">
         <h3>Tim Barnett</h3>
-        <p>A Little Rock native, husband, and father of two with over 10 years of hands-on experience in the lighting and landscaping industry. Tim started Rock City Lighting with one goal: to give Central Arkansas homeowners access to the kind of exterior lighting that used to be reserved for high-end custom builds.</p>
-        <p>Every project is handled personally — no franchise, no national chain. Just real attention to your home and your goals.</p>
+        <p>A Little Rock native with over 10 years of hands-on experience in lighting and landscaping. I started Rock City Lighting to give Central Arkansas homeowners access to the kind of exterior lighting that used to be reserved for high-end custom builds.</p>
+        <p>Every project gets my full attention — no subs, no project managers between you and the person doing the work. Just me, your property, and a result I'm proud to put my name on.</p>
+        <p class="hero-intro-neighborhoods">Serving the <strong>Heights · Hillcrest · Chenal Valley · West Little Rock · Cammack Village · Pulaski Heights · Maumelle</strong> and surrounding areas.</p>
         <div class="about-quote" style="margin-top:28px;">
           <p>Dedicated to one thing: a satisfied customer, every single time.</p>
         </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ===== TRUST BAR ===== -->
+<div class="trust-bar" role="complementary">
+  <div class="trust-bar-inner">
+    <div class="trust-item">
+      <span class="trust-icon">✦</span>
+      <span>Personal Site Visit on Every Project</span>
+    </div>
+    <div class="trust-divider"></div>
+    <div class="trust-item">
+      <span class="trust-icon">✦</span>
+      <span>90-Day Make-It-Right Guarantee</span>
+    </div>
+    <div class="trust-divider"></div>
+    <div class="trust-item">
+      <span class="trust-icon">✦</span>
+      <span>5-Year Workmanship Guarantee</span>
+    </div>
+    <div class="trust-divider"></div>
+    <div class="trust-item">
+      <span class="trust-icon">✦</span>
+      <span>Locally Owned · Little Rock, AR</span>
+    </div>
+  </div>
+</div>
+
+<!-- ===== PROCESS ===== -->
+<section id="process" aria-labelledby="process-heading">
+  <div class="section-header">
+    <div class="section-label reveal"><span>How it works</span></div>
+    <h2 id="process-heading" class="reveal reveal-delay-1">Simple from Start to Finish</h2>
+    <p class="subtitle reveal reveal-delay-2">From the first conversation to the final walkthrough — here's exactly what to expect.</p>
+  </div>
+  <div class="process-steps">
+    <div class="process-step reveal">
+      <div class="process-step-num">01</div>
+      <div class="process-step-label">First step</div>
+      <h3>Design Consultation</h3>
+      <p>I visit your property at dusk, walk the perimeter with you, and show you what's possible — before you commit to anything. No pressure, no obligation.</p>
+    </div>
+    <div class="process-step reveal reveal-delay-1">
+      <div class="process-step-num">02</div>
+      <div class="process-step-label">Second step</div>
+      <h3>Custom Proposal</h3>
+      <p>You receive a detailed proposal with fixture selections and a full investment breakdown — everything laid out clearly before a single wire is run.</p>
+    </div>
+    <div class="process-step reveal reveal-delay-2">
+      <div class="process-step-num">03</div>
+      <div class="process-step-label">Third step</div>
+      <h3>Professional Install</h3>
+      <p>One person. One day. I handle the installation start to finish — minimal disruption to your yard, maximum impact on how your home looks that night.</p>
+    </div>
+    <div class="process-step reveal reveal-delay-3">
+      <div class="process-step-num">04</div>
+      <div class="process-step-label">Ongoing</div>
+      <h3>We Stand Behind It</h3>
+      <p>Complimentary adjustments for 90 days after install. Plus ongoing maintenance plans to keep everything looking exactly the way it should.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== PORTFOLIO ===== -->
+<section id="portfolio" aria-labelledby="portfolio-heading">
+  <div class="section-header">
+    <div class="section-label reveal"><span>Recent work</span></div>
+    <h2 id="portfolio-heading" class="reveal reveal-delay-1">Examples of Our Work</h2>
+    <p class="subtitle reveal reveal-delay-2">Real projects across Little Rock and Central Arkansas. Click any photo to view full size.</p>
+  </div>
+  <div class="portfolio-grid reveal">
+    <div class="portfolio-item">
+      <img src="pics/IMG_3418.jpeg" alt="Pool and landscape lighting, lakeside property" loading="lazy" />
+      <div class="portfolio-overlay"><div class="portfolio-overlay-inner"><span>View Project</span></div></div>
+    </div>
+    <div class="portfolio-item">
+      <img src="pics/IMG_3417.jpeg" alt="Fire pit patio and lakeside landscape lighting" loading="lazy" />
+      <div class="portfolio-overlay"><div class="portfolio-overlay-inner"><span>View Project</span></div></div>
+    </div>
+    <div class="portfolio-item">
+      <img src="pics/IMG_3415.jpeg" alt="Front entry pathway and uplighting" loading="lazy" />
+      <div class="portfolio-overlay"><div class="portfolio-overlay-inner"><span>View Project</span></div></div>
+    </div>
+    <div class="portfolio-item">
+      <img src="pics/IMG_3420.jpeg" alt="Residential front facade with landscape lighting" loading="lazy" />
+      <div class="portfolio-overlay"><div class="portfolio-overlay-inner"><span>View Project</span></div></div>
+    </div>
+    <div class="portfolio-item">
+      <img src="pics/IMG_3416.jpeg" alt="Aerial driveway and tree lighting on lakeside property" loading="lazy" />
+      <div class="portfolio-overlay"><div class="portfolio-overlay-inner"><span>View Project</span></div></div>
+    </div>
+    <div class="portfolio-item">
+      <img src="pics/IMG_3422.jpeg" alt="Outdoor fireplace and living area lighting" loading="lazy" />
+      <div class="portfolio-overlay"><div class="portfolio-overlay-inner"><span>View Project</span></div></div>
+    </div>
+  </div>
+  <div class="portfolio-cta reveal">
+    <a href="#hero-intro" class="btn btn-primary">Ready to Transform Your Home? Let's Talk.</a>
+  </div>
+</section>
+
+<!-- ===== TESTIMONIALS ===== -->
+<section id="testimonials" aria-labelledby="testimonials-heading">
+  <div class="section-header">
+    <div class="section-label reveal"><span>Client reviews</span></div>
+    <h2 id="testimonials-heading" class="reveal reveal-delay-1">What Our Clients Say</h2>
+  </div>
+  <div class="testimonials-grid">
+    <div class="testimonial-card reveal reveal-delay-2">
+      <div class="testimonial-stars">★★★★★</div>
+      <blockquote class="testimonial-quote">"Tim has added lighting to both my home and Lakehouse. Both times he went above and beyond to create an incredible lighting experience. I highly recommend!"</blockquote>
+      <div class="testimonial-author">
+        <div class="testimonial-name">Corey Gillum</div>
+        <div class="testimonial-detail">Home &amp; Lakehouse · Little Rock, AR</div>
       </div>
     </div>
   </div>
@@ -183,14 +362,10 @@
       <div class="service-icon">
         <svg viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
           <circle cx="30" cy="30" r="27" fill="none" stroke="#B87338" stroke-width="1.4"/>
-          <!-- Columns -->
           <rect x="17" y="26" width="5" height="14" fill="none" stroke="#B87338" stroke-width="1.2"/>
           <rect x="38" y="26" width="5" height="14" fill="none" stroke="#B87338" stroke-width="1.2"/>
-          <!-- Entablature -->
           <rect x="14" y="23" width="32" height="3.5" fill="none" stroke="#B87338" stroke-width="1.2"/>
-          <!-- Ground -->
           <line x1="14" y1="40" x2="46" y2="40" stroke="#B87338" stroke-width="1.2"/>
-          <!-- Uplight rays from base -->
           <line x1="30" y1="40" x2="30" y2="13" stroke="#B87338" stroke-width="0.9" opacity="0.65" stroke-dasharray="1.5,2.5"/>
           <line x1="25" y1="40" x2="20" y2="15" stroke="#B87338" stroke-width="0.7" opacity="0.45" stroke-dasharray="1.5,2.5"/>
           <line x1="35" y1="40" x2="40" y2="15" stroke="#B87338" stroke-width="0.7" opacity="0.45" stroke-dasharray="1.5,2.5"/>
@@ -205,18 +380,14 @@
       <div class="service-icon">
         <svg viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
           <circle cx="30" cy="30" r="27" fill="none" stroke="#B87338" stroke-width="1.4"/>
-          <!-- Path edges -->
           <path d="M 24,44 C 24,36 26,29 28,18" fill="none" stroke="#B87338" stroke-width="1.2"/>
           <path d="M 36,44 C 36,36 34,29 32,18" fill="none" stroke="#B87338" stroke-width="1.2"/>
-          <!-- Left bollard -->
           <line x1="20" y1="40" x2="20" y2="33" stroke="#B87338" stroke-width="1.5"/>
           <circle cx="20" cy="32" r="2.5" fill="none" stroke="#B87338" stroke-width="1.2"/>
           <circle cx="20" cy="32" r="1" fill="#B87338"/>
-          <!-- Right bollard -->
           <line x1="40" y1="34" x2="40" y2="27" stroke="#B87338" stroke-width="1.5"/>
           <circle cx="40" cy="26" r="2.5" fill="none" stroke="#B87338" stroke-width="1.2"/>
           <circle cx="40" cy="26" r="1" fill="#B87338"/>
-          <!-- Ground -->
           <line x1="14" y1="44" x2="46" y2="44" stroke="#B87338" stroke-width="1" opacity="0.4"/>
         </svg>
       </div>
@@ -228,16 +399,12 @@
       <div class="service-icon">
         <svg viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
           <circle cx="30" cy="30" r="27" fill="none" stroke="#B87338" stroke-width="1.4"/>
-          <!-- Door arch frame -->
           <path d="M 20,44 L 20,30 A 10,10 0 0,1 40,30 L 40,44" fill="none" stroke="#B87338" stroke-width="1.5"/>
-          <!-- Threshold -->
           <line x1="18" y1="44" x2="42" y2="44" stroke="#B87338" stroke-width="1.5"/>
-          <!-- Hanging lantern -->
           <line x1="30" y1="14" x2="30" y2="20" stroke="#B87338" stroke-width="1.2"/>
           <rect x="26.5" y="20" width="7" height="9" rx="0.8" fill="none" stroke="#B87338" stroke-width="1.2"/>
           <rect x="26" y="19" width="8" height="2" rx="0.5" fill="#B87338" opacity="0.8"/>
           <circle cx="30" cy="25" r="1.5" fill="#B87338"/>
-          <!-- Glow rays from lantern -->
           <line x1="30" y1="29.5" x2="23" y2="32" stroke="#B87338" stroke-width="0.7" opacity="0.5"/>
           <line x1="30" y1="29.5" x2="37" y2="32" stroke="#B87338" stroke-width="0.7" opacity="0.5"/>
           <line x1="30" y1="29.5" x2="30" y2="34" stroke="#B87338" stroke-width="0.7" opacity="0.5"/>
@@ -251,17 +418,12 @@
       <div class="service-icon">
         <svg viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
           <circle cx="30" cy="30" r="27" fill="none" stroke="#B87338" stroke-width="1.4"/>
-          <!-- Tree trunk -->
           <rect x="28.5" y="37" width="3" height="7" fill="#B87338"/>
-          <!-- Tree — layered triangles -->
           <polygon points="30,16 38,30 22,30" fill="none" stroke="#B87338" stroke-width="1.3"/>
           <polygon points="30,21 40,36 20,36" fill="none" stroke="#B87338" stroke-width="1.3"/>
-          <!-- Ground line -->
           <line x1="14" y1="44" x2="46" y2="44" stroke="#B87338" stroke-width="1"/>
-          <!-- Ground spotlight -->
           <path d="M 14,46 L 22,40 L 20,46 Z" fill="none" stroke="#B87338" stroke-width="1.2"/>
           <circle cx="13.5" cy="46" r="2" fill="#B87338"/>
-          <!-- Light cone rays -->
           <line x1="15" y1="45" x2="26" y2="35" stroke="#B87338" stroke-width="0.6" opacity="0.55"/>
           <line x1="15" y1="45" x2="27" y2="39" stroke="#B87338" stroke-width="0.6" opacity="0.55"/>
         </svg>
@@ -274,12 +436,9 @@
       <div class="service-icon">
         <svg viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
           <circle cx="30" cy="30" r="27" fill="none" stroke="#B87338" stroke-width="1.4"/>
-          <!-- House silhouette -->
           <polyline points="13,32 30,17 47,32" fill="none" stroke="#B87338" stroke-width="1.5"/>
           <rect x="18" y="32" width="24" height="14" fill="none" stroke="#B87338" stroke-width="1.3"/>
-          <!-- Door -->
           <rect x="27" y="38" width="6" height="8" fill="none" stroke="#B87338" stroke-width="1"/>
-          <!-- Roofline lights (dots along roof edge) -->
           <circle cx="13" cy="32" r="1.8" fill="#B87338"/>
           <circle cx="18.8" cy="26.2" r="1.8" fill="#B87338"/>
           <circle cx="24.5" cy="21" r="1.8" fill="#B87338"/>
@@ -287,7 +446,6 @@
           <circle cx="35.5" cy="21" r="1.8" fill="#B87338"/>
           <circle cx="41.2" cy="26.2" r="1.8" fill="#B87338"/>
           <circle cx="47" cy="32" r="1.8" fill="#B87338"/>
-          <!-- Drip lines -->
           <line x1="13" y1="33.8" x2="13" y2="36.5" stroke="#B87338" stroke-width="0.8" opacity="0.6"/>
           <line x1="18.8" y1="28" x2="18.8" y2="30.5" stroke="#B87338" stroke-width="0.8" opacity="0.6"/>
           <line x1="24.5" y1="22.8" x2="24.5" y2="25.5" stroke="#B87338" stroke-width="0.8" opacity="0.6"/>
@@ -305,17 +463,12 @@
       <div class="service-icon">
         <svg viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
           <circle cx="30" cy="30" r="27" fill="none" stroke="#B87338" stroke-width="1.4"/>
-          <!-- Bulb glass -->
           <path d="M 22,31 A 8,8 0 1,1 38,31 L 36.5,38 L 23.5,38 Z" fill="none" stroke="#B87338" stroke-width="1.3"/>
-          <!-- Filament -->
           <polyline points="25.5,38 27,33 30,35.5 33,33 34.5,38" fill="none" stroke="#B87338" stroke-width="1" opacity="0.7"/>
-          <!-- Base rings -->
           <line x1="23.5" y1="38" x2="36.5" y2="38" stroke="#B87338" stroke-width="1.5"/>
           <line x1="24.5" y1="40.5" x2="35.5" y2="40.5" stroke="#B87338" stroke-width="1.5"/>
           <line x1="26" y1="43" x2="34" y2="43" stroke="#B87338" stroke-width="1.5"/>
-          <!-- Screw tip -->
           <line x1="29" y1="43" x2="31" y2="46" stroke="#B87338" stroke-width="1.5"/>
-          <!-- Checkmark badge -->
           <circle cx="42" cy="20" r="6" fill="#0F1E2D" stroke="#B87338" stroke-width="1.3"/>
           <polyline points="38.5,20 41,22.5 45.5,16.5" fill="none" stroke="#B87338" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
@@ -325,57 +478,6 @@
     </div>
   </div>
 </section>
-
-<!-- ===== PORTFOLIO ===== -->
-<section id="portfolio" aria-labelledby="portfolio-heading">
-  <div class="section-header">
-    <div class="section-label reveal"><span>Recent work</span></div>
-    <h2 id="portfolio-heading" class="reveal reveal-delay-1">Examples of Our Work</h2>
-    <p class="subtitle reveal reveal-delay-2">Real projects across Little Rock and Central Arkansas. Click any photo to view full size.</p>
-  </div>
-  <div class="portfolio-grid reveal">
-    <div class="portfolio-item">
-      <img src="pics/IMG_3418.jpeg" alt="Pool and landscape lighting, lakeside property" loading="lazy" />
-      <div class="portfolio-overlay"><div class="portfolio-overlay-inner"><span>View Project</span></div></div>
-    </div>
-    <div class="portfolio-item">
-      <img src="pics/IMG_3417.jpeg" alt="Fire pit patio and lakeside landscape lighting" loading="lazy" />
-      <div class="portfolio-overlay"><div class="portfolio-overlay-inner"><span>View Project</span></div></div>
-    </div>
-    <div class="portfolio-item">
-      <img src="pics/IMG_3415.jpeg" alt="Front entry pathway and uplighting" loading="lazy" />
-      <div class="portfolio-overlay"><div class="portfolio-overlay-inner"><span>View Project</span></div></div>
-    </div>
-    <div class="portfolio-item">
-      <img src="pics/IMG_3420.jpeg" alt="Residential front facade with landscape lighting" loading="lazy" />
-      <div class="portfolio-overlay"><div class="portfolio-overlay-inner"><span>View Project</span></div></div>
-    </div>
-    <div class="portfolio-item">
-      <img src="pics/IMG_3416.jpeg" alt="Aerial driveway and tree lighting on lakeside property" loading="lazy" />
-      <div class="portfolio-overlay"><div class="portfolio-overlay-inner"><span>View Project</span></div></div>
-    </div>
-    <div class="portfolio-item">
-      <img src="pics/IMG_3422.jpeg" alt="Outdoor fireplace and living area lighting" loading="lazy" />
-      <div class="portfolio-overlay"><div class="portfolio-overlay-inner"><span>View Project</span></div></div>
-    </div>
-  </div>
-  <div class="portfolio-cta reveal">
-    <a href="#hero-intro" class="btn btn-primary">Like what you see? Get a Free Quote</a>
-  </div>
-</section>
-
-<!-- Brand divider -->
-<div class="brand-divider">
-  <img src="assets/brand/logo-badge.png" alt="" aria-hidden="true" />
-</div>
-
-<!-- ===== CTA BANNER ===== -->
-<div class="cta-banner" role="complementary">
-  <img src="assets/brand/logo-badge.png" alt="" aria-hidden="true" class="cta-badge-watermark" />
-  <h2 class="reveal">Ready to transform your property?</h2>
-  <p class="reveal reveal-delay-1">Free quotes, no pressure. We serve Little Rock &amp; Central Arkansas.</p>
-  <a href="#hero-intro" class="btn btn-dark reveal reveal-delay-2">Schedule a Complimentary Consultation</a>
-</div>
 
 <!-- ===== GUARANTEES ===== -->
 <section id="guarantees" aria-labelledby="guarantees-heading">
@@ -390,14 +492,14 @@
       <p>Every project includes complimentary service and adjustments for 90 days. Fixture needs repositioning? Light needs re-aiming? We'll come back and make it right.</p>
     </div>
     <div class="guarantee-card reveal reveal-delay-1">
-      <div class="guarantee-stat">Free</div>
-      <h3>Consultations</h3>
-      <p>No pressure, no obligation. We walk your property, talk through your goals, and give you a clear quote before any work begins.</p>
+      <div class="guarantee-stat">5 Year</div>
+      <h3>Workmanship Guarantee</h3>
+      <p>We stand behind our installations. If anything fails due to workmanship within five years, we'll fix it — no charge, no questions asked.</p>
     </div>
     <div class="guarantee-card reveal reveal-delay-2">
-      <div class="guarantee-stat">Local</div>
-      <h3>Family-Run Business</h3>
-      <p>Little Rock–based, Central Arkansas–focused, and invested in the community we serve.</p>
+      <div class="guarantee-stat">Free</div>
+      <h3>Design Consultations</h3>
+      <p>No pressure, no obligation. I walk your property, talk through your goals, and give you a clear proposal before any work begins.</p>
     </div>
     <div class="guarantee-card reveal reveal-delay-3">
       <div class="guarantee-stat">10+</div>
@@ -407,58 +509,18 @@
   </div>
 </section>
 
-<!-- ===== PROCESS ===== -->
-<section id="process" aria-labelledby="process-heading">
-  <div class="section-header">
-    <div class="section-label reveal"><span>How it works</span></div>
-    <h2 id="process-heading" class="reveal reveal-delay-1">Simple from Start to Finish</h2>
-    <p class="subtitle reveal reveal-delay-2">From the first conversation to ongoing care — we handle every step.</p>
-  </div>
-  <div class="process-steps">
-    <div class="process-step reveal">
-      <div class="process-step-num">01</div>
-      <div class="process-step-label">First step</div>
-      <h3>Consultation</h3>
-      <p>We visit your property, talk through your goals, and put together a custom lighting plan — at no cost to you.</p>
-    </div>
-    <div class="process-step reveal reveal-delay-1">
-      <div class="process-step-num">02</div>
-      <div class="process-step-label">Second step</div>
-      <h3>Design</h3>
-      <p>We design a lighting layout tailored to your home's architecture, landscape, and how you use your outdoor space.</p>
-    </div>
-    <div class="process-step reveal reveal-delay-2">
-      <div class="process-step-num">03</div>
-      <div class="process-step-label">Third step</div>
-      <h3>Install</h3>
-      <p>Our team installs everything cleanly and professionally — minimal disruption, maximum impact.</p>
-    </div>
-    <div class="process-step reveal reveal-delay-3">
-      <div class="process-step-num">04</div>
-      <div class="process-step-label">Ongoing</div>
-      <h3>Service</h3>
-      <p>Complimentary adjustments for 90 days, plus ongoing maintenance plans to keep everything looking perfect.</p>
-    </div>
-  </div>
-</section>
+<!-- Brand divider -->
+<div class="brand-divider">
+  <img src="assets/brand/logo-badge.png" alt="" aria-hidden="true" />
+</div>
 
-<!-- ===== TESTIMONIALS ===== -->
-<section id="testimonials" aria-labelledby="testimonials-heading">
-  <div class="section-header">
-    <div class="section-label reveal"><span>Client reviews</span></div>
-    <h2 id="testimonials-heading" class="reveal reveal-delay-1">What Our Clients Say</h2>
-  </div>
-  <div class="testimonials-grid">
-    <div class="testimonial-card reveal reveal-delay-2">
-      <div class="testimonial-stars">★★★★★</div>
-      <blockquote class="testimonial-quote">"Tim has added lighting to both my home and Lakehouse. Both times he went above and beyond to create an incredible lighting experience. I highly recommend!"</blockquote>
-      <div class="testimonial-author">
-        <div class="testimonial-name">Corey Gillum</div>
-        <div class="testimonial-detail">Home &amp; Lakehouse · Little Rock, AR</div>
-      </div>
-    </div>
-  </div>
-</section>
+<!-- ===== CTA BANNER ===== -->
+<div class="cta-banner" role="complementary">
+  <img src="assets/brand/logo-badge.png" alt="" aria-hidden="true" class="cta-badge-watermark" />
+  <h2 class="reveal">Most homeowners are surprised by how dramatic the change is.</h2>
+  <p class="reveal reveal-delay-1">Let us show you what's possible for your home. Little Rock &amp; Central Arkansas.</p>
+  <a href="#hero-intro" class="btn btn-dark reveal reveal-delay-2">Request Your Complimentary Consultation</a>
+</div>
 
 <!-- ===== SOCIAL ===== -->
 <section id="social" aria-labelledby="social-heading">
@@ -482,9 +544,9 @@
 <section id="contact" aria-labelledby="contact-heading">
   <div class="contact-inner">
     <div class="contact-info">
-      <div class="section-label reveal" style="justify-content:flex-start;"><span>Get started</span></div>
-      <h2 id="contact-heading" class="reveal reveal-delay-1">Get a Free<br><span class="quote-word">Quote</span></h2>
-      <p class="reveal reveal-delay-2" style="margin-top:16px;">Tell us about your property and what you're hoping to achieve. We'll get back to you quickly to schedule a complimentary consultation.</p>
+      <div class="section-label reveal" style="justify-content:flex-start;"><span>Get in touch</span></div>
+      <h2 id="contact-heading" class="reveal reveal-delay-1">Ready to Get<br><span class="quote-word">Started?</span></h2>
+      <p class="reveal reveal-delay-2" style="margin-top:16px;">Call or text Tim directly, or scroll back up to fill out the quick form above. We'll get back to you within one business day.</p>
       <div class="contact-detail reveal reveal-delay-3">
         <div class="contact-detail-dot"></div>
         <div class="contact-detail-text">
@@ -535,7 +597,7 @@
       <h4>Contact</h4>
       <ul>
         <li><a href="tel:5014125972">(501) 412-5972</a></li>
-        <li><a href="#contact">Request a Quote</a></li>
+        <li><a href="#hero-intro">Request a Consultation</a></li>
         <li><a href="#about">About Tim Barnett</a></li>
         <li><a href="#portfolio">View Our Work</a></li>
       </ul>

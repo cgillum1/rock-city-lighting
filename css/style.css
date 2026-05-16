@@ -1341,3 +1341,261 @@ footer::before {
   .portfolio-grid { grid-template-columns: 1fr; }
   .guarantees-grid { grid-template-columns: 1fr; }
 }
+
+/* ===== TRUST BAR ===== */
+.trust-bar {
+  background: var(--navy-deep);
+  border-top: 1px solid rgba(184,115,51,0.14);
+  border-bottom: 1px solid rgba(184,115,51,0.14);
+  padding: 18px 40px;
+}
+.trust-bar-inner {
+  max-width: 1160px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0;
+}
+.trust-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--sand);
+  opacity: 0.8;
+  padding: 6px 28px;
+  white-space: nowrap;
+}
+.trust-icon {
+  color: var(--copper);
+  font-size: 0.52rem;
+  flex-shrink: 0;
+}
+.trust-divider {
+  width: 1px;
+  height: 18px;
+  background: rgba(184,115,51,0.22);
+  flex-shrink: 0;
+}
+@media (max-width: 768px) {
+  .trust-bar { padding: 14px 20px; }
+  .trust-bar-inner { gap: 4px 0; }
+  .trust-item { padding: 4px 14px; font-size: 0.63rem; }
+  .trust-divider { display: none; }
+}
+@media (max-width: 480px) {
+  .trust-bar-inner { flex-direction: column; gap: 10px; align-items: flex-start; }
+  .trust-item { padding: 2px 0; }
+}
+
+/* ===== HERO INTRO TRUST / NEIGHBORHOODS ===== */
+.hero-intro-trust {
+  font-size: 0.7rem;
+  letter-spacing: 1.5px;
+  color: var(--copper);
+  font-weight: 600;
+  margin-bottom: 12px;
+  margin-top: 8px;
+  opacity: 0.85;
+}
+.hero-intro-neighborhoods {
+  font-size: 0.82rem;
+  color: var(--muted);
+  line-height: 1.7;
+  margin-top: 4px;
+}
+.hero-intro-neighborhoods strong {
+  color: var(--sand);
+  font-weight: 600;
+}
+
+/* ===== MULTI-STEP FORM ===== */
+
+/* Step indicator bar */
+.form-steps {
+  display: flex;
+  align-items: center;
+  margin-bottom: 28px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid rgba(184,115,51,0.1);
+}
+.form-step-dot {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(184,115,51,0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--muted);
+  font-family: var(--font-sans);
+  flex-shrink: 0;
+  transition: border-color 0.3s, background 0.3s, color 0.3s;
+}
+.form-step-dot.active {
+  border-color: var(--copper);
+  background: var(--copper);
+  color: var(--navy-deep);
+}
+.form-step-dot.completed {
+  border-color: var(--copper);
+  background: transparent;
+  color: var(--copper);
+}
+.form-step-line {
+  flex: 1;
+  height: 1px;
+  background: rgba(184,115,51,0.18);
+  margin: 0 8px;
+}
+
+/* Step panels */
+.form-step-panel {
+  display: none;
+}
+.form-step-panel.active {
+  display: block;
+}
+
+/* Step label above each panel */
+.form-step-label {
+  font-size: 0.7rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--copper);
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+.form-optional {
+  color: var(--muted);
+  font-size: 0.65rem;
+  letter-spacing: 0.5px;
+  text-transform: none;
+  font-weight: 400;
+}
+
+/* Radio tile grid for project type */
+.project-type-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+.project-tile {
+  cursor: pointer;
+  position: relative;
+}
+.project-tile input[type="radio"] {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+.tile-inner {
+  display: block;
+  padding: 16px 18px;
+  background: rgba(30,40,50,0.6);
+  border: 1.5px solid rgba(184,115,51,0.15);
+  border-radius: var(--r);
+  transition: border-color 0.2s, background 0.2s;
+  cursor: pointer;
+}
+.project-tile:hover .tile-inner {
+  border-color: rgba(184,115,51,0.4);
+  background: rgba(30,40,50,0.9);
+}
+.project-tile input:checked ~ .tile-inner {
+  border-color: var(--copper);
+  background: rgba(184,115,51,0.08);
+}
+.tile-title {
+  display: block;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--cream);
+  margin-bottom: 3px;
+}
+.tile-sub {
+  display: block;
+  font-size: 0.72rem;
+  color: var(--muted);
+  line-height: 1.4;
+}
+/* Full-width tile (fifth option) */
+.project-tile-full {
+  grid-column: 1 / -1;
+}
+/* Shake animation on Next if no selection */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%       { transform: translateX(-6px); }
+  40%       { transform: translateX(6px); }
+  60%       { transform: translateX(-4px); }
+  80%       { transform: translateX(4px); }
+}
+.needs-selection {
+  animation: shake 0.4s ease;
+  border-color: rgba(200,80,60,0.6) !important;
+}
+
+/* Bottom nav row (Back + Next/Submit) */
+.form-nav-row {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-top: 4px;
+}
+.form-next-btn {
+  flex: 1;
+  text-align: center;
+  padding: 14px 24px;
+  font-size: 0.72rem;
+  letter-spacing: 2px;
+}
+.form-back-btn {
+  padding: 14px 20px;
+  font-size: 0.72rem;
+  letter-spacing: 1.5px;
+  flex-shrink: 0;
+}
+
+/* Microcopy beneath submit */
+.form-microcopy {
+  font-size: 0.73rem;
+  color: var(--muted);
+  text-align: center;
+  margin-top: 14px;
+  line-height: 1.6;
+  opacity: 0.8;
+}
+.form-field-note {
+  font-size: 0.67rem;
+  color: var(--muted);
+  opacity: 0.7;
+  display: block;
+  margin-top: 4px;
+}
+
+/* submit button stretches full width */
+.form-submit {
+  flex: 1;
+  padding: 15px 20px;
+  font-size: 0.7rem;
+  letter-spacing: 2px;
+  text-align: center;
+}
+
+@media (max-width: 480px) {
+  .project-type-grid { grid-template-columns: 1fr; }
+  .form-nav-row { flex-direction: column-reverse; gap: 8px; }
+  .form-back-btn { width: 100%; text-align: center; }
+  .form-next-btn, .form-submit { width: 100%; }
+}

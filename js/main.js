@@ -77,25 +77,62 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
   });
 });
 
-// ── LEAD FORM ─────────────────────────────────────────────────
+// ── MULTI-STEP LEAD FORM ───────────────────────────────────────
+// 3-step form: project type → optional description → contact info.
 // Submissions email tim@rockcitylighting.com and log to Google Sheet.
 // Handled by the Google Apps Script — see Rock City Lighting Form in Drive.
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwNarhgPjLV86aeos486Vhkb6Uf-yJ2KsbtyZLYna8QGY1qxKcuyfN4k4720kM6n67uoQ/exec';
 
-document.querySelector('.contact-form form')?.addEventListener('submit', async e => {
+function showStep(step) {
+  document.querySelectorAll('.form-step-panel').forEach(panel => panel.classList.remove('active'));
+  document.querySelectorAll('.form-step-dot').forEach(dot => {
+    const s = parseInt(dot.dataset.step, 10);
+    dot.classList.remove('active', 'completed');
+    if (s === step) dot.classList.add('active');
+    if (s < step)   dot.classList.add('completed');
+  });
+  const panel = document.getElementById(`step-${step}`);
+  if (panel) panel.classList.add('active');
+}
+
+function formNext(currentStep) {
+  if (currentStep === 1) {
+    // Require a project type selection before advancing
+    const grid = document.getElementById('project-type-grid');
+    const selected = grid?.querySelector('input[type="radio"]:checked');
+    if (!selected) {
+      // Shake the grid to signal required selection
+      grid.classList.remove('needs-selection');
+      void grid.offsetWidth; // force reflow so animation re-triggers
+      grid.classList.add('needs-selection');
+      grid.addEventListener('animationend', () => grid.classList.remove('needs-selection'), { once: true });
+      return;
+    }
+  }
+  showStep(currentStep + 1);
+}
+
+function formBack(currentStep) {
+  showStep(currentStep - 1);
+}
+
+// Lead form submission
+document.getElementById('lead-form')?.addEventListener('submit', async e => {
   e.preventDefault();
   const form = e.target;
   const btn  = form.querySelector('.form-submit');
   btn.textContent = 'Sending…';
   btn.disabled = true;
 
+  // Collect the radio value from the named group
+  const projectInput = form.querySelector('input[name="project"]:checked');
+
   const payload = {
-    name:    form.name.value,
-    phone:   form.phone.value,
-    email:   form.email.value,
-    address: form.address.value,
-    project: form.project.value,
-    time:    form.timing.value,
+    name:        form.name.value,
+    phone:       form.phone.value,
+    email:       form.email.value,
+    project:     projectInput ? projectInput.value : '',
+    description: form.description?.value || '',
   };
 
   try {
@@ -108,8 +145,9 @@ document.querySelector('.contact-form form')?.addEventListener('submit', async e
     btn.textContent = "Sent! We'll be in touch soon.";
     btn.style.opacity = '0.7';
     form.reset();
+    showStep(1); // reset form back to step 1
     setTimeout(() => {
-      btn.textContent  = "Let's Get Started";
+      btn.textContent  = 'Get My Free Design Consultation';
       btn.disabled     = false;
       btn.style.opacity = '';
     }, 5000);
