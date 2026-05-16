@@ -19,31 +19,9 @@
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
-    /* ── GATE ── */
-    #gate {
-      position: fixed; inset: 0; background: var(--navy);
-      display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 999;
-    }
-    #gate img { width: 80px; margin-bottom: 24px; opacity: 0.85; }
-    #gate h2 { color: var(--cream); font-family: var(--font-serif); font-size: 1.3rem; margin-bottom: 20px; letter-spacing: 0.05em; }
-    #gate input {
-      padding: 12px 20px; border: 1px solid var(--copper);
-      background: rgba(255,255,255,0.07); color: var(--cream);
-      border-radius: 4px; font-size: 1rem; width: 260px;
-      text-align: center; letter-spacing: 0.1em; outline: none;
-    }
-    #gate input::placeholder { color: rgba(245,240,232,0.35); letter-spacing: 0; }
-    #gate button {
-      margin-top: 14px; padding: 12px 32px; background: var(--copper); color: white;
-      border: none; border-radius: 4px; font-family: var(--font-sans); font-size: 0.9rem;
-      letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; width: 260px;
-    }
-    #gate button:hover { background: var(--gold); }
-    #gate .err { color: #e07070; font-size: 0.85rem; margin-top: 10px; min-height: 18px; }
-
     /* ── APP ── */
     body { background: #e8e8e8; font-family: var(--font-sans); }
-    #app { display: none; min-height: 100vh; }
+    #app { display: block; min-height: 100vh; }
 
     .builder-header {
       background: var(--navy); color: var(--cream);
@@ -412,17 +390,6 @@
 <body>
 
 <!-- GATE -->
-<div id="gate">
-  <img src="/assets/brand/logo-lantern.png" alt="RCL" />
-  <h2>Quote Builder</h2>
-  <form onsubmit="checkPassword(); return false;" autocomplete="on" style="display:contents;">
-    <input type="text" name="username" autocomplete="username" value="admin" style="display:none;" />
-    <input type="password" id="pw-input" name="password" autocomplete="current-password" placeholder="Enter password" />
-    <button type="submit">Enter</button>
-  </form>
-  <div class="err" id="pw-err"></div>
-</div>
-
 <!-- APP -->
 <div id="app">
   <div class="builder-header">
@@ -748,26 +715,10 @@
 </div>
 
 <script>
-  // ── PASSWORD ──────────────────────────────────────────────
-  const PASSWORD = 'batman2026';
-
-  function checkPassword() {
-    const val = document.getElementById('pw-input').value;
-    if (val === PASSWORD) {
-      document.getElementById('gate').style.display = 'none';
-      document.getElementById('app').style.display = 'block';
-      appReady = true;
-      initDate();
-      generateQuote();
-      applyZoom();
-    } else {
-      document.getElementById('pw-err').textContent = 'Incorrect password.';
-      document.getElementById('pw-input').value = '';
-    }
-  }
-  document.getElementById('pw-input').addEventListener('keydown', e => {
-    if (e.key === 'Enter') checkPassword();
-  });
+  // Quote builder — no password required
+  initDate();
+  generateQuote();
+  applyZoom();
 
   function initDate() {
     const now = new Date();
@@ -1280,10 +1231,7 @@
   // ── ZOOM ──────────────────────────────────────────────────
   let zoomLevel = 1.0;
   const ZOOM_STEPS = [0.50, 0.60, 0.75, 1.00, 1.25, 1.50];
-  let appReady = false;
-
   function applyZoom() {
-    if (!appReady) return;
     const doc   = document.getElementById('quote-doc');
     const outer = document.getElementById('doc-outer');
     doc.style.transform       = `scale(${zoomLevel})`;

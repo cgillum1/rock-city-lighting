@@ -2,8 +2,59 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="refresh" content="0; url=/admin/dashboard-mockup.html">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Admin — Rock City Lighting</title>
+<style>
+  :root { --navy: #0d1b2e; --copper: #b87338; --gold: #d4a853; --cream: #f5f0e8; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--navy); font-family: 'Helvetica Neue', Arial, sans-serif;
+    min-height: 100vh; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 36px; padding: 40px 20px;
+  }
+  img { width: 340px; max-width: 80vw; }
+  form { display: flex; flex-direction: column; align-items: center; gap: 12px; width: 260px; }
+  input {
+    width: 100%; padding: 13px 18px; border: 1px solid rgba(184,115,56,0.5);
+    background: rgba(255,255,255,0.06); color: var(--cream);
+    border-radius: 5px; font-size: 1rem; text-align: center;
+    letter-spacing: 0.14em; outline: none;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+  }
+  input::placeholder { color: rgba(245,240,232,0.3); letter-spacing: 0; }
+  input:focus { border-color: var(--copper); }
+  button {
+    width: 100%; padding: 13px; background: var(--copper); color: white;
+    border: none; border-radius: 5px; font-size: 0.82rem; font-weight: 700;
+    letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer;
+    font-family: 'Helvetica Neue', Arial, sans-serif; transition: background 0.15s;
+  }
+  button:hover { background: var(--gold); }
+  .err { color: #e07070; font-size: 0.82rem; min-height: 18px; text-align: center; }
+</style>
 </head>
-<body></body>
+<body>
+  <img src="/assets/brand/logo-horizontal.png" alt="Rock City Lighting">
+  <form onsubmit="login(); return false;">
+    <input type="password" id="pw" placeholder="Password" autofocus />
+    <button type="submit">Enter Admin</button>
+    <div class="err" id="err"></div>
+  </form>
+  <script>
+    // Already logged in? Go straight to dashboard
+    if (sessionStorage.getItem('rcl-admin') === '1') {
+      window.location.replace('/admin/dashboard-mockup.html');
+    }
+    function login() {
+      if (document.getElementById('pw').value === 'batman') {
+        sessionStorage.setItem('rcl-admin', '1');
+        window.location.replace('/admin/dashboard-mockup.html');
+      } else {
+        document.getElementById('err').textContent = 'Incorrect password.';
+        document.getElementById('pw').value = '';
+        document.getElementById('pw').focus();
+      }
+    }
+  </script>
+</body>
 </html>

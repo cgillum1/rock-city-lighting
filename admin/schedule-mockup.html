@@ -1237,6 +1237,7 @@
 </nav>
 
 <script>
+  if (sessionStorage.getItem('rcl-admin') !== '1') window.location.replace('/admin/');
   /* ── SIDEBAR TOGGLE ── */
   function openSidebar() {
     document.getElementById('sidebar').classList.add('open');
