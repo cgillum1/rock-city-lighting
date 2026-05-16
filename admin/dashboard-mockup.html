@@ -44,30 +44,26 @@
   }
 
   .sidebar-logo {
-    padding: 20px 20px 16px;
+    padding: 16px 16px 14px;
     border-bottom: 1px solid rgba(255,255,255,0.07);
     display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
+    background: #fff;
   }
   .sidebar-logo img {
-    width: 36px; height: 36px;
-    object-fit: contain; opacity: 0.9;
-  }
-  .sidebar-logo-text .name {
-    font-family: Georgia, serif;
-    color: var(--copper);
-    font-weight: 700;
-    font-size: 0.82rem;
-    letter-spacing: 0.03em;
-    line-height: 1;
+    width: 188px;
+    height: auto;
+    display: block;
   }
   .sidebar-logo-text .sub {
-    color: rgba(255,255,255,0.28);
-    font-size: 0.6rem;
-    letter-spacing: 0.1em;
+    font-size: 0.58rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
     text-transform: uppercase;
-    margin-top: 3px;
+    color: rgba(255,255,255,0.35);
+    text-align: center;
   }
 
   .sidebar-nav { flex: 1; padding: 10px 0; overflow-y: auto; }
@@ -653,10 +649,9 @@
 <!-- SIDEBAR -->
 <aside class="sidebar" id="sidebar" role="navigation" aria-label="Main navigation">
   <div class="sidebar-logo">
-    <img src="/assets/brand/logo-lantern.png" alt="Rock City Lighting" onerror="this.style.display='none'">
+    <img src="/assets/brand/logo-horizontal.png" alt="Rock City Lighting">
     <div class="sidebar-logo-text">
-      <div class="name">Rock City Lighting</div>
-      <div class="sub">Admin Portal</div>
+      <div class="sub" style="color:rgba(13,27,46,0.45);">Admin Dashboard</div>
     </div>
   </div>
 
