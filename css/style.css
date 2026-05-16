@@ -1342,6 +1342,237 @@ footer::before {
   .guarantees-grid { grid-template-columns: 1fr; }
 }
 
+/* ===== LEAD FORM (lf-*) ===== */
+
+.lf-wrap {
+  /* sits inside .hero-intro-form; inherits the dark card look from contact-form */
+  background: rgba(12,22,34,0.7);
+  border: 1px solid rgba(184,115,51,0.14);
+  border-radius: 10px;
+  padding: 36px 40px 32px;
+  overflow: hidden;
+}
+
+/* Progress bar */
+.lf-progress {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 32px;
+}
+.lf-progress-track {
+  flex: 1;
+  height: 2px;
+  background: rgba(184,115,51,0.12);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.lf-progress-fill {
+  height: 100%;
+  width: 33.33%;
+  background: var(--copper);
+  border-radius: 2px;
+  transition: width 0.45s cubic-bezier(.16,1,.3,1);
+}
+.lf-progress-label {
+  font-size: 0.6rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--copper);
+  font-weight: 600;
+  white-space: nowrap;
+  opacity: 0.75;
+}
+
+/* Step panels — slide in/out */
+.lf-panel {
+  display: none;
+  animation: lfSlideIn 0.38s cubic-bezier(.16,1,.3,1) both;
+}
+.lf-panel.active { display: block; }
+.lf-panel.slide-out {
+  display: block;
+  animation: lfSlideOut 0.28s cubic-bezier(.4,0,1,1) both;
+}
+@keyframes lfSlideIn {
+  from { opacity: 0; transform: translateX(22px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes lfSlideOut {
+  from { opacity: 1; transform: translateX(0); }
+  to   { opacity: 0; transform: translateX(-22px); }
+}
+.lf-panel.slide-in-back {
+  animation: lfSlideInBack 0.38s cubic-bezier(.16,1,.3,1) both;
+}
+@keyframes lfSlideInBack {
+  from { opacity: 0; transform: translateX(-22px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+/* Question heading */
+.lf-question {
+  font-family: var(--font-serif);
+  font-size: 1.22rem;
+  color: var(--cream);
+  font-weight: 600;
+  margin-bottom: 22px;
+  line-height: 1.35;
+}
+.lf-optional {
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  color: var(--muted);
+  font-weight: 400;
+  font-style: italic;
+}
+
+/* Option list — vertical, full-width rows */
+.lf-options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+.lf-option {
+  cursor: pointer;
+  display: block;
+}
+.lf-option input[type="radio"] {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+.lf-option-inner {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 18px;
+  border: 1px solid rgba(184,115,51,0.13);
+  border-radius: 7px;
+  background: rgba(255,255,255,0.025);
+  transition: border-color 0.2s, background 0.2s;
+  cursor: pointer;
+}
+.lf-option:hover .lf-option-inner {
+  border-color: rgba(184,115,51,0.35);
+  background: rgba(184,115,51,0.05);
+}
+.lf-option input:checked ~ .lf-option-inner {
+  border-color: var(--copper);
+  background: rgba(184,115,51,0.09);
+}
+
+/* Radio check circle */
+.lf-option-check {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(184,115,51,0.35);
+  flex-shrink: 0;
+  position: relative;
+  transition: border-color 0.2s;
+}
+.lf-option-check::after {
+  content: '';
+  position: absolute;
+  inset: 4px;
+  border-radius: 50%;
+  background: var(--copper);
+  opacity: 0;
+  transform: scale(0);
+  transition: opacity 0.18s, transform 0.18s cubic-bezier(.16,1,.3,1);
+}
+.lf-option input:checked ~ .lf-option-inner .lf-option-check {
+  border-color: var(--copper);
+}
+.lf-option input:checked ~ .lf-option-inner .lf-option-check::after {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.lf-option-body { display: flex; flex-direction: column; gap: 2px; }
+.lf-option-title {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--cream);
+  line-height: 1.2;
+}
+.lf-option-sub {
+  font-size: 0.72rem;
+  color: var(--muted);
+  line-height: 1.3;
+}
+
+/* Shake when no option selected */
+@keyframes lfShake {
+  0%, 100% { transform: translateX(0); }
+  20%       { transform: translateX(-5px); }
+  40%       { transform: translateX(5px); }
+  60%       { transform: translateX(-3px); }
+  80%       { transform: translateX(3px); }
+}
+.lf-options.needs-selection {
+  animation: lfShake 0.38s ease;
+}
+
+/* Footer row */
+.lf-footer { margin-top: 8px; }
+.lf-footer-split {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.lf-next {
+  padding: 14px 32px;
+  font-size: 0.72rem;
+  letter-spacing: 2px;
+}
+/* Full-width on step 1 (no back link) */
+.lf-footer:not(.lf-footer-split) .lf-next {
+  width: 100%;
+  text-align: center;
+}
+
+/* Back link — not a button, just understated text */
+.lf-back-link {
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.2s;
+  letter-spacing: 0.5px;
+}
+.lf-back-link:hover { color: var(--cream); }
+
+/* Microcopy */
+.lf-microcopy {
+  margin-top: 16px;
+  font-size: 0.71rem;
+  color: var(--muted);
+  opacity: 0.7;
+  text-align: center;
+  line-height: 1.6;
+}
+
+/* Form inputs inside lf-wrap */
+.lf-wrap .form-group { margin-bottom: 14px; }
+.lf-wrap .form-group textarea { min-height: 100px; }
+
+@media (max-width: 480px) {
+  .lf-wrap { padding: 28px 22px 24px; }
+  .lf-footer-split { flex-direction: column-reverse; gap: 10px; align-items: stretch; }
+  .lf-next { width: 100%; text-align: center; }
+  .lf-back-link { text-align: center; }
+}
+
 /* ===== TRUST BAR ===== */
 .trust-bar {
   background: var(--navy-deep);
@@ -1414,188 +1645,3 @@ footer::before {
   font-weight: 600;
 }
 
-/* ===== MULTI-STEP FORM ===== */
-
-/* Step indicator bar */
-.form-steps {
-  display: flex;
-  align-items: center;
-  margin-bottom: 28px;
-  padding-bottom: 20px;
-  border-bottom: 1px solid rgba(184,115,51,0.1);
-}
-.form-step-dot {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  border: 1.5px solid rgba(184,115,51,0.3);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.65rem;
-  font-weight: 700;
-  color: var(--muted);
-  font-family: var(--font-sans);
-  flex-shrink: 0;
-  transition: border-color 0.3s, background 0.3s, color 0.3s;
-}
-.form-step-dot.active {
-  border-color: var(--copper);
-  background: var(--copper);
-  color: var(--navy-deep);
-}
-.form-step-dot.completed {
-  border-color: var(--copper);
-  background: transparent;
-  color: var(--copper);
-}
-.form-step-line {
-  flex: 1;
-  height: 1px;
-  background: rgba(184,115,51,0.18);
-  margin: 0 8px;
-}
-
-/* Step panels */
-.form-step-panel {
-  display: none;
-}
-.form-step-panel.active {
-  display: block;
-}
-
-/* Step label above each panel */
-.form-step-label {
-  font-size: 0.7rem;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color: var(--copper);
-  font-weight: 600;
-  margin-bottom: 16px;
-}
-.form-optional {
-  color: var(--muted);
-  font-size: 0.65rem;
-  letter-spacing: 0.5px;
-  text-transform: none;
-  font-weight: 400;
-}
-
-/* Radio tile grid for project type */
-.project-type-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  margin-bottom: 20px;
-}
-.project-tile {
-  cursor: pointer;
-  position: relative;
-}
-.project-tile input[type="radio"] {
-  position: absolute;
-  opacity: 0;
-  width: 0;
-  height: 0;
-  pointer-events: none;
-}
-.tile-inner {
-  display: block;
-  padding: 16px 18px;
-  background: rgba(30,40,50,0.6);
-  border: 1.5px solid rgba(184,115,51,0.15);
-  border-radius: var(--r);
-  transition: border-color 0.2s, background 0.2s;
-  cursor: pointer;
-}
-.project-tile:hover .tile-inner {
-  border-color: rgba(184,115,51,0.4);
-  background: rgba(30,40,50,0.9);
-}
-.project-tile input:checked ~ .tile-inner {
-  border-color: var(--copper);
-  background: rgba(184,115,51,0.08);
-}
-.tile-title {
-  display: block;
-  font-size: 0.82rem;
-  font-weight: 700;
-  color: var(--cream);
-  margin-bottom: 3px;
-}
-.tile-sub {
-  display: block;
-  font-size: 0.72rem;
-  color: var(--muted);
-  line-height: 1.4;
-}
-/* Full-width tile (fifth option) */
-.project-tile-full {
-  grid-column: 1 / -1;
-}
-/* Shake animation on Next if no selection */
-@keyframes shake {
-  0%, 100% { transform: translateX(0); }
-  20%       { transform: translateX(-6px); }
-  40%       { transform: translateX(6px); }
-  60%       { transform: translateX(-4px); }
-  80%       { transform: translateX(4px); }
-}
-.needs-selection {
-  animation: shake 0.4s ease;
-  border-color: rgba(200,80,60,0.6) !important;
-}
-
-/* Bottom nav row (Back + Next/Submit) */
-.form-nav-row {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-  margin-top: 4px;
-}
-.form-next-btn {
-  flex: 1;
-  text-align: center;
-  padding: 14px 24px;
-  font-size: 0.72rem;
-  letter-spacing: 2px;
-}
-.form-back-btn {
-  padding: 14px 20px;
-  font-size: 0.72rem;
-  letter-spacing: 1.5px;
-  flex-shrink: 0;
-}
-
-/* Microcopy beneath submit */
-.form-microcopy {
-  font-size: 0.73rem;
-  color: var(--muted);
-  text-align: center;
-  margin-top: 14px;
-  line-height: 1.6;
-  opacity: 0.8;
-}
-.form-field-note {
-  font-size: 0.67rem;
-  color: var(--muted);
-  opacity: 0.7;
-  display: block;
-  margin-top: 4px;
-}
-
-/* submit button stretches full width */
-.form-submit {
-  flex: 1;
-  padding: 15px 20px;
-  font-size: 0.7rem;
-  letter-spacing: 2px;
-  text-align: center;
-}
-
-@media (max-width: 480px) {
-  .project-type-grid { grid-template-columns: 1fr; }
-  .form-nav-row { flex-direction: column-reverse; gap: 8px; }
-  .form-back-btn { width: 100%; text-align: center; }
-  .form-next-btn, .form-submit { width: 100%; }
-}

@@ -83,38 +83,60 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 // Handled by the Google Apps Script — see Rock City Lighting Form in Drive.
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwNarhgPjLV86aeos486Vhkb6Uf-yJ2KsbtyZLYna8QGY1qxKcuyfN4k4720kM6n67uoQ/exec';
 
-function showStep(step) {
-  document.querySelectorAll('.form-step-panel').forEach(panel => panel.classList.remove('active'));
-  document.querySelectorAll('.form-step-dot').forEach(dot => {
-    const s = parseInt(dot.dataset.step, 10);
-    dot.classList.remove('active', 'completed');
-    if (s === step) dot.classList.add('active');
-    if (s < step)   dot.classList.add('completed');
-  });
-  const panel = document.getElementById(`step-${step}`);
-  if (panel) panel.classList.add('active');
+// ── MULTI-STEP FORM NAVIGATION ─────────────────────────────────
+let _lfCurrentStep = 1;
+const LF_TOTAL = 3;
+
+function lfUpdateProgress(step) {
+  const fill  = document.getElementById('lf-progress-fill');
+  const label = document.getElementById('lf-progress-label');
+  if (fill)  fill.style.width = `${(step / LF_TOTAL) * 100}%`;
+  if (label) label.textContent = `Step ${step} of ${LF_TOTAL}`;
+}
+
+function showStep(step, direction = 'forward') {
+  const current = document.querySelector('.lf-panel.active');
+  const next    = document.getElementById(`step-${step}`);
+  if (!next || current === next) return;
+
+  if (current) {
+    current.classList.add('slide-out');
+    current.addEventListener('animationend', () => {
+      current.classList.remove('active', 'slide-out');
+    }, { once: true });
+  }
+
+  next.style.display = 'block';
+  next.classList.remove('active', 'slide-in-back');
+  void next.offsetWidth;
+  if (direction === 'back') next.classList.add('slide-in-back');
+  next.classList.add('active');
+
+  _lfCurrentStep = step;
+  lfUpdateProgress(step);
 }
 
 function formNext(currentStep) {
   if (currentStep === 1) {
-    // Require a project type selection before advancing
-    const grid = document.getElementById('project-type-grid');
+    const grid     = document.getElementById('project-type-grid');
     const selected = grid?.querySelector('input[type="radio"]:checked');
     if (!selected) {
-      // Shake the grid to signal required selection
       grid.classList.remove('needs-selection');
-      void grid.offsetWidth; // force reflow so animation re-triggers
+      void grid.offsetWidth;
       grid.classList.add('needs-selection');
       grid.addEventListener('animationend', () => grid.classList.remove('needs-selection'), { once: true });
       return;
     }
   }
-  showStep(currentStep + 1);
+  showStep(currentStep + 1, 'forward');
 }
 
 function formBack(currentStep) {
-  showStep(currentStep - 1);
+  showStep(currentStep - 1, 'back');
 }
+
+// Init progress on load
+lfUpdateProgress(1);
 
 // Lead form submission
 document.getElementById('lead-form')?.addEventListener('submit', async e => {
@@ -145,9 +167,9 @@ document.getElementById('lead-form')?.addEventListener('submit', async e => {
     btn.textContent = "Sent! We'll be in touch soon.";
     btn.style.opacity = '0.7';
     form.reset();
-    showStep(1); // reset form back to step 1
+    showStep(1, 'back'); // animate back to step 1
     setTimeout(() => {
-      btn.textContent  = 'Get My Free Design Consultation';
+      btn.textContent  = 'Request a Consultation';
       btn.disabled     = false;
       btn.style.opacity = '';
     }, 5000);

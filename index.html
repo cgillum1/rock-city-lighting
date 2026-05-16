@@ -93,95 +93,109 @@
       </p>
       <p class="hero-intro-sub reveal reveal-delay-2">Tell us about your property and what you're hoping to achieve. We'll get back to you within one business day.</p>
 
-      <div class="contact-form" style="margin-top:28px;">
+      <div class="lf-wrap" style="margin-top:32px;">
         <form id="lead-form" novalidate>
 
-          <!-- Step indicator -->
-          <div class="form-steps">
-            <div class="form-step-dot active" data-step="1">1</div>
-            <div class="form-step-line"></div>
-            <div class="form-step-dot" data-step="2">2</div>
-            <div class="form-step-line"></div>
-            <div class="form-step-dot" data-step="3">3</div>
+          <!-- Progress bar -->
+          <div class="lf-progress" aria-hidden="true">
+            <div class="lf-progress-track">
+              <div class="lf-progress-fill" id="lf-progress-fill"></div>
+            </div>
+            <span class="lf-progress-label" id="lf-progress-label">Step 1 of 3</span>
           </div>
 
           <!-- Step 1: Project type -->
-          <div class="form-step-panel active" id="step-1">
-            <p class="form-step-label">What kind of project?</p>
-            <div class="project-type-grid" id="project-type-grid">
-              <label class="project-tile">
+          <div class="lf-panel active" id="step-1">
+            <p class="lf-question">What brings you here?</p>
+            <div class="lf-options" id="project-type-grid">
+              <label class="lf-option">
                 <input type="radio" name="project" value="New Install" />
-                <span class="tile-inner">
-                  <span class="tile-title">New Install</span>
-                  <span class="tile-sub">Light your property from scratch</span>
+                <span class="lf-option-inner">
+                  <span class="lf-option-check"></span>
+                  <span class="lf-option-body">
+                    <span class="lf-option-title">New Installation</span>
+                    <span class="lf-option-sub">Light your property from scratch</span>
+                  </span>
                 </span>
               </label>
-              <label class="project-tile">
+              <label class="lf-option">
                 <input type="radio" name="project" value="Upgrade Existing System" />
-                <span class="tile-inner">
-                  <span class="tile-title">Upgrade Existing</span>
-                  <span class="tile-sub">Update or expand what you have</span>
+                <span class="lf-option-inner">
+                  <span class="lf-option-check"></span>
+                  <span class="lf-option-body">
+                    <span class="lf-option-title">Upgrade Existing System</span>
+                    <span class="lf-option-sub">Expand or modernize what you have</span>
+                  </span>
                 </span>
               </label>
-              <label class="project-tile">
+              <label class="lf-option">
                 <input type="radio" name="project" value="Seasonal Color Change" />
-                <span class="tile-inner">
-                  <span class="tile-title">Seasonal Colors</span>
-                  <span class="tile-sub">Swap to holiday or seasonal color</span>
+                <span class="lf-option-inner">
+                  <span class="lf-option-check"></span>
+                  <span class="lf-option-body">
+                    <span class="lf-option-title">Seasonal Color Change</span>
+                    <span class="lf-option-sub">Holiday or seasonal lighting</span>
+                  </span>
                 </span>
               </label>
-              <label class="project-tile">
+              <label class="lf-option">
                 <input type="radio" name="project" value="Maintenance / Tune-Up" />
-                <span class="tile-inner">
-                  <span class="tile-title">Maintenance</span>
-                  <span class="tile-sub">Service or tune-up existing lights</span>
+                <span class="lf-option-inner">
+                  <span class="lf-option-check"></span>
+                  <span class="lf-option-body">
+                    <span class="lf-option-title">Maintenance &amp; Tune-Up</span>
+                    <span class="lf-option-sub">Service existing lights</span>
+                  </span>
                 </span>
               </label>
-              <label class="project-tile project-tile-full">
+              <label class="lf-option">
                 <input type="radio" name="project" value="Not Sure Yet" />
-                <span class="tile-inner">
-                  <span class="tile-title">Not Sure Yet</span>
-                  <span class="tile-sub">Just exploring — that's totally fine</span>
+                <span class="lf-option-inner">
+                  <span class="lf-option-check"></span>
+                  <span class="lf-option-body">
+                    <span class="lf-option-title">Not Sure Yet</span>
+                    <span class="lf-option-sub">Just exploring — that's completely fine</span>
+                  </span>
                 </span>
               </label>
             </div>
-            <button type="button" class="btn btn-primary form-next-btn" onclick="formNext(1)">Next &rarr;</button>
+            <div class="lf-footer">
+              <button type="button" class="btn btn-primary lf-next" onclick="formNext(1)">Continue</button>
+            </div>
           </div>
 
           <!-- Step 2: Optional description -->
-          <div class="form-step-panel" id="step-2">
-            <p class="form-step-label">Tell us about it <span class="form-optional">(optional)</span></p>
+          <div class="lf-panel" id="step-2">
+            <p class="lf-question">Tell us about the property <span class="lf-optional">— optional</span></p>
             <div class="form-group">
-              <label for="hi-desc">What are you hoping to light up?</label>
-              <textarea id="hi-desc" name="description" placeholder="Front of house, backyard, pool area, driveway, trees..."></textarea>
+              <textarea id="hi-desc" name="description" placeholder="Front entry, backyard, pool, trees, driveway — whatever you're thinking..."></textarea>
             </div>
-            <div class="form-nav-row">
-              <button type="button" class="btn btn-outline form-back-btn" onclick="formBack(2)">&larr; Back</button>
-              <button type="button" class="btn btn-primary form-next-btn" onclick="formNext(2)">Next &rarr;</button>
+            <div class="lf-footer lf-footer-split">
+              <button type="button" class="lf-back-link" onclick="formBack(2)">&larr; Back</button>
+              <button type="button" class="btn btn-primary lf-next" onclick="formNext(2)">Continue</button>
             </div>
           </div>
 
           <!-- Step 3: Contact info -->
-          <div class="form-step-panel" id="step-3">
-            <p class="form-step-label">How do we reach you?</p>
+          <div class="lf-panel" id="step-3">
+            <p class="lf-question">How do we reach you?</p>
             <div class="form-group">
-              <label for="hi-name">Your Name</label>
-              <input type="text" id="hi-name" name="name" autocomplete="name" autocorrect="off" autocapitalize="words" placeholder="Tim Smith" required />
+              <label for="hi-name">Name</label>
+              <input type="text" id="hi-name" name="name" autocomplete="name" autocorrect="off" autocapitalize="words" placeholder="Your name" required />
             </div>
             <div class="form-group">
-              <label for="hi-email">Email Address</label>
+              <label for="hi-phone">Phone</label>
+              <input type="text" inputmode="tel" id="hi-phone" name="phone" autocomplete="tel" placeholder="(501) 555-0000" required oninput="formatPhone(this)" />
+            </div>
+            <div class="form-group">
+              <label for="hi-email">Email</label>
               <input type="email" id="hi-email" name="email" autocomplete="email" placeholder="you@email.com" required />
             </div>
-            <div class="form-group">
-              <label for="hi-phone">Phone Number</label>
-              <input type="text" inputmode="tel" id="hi-phone" name="phone" autocomplete="tel" placeholder="(501) 555-0000" required oninput="formatPhone(this)" />
-              <span class="form-field-note">We call you — no sales robots, no spam texts.</span>
+            <div class="lf-footer lf-footer-split">
+              <button type="button" class="lf-back-link" onclick="formBack(3)">&larr; Back</button>
+              <button type="submit" class="btn btn-primary lf-next form-submit">Request a Consultation</button>
             </div>
-            <div class="form-nav-row">
-              <button type="button" class="btn btn-outline form-back-btn" onclick="formBack(3)">&larr; Back</button>
-              <button type="submit" class="btn btn-primary form-submit">Get My Free Design Consultation</button>
-            </div>
-            <p class="form-microcopy">We respond within 1 business day. No obligation — just a conversation about your property.</p>
+            <p class="lf-microcopy">We'll be in touch within one business day. No pressure, no obligation.</p>
           </div>
 
         </form>
