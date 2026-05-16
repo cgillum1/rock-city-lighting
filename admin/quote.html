@@ -166,114 +166,126 @@
        QUOTE DOCUMENT
     ══════════════════════════════════════════ */
     #quote-doc {
-      width: 800px; background: var(--navy);
+      width: 800px;
       box-shadow: 0 4px 40px rgba(0,0,0,0.3);
-      font-family: var(--font-sans); color: var(--cream);
+      font-family: var(--font-sans);
     }
 
+    /* ── Dark header ── */
     .q-doc-header {
-      padding: 48px 60px 36px;
+      background: var(--navy);
+      padding: 44px 60px 40px;
       display: flex; flex-direction: column; align-items: center;
-      border-bottom: 1px solid rgba(184,115,56,0.25);
     }
-    .q-doc-header img { width: 64px; margin-bottom: 16px; }
-    .q-brand-name { font-family: var(--font-serif); font-size: 2rem; color: var(--cream); letter-spacing: 0.06em; line-height: 1; }
-    .q-brand-name em { color: var(--copper); font-style: normal; }
-    .q-brand-sub { font-size: 0.65rem; letter-spacing: 0.22em; text-transform: uppercase; color: rgba(245,240,232,0.5); margin-top: 6px; }
-    .q-diamond { width: 8px; height: 8px; background: var(--copper); transform: rotate(45deg); margin: 20px auto; }
-    .q-doc-title { font-family: var(--font-serif); font-size: 3.8rem; color: var(--cream); letter-spacing: 0.28em; text-transform: uppercase; line-height: 1; }
-    .q-title-rule { width: 100%; display: flex; align-items: center; gap: 14px; margin-top: 18px; }
-    .q-title-rule span { flex: 1; height: 1px; background: rgba(184,115,56,0.35); }
+    .q-doc-header .q-full-logo { width: 220px; margin-bottom: 28px; display: block; }
+    .q-copper-bar { height: 4px; background: linear-gradient(90deg, transparent, var(--copper) 20%, var(--gold) 50%, var(--copper) 80%, transparent); }
+    .q-doc-title-wrap {
+      background: var(--navy);
+      padding: 28px 60px 32px;
+      display: flex; flex-direction: column; align-items: center;
+      border-bottom: 3px solid var(--copper);
+    }
+    .q-diamond { width: 7px; height: 7px; background: var(--copper); transform: rotate(45deg); margin-bottom: 16px; }
+    .q-doc-title { font-family: var(--font-serif); font-size: 3.6rem; color: var(--cream); letter-spacing: 0.32em; text-transform: uppercase; line-height: 1; }
+
+    /* ── Light body ── */
+    .q-body { background: #f7f3ee; }
 
     .q-info-block {
       display: grid; grid-template-columns: 1fr 1px 1fr;
-      margin: 0 60px; padding: 36px 0;
-      border-bottom: 1px solid rgba(184,115,56,0.2);
+      margin: 0; padding: 36px 60px;
+      border-bottom: 1px solid rgba(15,31,56,0.1);
+      background: #f7f3ee;
     }
-    .q-info-divider { background: rgba(184,115,56,0.2); }
+    .q-info-divider { background: rgba(184,115,56,0.3); }
     .q-info-col { padding: 0 32px; }
     .q-info-col:first-child { padding-left: 0; }
     .q-info-col:last-child { padding-right: 0; }
     .q-info-label { font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.2em; color: var(--copper); font-weight: 700; margin-bottom: 12px; }
-    .q-info-name { font-family: var(--font-serif); font-size: 1.45rem; color: var(--cream); margin-bottom: 8px; line-height: 1.2; }
-    .q-info-detail { font-size: 0.88rem; color: rgba(245,240,232,0.72); line-height: 1.85; }
+    .q-info-name { font-family: var(--font-serif); font-size: 1.45rem; color: var(--navy); margin-bottom: 8px; line-height: 1.2; }
+    .q-info-detail { font-size: 0.88rem; color: #4a5a70; line-height: 1.85; }
 
     .q-meta-row {
-      margin: 0 60px; padding: 16px 0;
+      padding: 14px 60px;
       display: flex; justify-content: space-between;
+      background: var(--navy);
       border-bottom: 1px solid rgba(184,115,56,0.2);
     }
     .q-meta-item { display: flex; align-items: baseline; gap: 12px; }
-    .q-meta-label { font-size: 0.62rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--copper); font-weight: 700; }
-    .q-meta-value { font-family: var(--font-serif); font-size: 1rem; color: var(--cream); }
+    .q-meta-label { font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--copper); font-weight: 700; }
+    .q-meta-value { font-family: var(--font-serif); font-size: 0.95rem; color: var(--cream); }
 
     .q-section {
-      margin: 32px 60px 0; padding-bottom: 32px;
-      border-bottom: 1px solid rgba(184,115,56,0.2);
+      margin: 0; padding: 28px 60px;
+      border-bottom: 1px solid rgba(15,31,56,0.1);
+      background: #f7f3ee;
     }
     .q-section-label { font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.2em; color: var(--copper); font-weight: 700; margin-bottom: 14px; }
-    .q-narrative { font-size: 0.92rem; color: rgba(245,240,232,0.82); line-height: 1.85; }
+    .q-narrative { font-size: 0.92rem; color: #2a3a50; line-height: 1.85; }
 
-    .q-scope-card { padding: 14px 18px; margin-bottom: 10px; border-left: 3px solid var(--copper); background: rgba(255,255,255,0.04); border-radius: 0 4px 4px 0; }
+    .q-scope-card { padding: 13px 16px; margin-bottom: 8px; border-left: 3px solid var(--copper); background: white; border-radius: 0 4px 4px 0; box-shadow: 0 1px 3px rgba(15,31,56,0.07); }
     .q-scope-card:last-child { margin-bottom: 0; }
-    .q-scope-card-title { font-size: 0.76rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--cream); margin-bottom: 5px; }
-    .q-scope-card-desc { font-size: 0.85rem; color: rgba(245,240,232,0.62); line-height: 1.65; }
+    .q-scope-card-title { font-size: 0.74rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--navy); margin-bottom: 4px; }
+    .q-scope-card-desc { font-size: 0.84rem; color: #4a5a70; line-height: 1.65; }
 
-    .q-table-wrap { margin: 32px 60px 0; padding-bottom: 0; }
+    .q-table-wrap { margin: 0; padding: 28px 60px 0; background: #f7f3ee; }
     .q-table { width: 100%; border-collapse: collapse; }
-    .q-table thead tr { border-bottom: 1px solid rgba(184,115,56,0.4); }
-    .q-table thead th { font-size: 0.62rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--copper); font-weight: 700; padding-bottom: 12px; text-align: left; }
+    .q-table thead tr { border-bottom: 2px solid var(--copper); }
+    .q-table thead th { font-size: 0.62rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--copper); font-weight: 700; padding-bottom: 10px; text-align: left; }
     .q-table thead th:not(:first-child) { text-align: center; }
     .q-table thead th:last-child { text-align: right; }
-    .q-table tbody tr { border-bottom: 1px solid rgba(245,240,232,0.07); }
-    .q-table tbody td { padding: 15px 0; font-size: 0.9rem; color: rgba(245,240,232,0.85); vertical-align: top; }
+    .q-table tbody tr { border-bottom: 1px solid rgba(15,31,56,0.08); }
+    .q-table tbody td { padding: 14px 0; font-size: 0.9rem; color: #2a3a50; vertical-align: top; }
     .q-table tbody td:not(:first-child) { text-align: center; }
     .q-table tbody td:last-child { text-align: right; }
-    .q-table-desc { font-weight: 600; color: var(--cream); }
+    .q-table-desc { font-weight: 600; color: var(--navy); }
 
-    .q-total-wrap { margin: 0 60px; padding: 24px 0 32px; display: flex; justify-content: flex-end; }
+    .q-total-wrap { margin: 0; padding: 0 60px 28px; background: #f7f3ee; display: flex; justify-content: flex-end; }
     .q-total-box {
-      border: 1px solid var(--copper); border-radius: 2px;
-      padding: 16px 28px; display: flex; align-items: center; gap: 48px; min-width: 320px;
+      background: var(--navy);
+      padding: 18px 32px; display: flex; align-items: center; gap: 48px; min-width: 340px;
+      border-radius: 3px; margin-top: 20px;
     }
     .q-total-label { font-size: 0.62rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--copper); font-weight: 700; }
     .q-total-amount { font-family: var(--font-serif); font-size: 2.2rem; color: var(--cream); margin-left: auto; }
 
     .q-payment {
-      margin: 0 60px 32px;
-      padding: 16px 20px;
-      background: rgba(184,115,56,0.08);
-      border: 1px solid rgba(184,115,56,0.2); border-radius: 4px;
+      padding: 18px 60px 20px;
+      background: #f0ebe3;
+      border-top: 1px solid rgba(184,115,56,0.2);
+      border-bottom: 1px solid rgba(184,115,56,0.2);
       display: flex; align-items: flex-start; gap: 14px;
     }
-    .q-payment-icon { color: var(--copper); font-size: 1.1rem; flex-shrink: 0; margin-top: 2px; }
-    .q-payment-label { font-size: 0.62rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--copper); font-weight: 700; margin-bottom: 5px; }
-    .q-payment-text { font-size: 0.85rem; color: rgba(245,240,232,0.7); line-height: 1.65; }
+    .q-payment-icon { color: var(--copper); font-size: 1rem; flex-shrink: 0; margin-top: 3px; }
+    .q-payment-label { font-size: 0.62rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--copper); font-weight: 700; margin-bottom: 4px; }
+    .q-payment-text { font-size: 0.85rem; color: #3a4a5e; line-height: 1.65; }
 
     .q-bottom-row {
-      margin: 0 60px; padding: 32px 0;
+      padding: 32px 60px;
       display: grid; grid-template-columns: 1fr 1px 1fr; gap: 0;
-      border-top: 1px solid rgba(184,115,56,0.2);
+      background: #f7f3ee;
+      border-top: 1px solid rgba(15,31,56,0.1);
     }
-    .q-bottom-divider { background: rgba(184,115,56,0.2); }
+    .q-bottom-divider { background: rgba(184,115,56,0.25); }
     .q-bottom-col { padding: 0 32px; }
     .q-bottom-col:first-child { padding-left: 0; }
     .q-bottom-col:last-child { padding-right: 0; }
     .q-bottom-label { font-size: 0.62rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--copper); font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
-    .q-bottom-text { font-size: 0.85rem; color: rgba(245,240,232,0.7); line-height: 1.7; }
+    .q-bottom-text { font-size: 0.84rem; color: #3a4a5e; line-height: 1.75; }
     .q-notes-lines { margin-top: 8px; }
-    .q-notes-line { border-bottom: 1px solid rgba(245,240,232,0.12); height: 28px; }
+    .q-notes-line { border-bottom: 1px solid rgba(15,31,56,0.15); height: 28px; }
 
     .q-sig-row {
-      margin: 0 60px; padding: 32px 0;
+      padding: 28px 60px 32px;
       display: grid; grid-template-columns: 1fr 1fr; gap: 48px;
-      border-top: 1px solid rgba(184,115,56,0.2);
+      background: white;
+      border-top: 3px solid var(--copper);
     }
     .q-sig-col .q-sig-label { font-size: 0.62rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--copper); font-weight: 700; margin-bottom: 36px; }
-    .q-sig-line { border-bottom: 1px solid rgba(245,240,232,0.3); padding-bottom: 8px; }
-    .q-sig-sublabel { font-size: 0.78rem; color: rgba(245,240,232,0.4); margin-top: 8px; text-align: center; }
+    .q-sig-line { border-bottom: 1px solid #aab; padding-bottom: 8px; }
+    .q-sig-sublabel { font-size: 0.78rem; color: #8090a0; margin-top: 8px; text-align: center; }
 
-    .q-doc-footer { padding: 20px 60px; border-top: 1px solid rgba(184,115,56,0.2); display: flex; justify-content: center; }
+    .q-doc-footer { padding: 18px 60px; background: var(--navy); display: flex; justify-content: center; }
     .q-footer-text { font-size: 0.68rem; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(245,240,232,0.3); }
   </style>
 </head>
@@ -465,18 +477,15 @@
       <div id="quote-doc">
 
         <div class="q-doc-header">
-          <img src="/assets/brand/logo-lantern.png" onerror="this.style.display='none'" alt="Rock City Lighting" />
-          <div class="q-brand-name">Rock City <em>Lighting</em></div>
-          <div class="q-brand-sub">Residential Exterior Lighting</div>
+          <img src="/assets/brand/logo-stacked.png" class="q-full-logo" alt="Rock City Lighting" />
+        </div>
+        <div class="q-copper-bar"></div>
+        <div class="q-doc-title-wrap">
           <div class="q-diamond"></div>
           <div class="q-doc-title">Quote</div>
-          <div class="q-title-rule">
-            <span></span>
-            <svg width="10" height="10" viewBox="0 0 10 10"><rect x="2" y="2" width="6" height="6" fill="#b87338" transform="rotate(45 5 5)"/></svg>
-            <span></span>
-          </div>
         </div>
 
+        <div class="q-body">
         <div class="q-info-block">
           <div class="q-info-col">
             <div class="q-info-label">Prepared For</div>
@@ -573,6 +582,7 @@
           </div>
         </div>
 
+        </div><!-- /q-body -->
         <div class="q-doc-footer">
           <div class="q-footer-text">Thank you for choosing Rock City Lighting</div>
         </div>
