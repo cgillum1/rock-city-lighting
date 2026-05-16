@@ -436,7 +436,7 @@
         <div class="field"><label>ZIP</label><input type="text" id="client-zip" placeholder="72211" inputmode="numeric" maxlength="10" /></div>
       </div>
       <div class="field-row">
-        <div class="field"><label>Phone</label><input type="tel" id="client-phone" placeholder="(501) 555-0100" inputmode="tel" /></div>
+        <div class="field"><label>Phone</label><input type="text" inputmode="tel" id="client-phone" placeholder="(501) 555-0100" oninput="formatPhone(this);liveUpdate()" /></div>
         <div class="field"><label>Email</label><input type="text" id="client-email" placeholder="client@email.com" /></div>
       </div>
 
@@ -461,56 +461,56 @@
       <div class="zones" id="zones-container">
 
         <div class="zone-item">
-          <div class="zone-header" onclick="toggleZone(this,event)">
-            <input type="checkbox" id="z-entry" /><label for="z-entry">Architectural Uplighting</label>
+          <div class="zone-header" onclick="zoneHeaderClick(event,'z-entry')">
+            <input type="checkbox" id="z-entry" onchange="zoneChanged(this)" /><label for="z-entry" onclick="event.stopPropagation()">Architectural Uplighting</label>
           </div>
           <div class="zone-body">
-            <div class="field"><textarea id="z-entry-notes" placeholder="e.g. Uplighting on front columns, oak trees, and stone facade — warm white 3000K"></textarea></div>
+            <div class="field"><textarea id="z-entry-notes" placeholder="e.g. Uplighting on front columns, oak trees, and stone facade — warm white 3000K" oninput="liveUpdate()"></textarea></div>
           </div>
         </div>
 
         <div class="zone-item">
-          <div class="zone-header" onclick="toggleZone(this,event)">
-            <input type="checkbox" id="z-pathway" /><label for="z-pathway">Pathway Lighting</label>
+          <div class="zone-header" onclick="zoneHeaderClick(event,'z-pathway')">
+            <input type="checkbox" id="z-pathway" onchange="zoneChanged(this)" /><label for="z-pathway" onclick="event.stopPropagation()">Pathway Lighting</label>
           </div>
           <div class="zone-body">
-            <div class="field"><textarea id="z-pathway-notes" placeholder="e.g. 8 step lights on front staircase, pathway fixtures from driveway to side gate"></textarea></div>
+            <div class="field"><textarea id="z-pathway-notes" placeholder="e.g. 8 step lights on front staircase, pathway fixtures from driveway to side gate" oninput="liveUpdate()"></textarea></div>
           </div>
         </div>
 
         <div class="zone-item">
-          <div class="zone-header" onclick="toggleZone(this,event)">
-            <input type="checkbox" id="z-porch" /><label for="z-porch">Porch & Entry Lighting</label>
+          <div class="zone-header" onclick="zoneHeaderClick(event,'z-porch')">
+            <input type="checkbox" id="z-porch" onchange="zoneChanged(this)" /><label for="z-porch" onclick="event.stopPropagation()">Porch & Entry Lighting</label>
           </div>
           <div class="zone-body">
-            <div class="field"><textarea id="z-porch-notes" placeholder="e.g. Downlights on covered porch ceiling, wall-wash on front door surround"></textarea></div>
+            <div class="field"><textarea id="z-porch-notes" placeholder="e.g. Downlights on covered porch ceiling, wall-wash on front door surround" oninput="liveUpdate()"></textarea></div>
           </div>
         </div>
 
         <div class="zone-item">
-          <div class="zone-header" onclick="toggleZone(this,event)">
-            <input type="checkbox" id="z-landscape" /><label for="z-landscape">Landscape Lighting</label>
+          <div class="zone-header" onclick="zoneHeaderClick(event,'z-landscape')">
+            <input type="checkbox" id="z-landscape" onchange="zoneChanged(this)" /><label for="z-landscape" onclick="event.stopPropagation()">Landscape Lighting</label>
           </div>
           <div class="zone-body">
-            <div class="field"><textarea id="z-landscape-notes" placeholder="e.g. Bed lighting along front border, accent fixtures on ornamental grasses"></textarea></div>
+            <div class="field"><textarea id="z-landscape-notes" placeholder="e.g. Bed lighting along front border, accent fixtures on ornamental grasses" oninput="liveUpdate()"></textarea></div>
           </div>
         </div>
 
         <div class="zone-item">
-          <div class="zone-header" onclick="toggleZone(this,event)">
-            <input type="checkbox" id="z-outdoor" /><label for="z-outdoor">Outdoor Living & Entertaining</label>
+          <div class="zone-header" onclick="zoneHeaderClick(event,'z-outdoor')">
+            <input type="checkbox" id="z-outdoor" onchange="zoneChanged(this)" /><label for="z-outdoor" onclick="event.stopPropagation()">Outdoor Living & Entertaining</label>
           </div>
           <div class="zone-body">
-            <div class="field"><textarea id="z-outdoor-notes" placeholder="e.g. String lights over pergola, downlights on covered patio ceiling"></textarea></div>
+            <div class="field"><textarea id="z-outdoor-notes" placeholder="e.g. String lights over pergola, downlights on covered patio ceiling" oninput="liveUpdate()"></textarea></div>
           </div>
         </div>
 
         <div class="zone-item">
-          <div class="zone-header" onclick="toggleZone(this,event)">
-            <input type="checkbox" id="z-other" /><label for="z-other">Other / Custom</label>
+          <div class="zone-header" onclick="zoneHeaderClick(event,'z-other')">
+            <input type="checkbox" id="z-other" onchange="zoneChanged(this)" /><label for="z-other" onclick="event.stopPropagation()">Other / Custom</label>
           </div>
           <div class="zone-body">
-            <div class="field"><textarea id="z-other-notes" placeholder="Describe any additional work..."></textarea></div>
+            <div class="field"><textarea id="z-other-notes" placeholder="Describe any additional work..." oninput="liveUpdate()"></textarea></div>
           </div>
         </div>
 
@@ -806,10 +806,6 @@
   function liveUpdate() { clearTimeout(debounceTimer); debounceTimer = setTimeout(generateQuote, 180); }
 
   document.addEventListener('DOMContentLoaded', () => {
-    // Phone
-    const ph = document.getElementById('client-phone');
-    ph.addEventListener('input', () => { formatPhone(ph); liveUpdate(); });
-
     // Manual total
     const mt = document.getElementById('manual-total');
     mt.addEventListener('input', () => { formatCurrency(mt); liveUpdate(); });
@@ -841,23 +837,18 @@
   });
 
   // ── ZONE TOGGLE ───────────────────────────────────────────
-  function toggleZone(header, evt) {
-    const cb   = header.querySelector('input[type=checkbox]');
-    const body = header.closest('.zone-item').querySelector('.zone-body');
-    const tgt  = (evt && evt.target) ? evt.target : null;
-    if (tgt && tgt.tagName === 'LABEL') {
-      // Label click: browser already toggled the checkbox via 'for', just update body
-      // Use timeout so the browser's toggle has applied
-      setTimeout(() => { body.classList.toggle('open', cb.checked); liveUpdate(); }, 0);
-      return;
-    }
-    if (tgt && tgt.tagName === 'INPUT') {
-      body.classList.toggle('open', cb.checked);
-    } else {
-      cb.checked = !cb.checked;
-      body.classList.toggle('open', cb.checked);
-    }
+  // Called by onchange on each checkbox — most reliable across iOS/Android/desktop
+  function zoneChanged(cb) {
+    const body = cb.closest('.zone-item').querySelector('.zone-body');
+    body.classList.toggle('open', cb.checked);
     liveUpdate();
+  }
+  // Called by onclick on the header background — just forward to the checkbox
+  function zoneHeaderClick(evt, cbId) {
+    if (evt.target.tagName === 'INPUT' || evt.target.tagName === 'LABEL') return;
+    const cb = document.getElementById(cbId);
+    cb.checked = !cb.checked;
+    zoneChanged(cb);
   }
 
   // ── SERVICE ADD-ONS ──────────────────────────────────────
@@ -1075,7 +1066,8 @@
   };
 
   // ── GENERATE QUOTE ────────────────────────────────────────
-  function generateQuote() {
+  function generateQuote() { try { _generateQuote(); } catch(e) { console.error('generateQuote error:', e); } }
+  function _generateQuote() {
     const name        = document.getElementById('client-name').value.trim();
     const street      = document.getElementById('client-address').value.trim();
     const city        = document.getElementById('client-city').value.trim();
