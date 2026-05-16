@@ -697,6 +697,15 @@
     // Default valid-until = 30 days from now
     const exp = new Date(now); exp.setDate(exp.getDate() + 30);
     document.getElementById('valid-until').value = exp.toISOString().split('T')[0];
+    // Auto-fill quote number if blank
+    const qField = document.getElementById('quote-num');
+    if (!qField.value.trim()) {
+      const year = now.getFullYear();
+      const key  = `rcl-quote-seq-${year}`;
+      const next = (parseInt(localStorage.getItem(key) || '0', 10)) + 1;
+      localStorage.setItem(key, next);
+      qField.value = `RC-${year}-${String(next).padStart(3, '0')}`;
+    }
   }
 
   // ── INPUT FORMATTING ──────────────────────────────────────
