@@ -68,8 +68,33 @@ As trees grow, shrubs fill in, and new plants go in, the whole lighting picture 
 
 ## Admin / Operations Tools
 
-### Service Plan ✅ (built into quote builder)
-Frequency selector (monthly/quarterly/semi-annual/annual), price per visit, and start date. Shows on the quote document and downloads a .ics calendar file with all scheduled visits for the year.
+### Stripe + Google Calendar Integration ⭐ (build once bank account + Stripe are live)
+The big one. Replaces the manual .ics download and makes billing fully automatic.
+
+**How it works:**
+- Quote builder sends quote → client approves
+- Tim clicks "Send Invoice" in the quote builder
+- Vercel serverless backend creates a Stripe Customer, sends a payment link for the deposit
+- Client pays, Stripe saves their card
+- Each active service add-on automatically becomes a Stripe Subscription — charges the client on schedule, sends them a receipt, Tim never thinks about it
+- At the same moment, Google Calendar API creates recurring events in Tim's calendar for every scheduled visit — no import, they just appear
+
+**Architecture:**
+- Vercel serverless functions (`/api/send-invoice`, `/api/create-subscriptions`)
+- Stripe API: Customers, Invoices, Subscriptions, Payment Links
+- Google Calendar API: OAuth with Tim's `@rockcitylighting.com` account, creates events directly
+- Quote builder gets a "Send Invoice" button that triggers the whole chain
+
+**What this replaces:**
+- Manual .ics download (still useful as a stopgap until this is built)
+- Any manual recurring invoicing
+
+**Waiting on:** Bank account → Stripe account → Google Workspace email/calendar setup
+
+---
+
+### Service Add-Ons ✅ (built into quote builder)
+Five add-ons (Maintenance, Seasonal Timer, Holiday Lighting, Bulb Replacement, Landscape Assessment) with independent frequency + price per visit. Shows on quote doc. Downloads combined .ics as stopgap until Stripe integration is live.
 
 ### Text Notification for New Leads
 When a contact form is submitted, Tim gets a text immediately. Home services live and die by speed-to-lead — calling back in 5 minutes vs. 2 hours is the difference between booking the job and losing it.
@@ -103,6 +128,7 @@ One of the top Google searches for this service. An honest breakdown builds trus
 - [ ] **Decide on holiday lighting offering** — install only? install + takedown? client owns lights or we do?
 - [ ] **Price out holiday lighting** — per linear foot, per zone, or flat rate?
 - [ ] **Decide on bulb replacement plan pricing** — flat monthly rate, what's the right number?
-- [ ] **Set up business bank account + Stripe** (unlocks invoice tool)
+- [ ] **Set up business bank account + Stripe** (unlocks invoice tool, subscriptions, and auto-calendar)
+- [ ] **Set up Google Workspace** (`tim@rockcitylighting.com`) — needed for Google Calendar API integration
 - [ ] **Collect a physical business address** if needed for GBP verification
 - [ ] **After first year of installs** — reach back out to early clients about landscape assessment visits
