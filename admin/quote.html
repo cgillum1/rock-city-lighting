@@ -32,8 +32,7 @@
       padding: 12px 20px; border: 1px solid var(--copper);
       background: rgba(255,255,255,0.07); color: var(--cream);
       border-radius: 4px; font-size: 1rem; width: 260px;
-      text-align: center; letter-spacing: 0.1em;
-      outline: none;
+      text-align: center; letter-spacing: 0.1em; outline: none;
     }
     #gate input::placeholder { color: rgba(245,240,232,0.35); letter-spacing: 0; }
     #gate button {
@@ -76,15 +75,13 @@
       width: 100%; padding: 9px 12px;
       border: 1px solid #ddd; border-radius: 4px;
       font-size: 0.9rem; font-family: var(--font-sans);
-      color: #222; outline: none;
-      transition: border 0.2s;
+      color: #222; outline: none; transition: border 0.2s;
     }
     .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--copper); }
     .field textarea { resize: vertical; min-height: 70px; }
-
     .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .field-row3 { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 10px; }
 
-    /* zones */
     .zones { display: flex; flex-direction: column; gap: 10px; }
     .zone-item { border: 1px solid #e5e5e5; border-radius: 6px; overflow: hidden; }
     .zone-header {
@@ -96,12 +93,20 @@
     .zone-header label { font-size: 0.88rem; font-weight: 600; color: #333; cursor: pointer; flex: 1; }
     .zone-body { padding: 10px 14px; display: none; border-top: 1px solid #e5e5e5; }
     .zone-body.open { display: block; }
-    .zone-body textarea { min-height: 55px; font-size: 0.83rem; }
     .zone-body .field { margin-bottom: 8px; }
     .zone-body label { font-size: 0.76rem; }
 
-    .price-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; align-items: end; }
-    .price-row .field input { font-size: 1.1rem; font-weight: 700; color: var(--navy); }
+    .autogen-btn {
+      padding: 7px 14px;
+      background: transparent; color: var(--copper);
+      border: 1px solid var(--copper); border-radius: 4px;
+      font-size: 0.72rem; letter-spacing: 0.08em;
+      text-transform: uppercase; cursor: pointer;
+      font-family: var(--font-sans); transition: all 0.2s;
+      margin-bottom: 8px;
+    }
+    .autogen-btn:hover { background: var(--copper); color: white; }
+    #narrative-field { min-height: 110px; }
 
     .generate-btn {
       margin-top: 24px; width: 100%; padding: 14px;
@@ -109,19 +114,16 @@
       border: none; border-radius: 6px;
       font-size: 0.9rem; letter-spacing: 0.08em;
       text-transform: uppercase; cursor: pointer;
-      font-family: var(--font-sans);
-      transition: background 0.2s;
+      font-family: var(--font-sans); transition: background 0.2s;
     }
     .generate-btn:hover { background: var(--copper); }
-
     .pdf-btn {
       margin-top: 10px; width: 100%; padding: 12px;
       background: var(--copper); color: white;
       border: none; border-radius: 6px;
       font-size: 0.85rem; letter-spacing: 0.08em;
       text-transform: uppercase; cursor: pointer;
-      font-family: var(--font-sans);
-      transition: background 0.2s;
+      font-family: var(--font-sans); transition: background 0.2s;
     }
     .pdf-btn:hover { background: var(--gold); }
 
@@ -137,114 +139,185 @@
       text-align: center; line-height: 1.8;
     }
 
-    /* ── QUOTE DOCUMENT ── */
+    /* ══════════════════════════════════════════
+       QUOTE DOCUMENT
+    ══════════════════════════════════════════ */
     #quote-doc {
       width: 800px;
-      background: white;
-      box-shadow: 0 4px 40px rgba(0,0,0,0.18);
+      background: var(--navy);
+      box-shadow: 0 4px 40px rgba(0,0,0,0.3);
       font-family: var(--font-sans);
+      color: var(--cream);
     }
 
-    .q-header {
-      background: var(--navy); padding: 40px 48px 32px;
-      display: flex; justify-content: space-between; align-items: flex-start;
+    /* ── Doc Header ── */
+    .q-doc-header {
+      padding: 48px 60px 36px;
+      display: flex; flex-direction: column; align-items: center;
+      border-bottom: 1px solid rgba(184,115,56,0.25);
     }
-    .q-header-left img { width: 56px; margin-bottom: 12px; display: block; }
-    .q-header-left .brand-name {
-      font-family: var(--font-serif); color: var(--cream);
-      font-size: 1.5rem; letter-spacing: 0.08em;
+    .q-doc-header img { width: 64px; margin-bottom: 16px; }
+    .q-brand-name {
+      font-family: var(--font-serif); font-size: 2rem;
+      color: var(--cream); letter-spacing: 0.06em;
+      line-height: 1;
     }
-    .q-header-left .brand-sub {
-      color: var(--copper); font-size: 0.72rem; letter-spacing: 0.18em;
-      text-transform: uppercase; margin-top: 3px;
+    .q-brand-name em { color: var(--copper); font-style: normal; }
+    .q-brand-sub {
+      font-size: 0.65rem; letter-spacing: 0.22em;
+      text-transform: uppercase; color: rgba(245,240,232,0.5);
+      margin-top: 6px;
     }
-    .q-header-right { text-align: right; }
-    .q-header-right .quote-label {
-      color: var(--copper); font-size: 0.68rem; letter-spacing: 0.2em;
-      text-transform: uppercase; margin-bottom: 6px;
+    .q-diamond {
+      width: 8px; height: 8px; background: var(--copper);
+      transform: rotate(45deg); margin: 20px auto;
     }
-    .q-header-right .quote-num {
-      color: var(--cream); font-family: var(--font-serif);
-      font-size: 1.6rem; letter-spacing: 0.05em;
+    .q-doc-title {
+      font-family: var(--font-serif); font-size: 3.8rem;
+      color: var(--cream); letter-spacing: 0.28em;
+      text-transform: uppercase; line-height: 1;
     }
-    .q-header-right .quote-date {
-      color: rgba(245,240,232,0.55); font-size: 0.78rem; margin-top: 6px;
+    .q-title-rule {
+      width: 100%; display: flex; align-items: center; gap: 14px; margin-top: 18px;
+    }
+    .q-title-rule span { flex: 1; height: 1px; background: rgba(184,115,56,0.35); }
+
+    /* ── Client / Project block ── */
+    .q-info-block {
+      display: grid; grid-template-columns: 1fr 1px 1fr;
+      gap: 0; margin: 0 60px; padding: 36px 0;
+      border-bottom: 1px solid rgba(184,115,56,0.2);
+    }
+    .q-info-divider { background: rgba(184,115,56,0.2); }
+    .q-info-col { padding: 0 32px; }
+    .q-info-col:first-child { padding-left: 0; }
+    .q-info-col:last-child { padding-right: 0; }
+    .q-info-label {
+      font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.2em;
+      color: var(--copper); font-weight: 700; margin-bottom: 14px;
+    }
+    .q-info-name {
+      font-family: var(--font-serif); font-size: 1.45rem;
+      color: var(--cream); margin-bottom: 8px; line-height: 1.2;
+    }
+    .q-info-detail {
+      font-size: 0.9rem; color: rgba(245,240,232,0.75);
+      line-height: 1.85;
     }
 
-    .q-copper-bar { height: 4px; background: var(--copper); }
-
-    .q-body { padding: 40px 48px; }
-
-    .q-client-block {
-      display: grid; grid-template-columns: 1fr 1fr;
-      gap: 32px; margin-bottom: 36px;
-      padding-bottom: 32px; border-bottom: 1px solid #e8e2d8;
+    /* ── Quote # / Date row ── */
+    .q-meta-row {
+      margin: 0 60px; padding: 18px 0;
+      display: flex; justify-content: space-between;
+      border-bottom: 1px solid rgba(184,115,56,0.2);
     }
-    .q-block-label {
-      font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.16em;
-      color: var(--copper); margin-bottom: 8px; font-weight: 700;
-    }
-    .q-block-value { font-size: 0.95rem; color: #1a1a1a; line-height: 1.75; }
-    .q-block-value strong { font-size: 1.05rem; color: var(--navy); }
+    .q-meta-item { display: flex; align-items: baseline; gap: 12px; }
+    .q-meta-label { font-size: 0.62rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--copper); font-weight: 700; }
+    .q-meta-value { font-family: var(--font-serif); font-size: 1rem; color: var(--cream); }
 
-    .q-section-title {
-      font-family: var(--font-serif); font-size: 1.2rem;
-      color: var(--navy); margin-bottom: 14px;
-      padding-bottom: 10px; border-bottom: 2px solid #e8e2d8;
+    /* ── Line items table ── */
+    .q-table-wrap { margin: 36px 60px 0; }
+    .q-table {
+      width: 100%; border-collapse: collapse;
+    }
+    .q-table thead tr {
+      border-bottom: 1px solid rgba(184,115,56,0.4);
+    }
+    .q-table thead th {
+      font-size: 0.62rem; letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--copper); font-weight: 700; padding-bottom: 12px;
+      text-align: left;
+    }
+    .q-table thead th:not(:first-child) { text-align: center; }
+    .q-table thead th:last-child { text-align: right; }
+    .q-table tbody tr {
+      border-bottom: 1px solid rgba(245,240,232,0.08);
+    }
+    .q-table tbody td {
+      padding: 16px 0; font-size: 0.92rem;
+      color: rgba(245,240,232,0.88); vertical-align: top;
+    }
+    .q-table tbody td:not(:first-child) { text-align: center; }
+    .q-table tbody td:last-child { text-align: right; }
+    .q-table-desc { font-weight: 600; color: var(--cream); }
+    .q-table-notes { font-size: 0.8rem; color: rgba(245,240,232,0.5); margin-top: 4px; line-height: 1.5; }
+
+    /* ── Total block ── */
+    .q-total-wrap {
+      margin: 0 60px; padding: 24px 0 36px;
+      display: flex; justify-content: flex-end;
+    }
+    .q-total-box {
+      border: 1px solid var(--copper); border-radius: 2px;
+      padding: 16px 28px; display: flex; align-items: center; gap: 48px;
+      min-width: 320px;
+    }
+    .q-total-label {
+      font-size: 0.62rem; letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--copper); font-weight: 700;
+    }
+    .q-total-amount {
+      font-family: var(--font-serif); font-size: 2.2rem; color: var(--cream);
+      margin-left: auto;
     }
 
-    .q-narrative {
-      font-size: 0.93rem; color: #2a2a2a; line-height: 1.85;
-      margin-bottom: 36px;
+    /* ── Deposit notice ── */
+    .q-deposit {
+      margin: 0 60px 36px;
+      display: flex; align-items: flex-start; gap: 14px;
+      padding: 16px 20px;
+      background: rgba(184,115,56,0.08);
+      border: 1px solid rgba(184,115,56,0.2); border-radius: 4px;
     }
+    .q-deposit-icon { color: var(--copper); font-size: 1.2rem; flex-shrink: 0; margin-top: 1px; }
+    .q-deposit-label {
+      font-size: 0.62rem; letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--copper); font-weight: 700; margin-bottom: 4px;
+    }
+    .q-deposit-text { font-size: 0.85rem; color: rgba(245,240,232,0.7); line-height: 1.6; }
 
-    .q-zones { margin-bottom: 36px; }
-    .q-zone {
-      margin-bottom: 16px; padding: 16px 20px;
-      background: #faf8f5; border-left: 4px solid var(--copper);
-      border-radius: 0 4px 4px 0;
+    /* ── Guarantee + Notes row ── */
+    .q-bottom-row {
+      margin: 0 60px; padding: 32px 0;
+      display: grid; grid-template-columns: 1fr 1px 1fr; gap: 0;
+      border-top: 1px solid rgba(184,115,56,0.2);
     }
-    .q-zone-name {
-      font-weight: 700; font-size: 0.9rem; color: var(--navy);
-      text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px;
+    .q-bottom-divider { background: rgba(184,115,56,0.2); }
+    .q-bottom-col { padding: 0 32px; }
+    .q-bottom-col:first-child { padding-left: 0; }
+    .q-bottom-col:last-child { padding-right: 0; }
+    .q-bottom-label {
+      font-size: 0.62rem; letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--copper); font-weight: 700; margin-bottom: 12px;
+      display: flex; align-items: center; gap: 8px;
     }
-    .q-zone-desc { font-size: 0.87rem; color: #333; line-height: 1.7; }
-    .q-zone-fixtures { font-size: 0.85rem; color: #444; margin-top: 6px; }
+    .q-bottom-text { font-size: 0.85rem; color: rgba(245,240,232,0.7); line-height: 1.7; }
+    .q-notes-lines { margin-top: 8px; }
+    .q-notes-line { border-bottom: 1px solid rgba(245,240,232,0.15); height: 28px; }
 
-    .q-pricing {
-      background: var(--navy); border-radius: 6px;
-      padding: 24px 28px; margin-bottom: 36px;
-      display: flex; justify-content: space-between; align-items: center;
-    }
-    .q-pricing-left .label { color: #a8bcd4; font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase; font-weight: 700; }
-    .q-pricing-left .includes { color: #c8d8e8; font-size: 0.85rem; margin-top: 8px; line-height: 1.6; }
-    .q-pricing-right .total-label { color: var(--copper); font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase; text-align: right; font-weight: 700; }
-    .q-pricing-right .total-amount { color: #ffffff; font-family: var(--font-serif); font-size: 2.4rem; text-align: right; margin-top: 4px; }
-
-    .q-guarantee {
-      display: flex; gap: 16px; align-items: flex-start;
-      padding: 20px 22px; background: #f9f5ee;
-      border: 1px solid #d4b896; border-radius: 6px; margin-bottom: 36px;
-    }
-    .q-guarantee-icon { color: var(--copper); font-size: 1.5rem; flex-shrink: 0; }
-    .q-guarantee-text strong { display: block; font-size: 0.92rem; color: var(--navy); margin-bottom: 6px; }
-    .q-guarantee-text p { font-size: 0.87rem; color: #333; line-height: 1.65; }
-
-    .q-sig {
-      border-top: 2px solid #e8e2d8; padding-top: 32px;
+    /* ── Signature ── */
+    .q-sig-row {
+      margin: 0 60px; padding: 32px 0;
       display: grid; grid-template-columns: 1fr 1fr; gap: 48px;
+      border-top: 1px solid rgba(184,115,56,0.2);
     }
-    .q-sig-block .sig-line {
-      border-bottom: 1px solid #666; height: 44px; margin-bottom: 8px;
+    .q-sig-col .q-sig-label {
+      font-size: 0.62rem; letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--copper); font-weight: 700; margin-bottom: 36px;
     }
-    .q-sig-block .sig-label { font-size: 0.78rem; color: #555; letter-spacing: 0.04em; }
+    .q-sig-line { border-bottom: 1px solid rgba(245,240,232,0.3); padding-bottom: 8px; }
+    .q-sig-sublabel { font-size: 0.78rem; color: rgba(245,240,232,0.45); margin-top: 8px; text-align: center; }
 
-    .q-footer {
-      background: var(--navy); padding: 20px 48px;
-      display: flex; justify-content: space-between; align-items: center;
+    /* ── Doc Footer ── */
+    .q-doc-footer {
+      padding: 20px 60px;
+      border-top: 1px solid rgba(184,115,56,0.2);
+      display: flex; justify-content: center; align-items: center;
     }
-    .q-footer .contact { font-size: 0.78rem; color: #a8bcd4; line-height: 1.7; }
-    .q-footer .website { font-size: 0.85rem; color: var(--copper); font-weight: 700; letter-spacing: 0.04em; }
+    .q-footer-text {
+      font-size: 0.68rem; letter-spacing: 0.2em; text-transform: uppercase;
+      color: rgba(245,240,232,0.35);
+    }
   </style>
 </head>
 <body>
@@ -268,7 +341,7 @@
 
   <div class="workspace">
 
-    <!-- FORM -->
+    <!-- FORM PANEL -->
     <div class="form-panel">
 
       <h3>Client Info</h3>
@@ -291,86 +364,95 @@
         </div>
       </div>
 
-      <h3>Project Zones</h3>
+      <h3>Project Name / Location</h3>
+      <div class="field">
+        <input type="text" id="project-name" placeholder="e.g. Chenal Valley Residence" />
+      </div>
+
+      <h3>Line Items</h3>
       <div class="zones" id="zones-container">
 
         <div class="zone-item">
           <div class="zone-header" onclick="toggleZone(this)">
-            <input type="checkbox" id="z-entry" onchange="toggleZone(this.closest('.zone-item').querySelector('.zone-header'))" />
-            <label for="z-entry">Front Entry & Driveway</label>
+            <input type="checkbox" id="z-entry" />
+            <label for="z-entry">Architectural Uplighting</label>
           </div>
           <div class="zone-body">
-            <div class="field"><label>Fixtures / Notes</label><textarea id="z-entry-notes" placeholder="e.g. 4 uplights on entry columns, 2 pathway lights along driveway"></textarea></div>
+            <div class="field-row">
+              <div class="field"><label>Qty</label><input type="number" id="z-entry-qty" value="1" min="1" /></div>
+              <div class="field"><label>Unit Price</label><input type="text" id="z-entry-price" placeholder="$0.00" /></div>
+            </div>
+            <div class="field"><label>Notes (optional)</label><textarea id="z-entry-notes" placeholder="e.g. 4 uplights on entry columns, trees in front yard"></textarea></div>
           </div>
         </div>
 
         <div class="zone-item">
           <div class="zone-header" onclick="toggleZone(this)">
-            <input type="checkbox" id="z-trees" onchange="toggleZone(this.closest('.zone-item').querySelector('.zone-header'))" />
-            <label for="z-trees">Trees & Landscaping</label>
+            <input type="checkbox" id="z-pathway" />
+            <label for="z-pathway">Pathway Lighting</label>
           </div>
           <div class="zone-body">
-            <div class="field"><label>Fixtures / Notes</label><textarea id="z-trees-notes" placeholder="e.g. 6 uplights on oak trees in front yard, warm white 3000K"></textarea></div>
+            <div class="field-row">
+              <div class="field"><label>Qty</label><input type="number" id="z-pathway-qty" value="1" min="1" /></div>
+              <div class="field"><label>Unit Price</label><input type="text" id="z-pathway-price" placeholder="$0.00" /></div>
+            </div>
+            <div class="field"><label>Notes (optional)</label><textarea id="z-pathway-notes" placeholder="e.g. 8 step lights, pathway fixtures to side gate"></textarea></div>
           </div>
         </div>
 
         <div class="zone-item">
           <div class="zone-header" onclick="toggleZone(this)">
-            <input type="checkbox" id="z-facade" onchange="toggleZone(this.closest('.zone-item').querySelector('.zone-header'))" />
-            <label for="z-facade">Facade & Architecture</label>
+            <input type="checkbox" id="z-porch" />
+            <label for="z-porch">Porch & Entry Lighting</label>
           </div>
           <div class="zone-body">
-            <div class="field"><label>Fixtures / Notes</label><textarea id="z-facade-notes" placeholder="e.g. wash lights on front columns and brick facade"></textarea></div>
+            <div class="field-row">
+              <div class="field"><label>Qty</label><input type="number" id="z-porch-qty" value="1" min="1" /></div>
+              <div class="field"><label>Unit Price</label><input type="text" id="z-porch-price" placeholder="$0.00" /></div>
+            </div>
+            <div class="field"><label>Notes (optional)</label><textarea id="z-porch-notes" placeholder="e.g. downlights on covered porch, wall sconces"></textarea></div>
           </div>
         </div>
 
         <div class="zone-item">
           <div class="zone-header" onclick="toggleZone(this)">
-            <input type="checkbox" id="z-pathway" onchange="toggleZone(this.closest('.zone-item').querySelector('.zone-header'))" />
-            <label for="z-pathway">Pathways & Steps</label>
+            <input type="checkbox" id="z-landscape" />
+            <label for="z-landscape">Landscape Lighting</label>
           </div>
           <div class="zone-body">
-            <div class="field"><label>Fixtures / Notes</label><textarea id="z-pathway-notes" placeholder="e.g. 8 step lights on front staircase, pathway fixtures to side gate"></textarea></div>
+            <div class="field-row">
+              <div class="field"><label>Qty</label><input type="number" id="z-landscape-qty" value="1" min="1" /></div>
+              <div class="field"><label>Unit Price</label><input type="text" id="z-landscape-price" placeholder="$0.00" /></div>
+            </div>
+            <div class="field"><label>Notes (optional)</label><textarea id="z-landscape-notes" placeholder="e.g. bed lighting, garden features"></textarea></div>
           </div>
         </div>
 
         <div class="zone-item">
           <div class="zone-header" onclick="toggleZone(this)">
-            <input type="checkbox" id="z-patio" onchange="toggleZone(this.closest('.zone-item').querySelector('.zone-header'))" />
-            <label for="z-patio">Back Patio & Outdoor Living</label>
+            <input type="checkbox" id="z-other" />
+            <label for="z-other">Additional Services / Notes</label>
           </div>
           <div class="zone-body">
-            <div class="field"><label>Fixtures / Notes</label><textarea id="z-patio-notes" placeholder="e.g. string lights over pergola, downlights on covered patio ceiling"></textarea></div>
-          </div>
-        </div>
-
-        <div class="zone-item">
-          <div class="zone-header" onclick="toggleZone(this)">
-            <input type="checkbox" id="z-other" onchange="toggleZone(this.closest('.zone-item').querySelector('.zone-header'))" />
-            <label for="z-other">Other / Custom</label>
-          </div>
-          <div class="zone-body">
-            <div class="field"><label>Description</label><textarea id="z-other-notes" placeholder="Describe any additional work..."></textarea></div>
+            <div class="field-row">
+              <div class="field"><label>Qty</label><input type="number" id="z-other-qty" value="1" min="1" /></div>
+              <div class="field"><label>Unit Price</label><input type="text" id="z-other-price" placeholder="$0.00" /></div>
+            </div>
+            <div class="field"><label>Description</label><textarea id="z-other-notes" placeholder="Any additional work, phasing, or special requests..."></textarea></div>
           </div>
         </div>
 
       </div>
 
-      <h3>Pricing & Timeline</h3>
-      <div class="price-row">
-        <div class="field">
-          <label>Total Price</label>
-          <input type="text" id="total-price" placeholder="$4,500" />
-        </div>
-        <div class="field">
-          <label>Est. Completion</label>
-          <input type="text" id="est-completion" placeholder="e.g. Within 2 weeks" />
-        </div>
-      </div>
-
-      <h3>Additional Notes</h3>
+      <h3>Project Overview Paragraph</h3>
+      <button class="autogen-btn" onclick="autogenNarrative()">Auto-Generate from Zones</button>
       <div class="field">
-        <textarea id="extra-notes" placeholder="Anything else to include — special requests, phasing, materials..."></textarea>
+        <textarea id="narrative-field" placeholder="Write or auto-generate a project overview paragraph — this appears on the quote above the line items..."></textarea>
+      </div>
+
+      <h3>Notes for Client</h3>
+      <div class="field">
+        <textarea id="extra-notes" placeholder="Any additional notes to display on the quote..."></textarea>
       </div>
 
       <button class="generate-btn" onclick="generateQuote()">Preview Quote</button>
@@ -378,7 +460,7 @@
 
     </div>
 
-    <!-- PREVIEW -->
+    <!-- PREVIEW PANEL -->
     <div class="preview-panel" id="preview-panel">
       <div class="hint">
         Fill out the form and click<br><strong>Preview Quote</strong><br>to see the client-ready proposal.
@@ -387,88 +469,121 @@
       <!-- QUOTE DOCUMENT -->
       <div id="quote-doc" style="display:none;">
 
-        <div class="q-header">
-          <div class="q-header-left">
-            <img src="/assets/brand/logo-lantern-white.png" onerror="this.style.display='none'" />
-            <div class="brand-name">Rock City Lighting</div>
-            <div class="brand-sub">Exterior Landscape & Architectural Lighting</div>
-          </div>
-          <div class="q-header-right">
-            <div class="quote-label">Proposal</div>
-            <div class="quote-num" id="q-num">#RCL-001</div>
-            <div class="quote-date" id="q-date"></div>
+        <!-- Header -->
+        <div class="q-doc-header">
+          <img src="/assets/brand/logo-lantern.png" onerror="this.style.display='none'" alt="Rock City Lighting" />
+          <div class="q-brand-name">Rock City <em>Lighting</em></div>
+          <div class="q-brand-sub">Residential Exterior Lighting</div>
+          <div class="q-diamond"></div>
+          <div class="q-doc-title">Quote</div>
+          <div class="q-title-rule">
+            <span></span>
+            <svg width="10" height="10" viewBox="0 0 10 10"><rect x="2" y="2" width="6" height="6" fill="#b87338" transform="rotate(45 5 5)"/></svg>
+            <span></span>
           </div>
         </div>
 
-        <div class="q-copper-bar"></div>
-
-        <div class="q-body">
-
-          <div class="q-client-block">
-            <div>
-              <div class="q-block-label">Prepared For</div>
-              <div class="q-block-value">
-                <strong id="q-client-name">—</strong><br>
-                <span id="q-client-address">—</span><br>
-                <span id="q-client-phone">—</span><br>
-                <span id="q-client-email">—</span>
-              </div>
-            </div>
-            <div>
-              <div class="q-block-label">Prepared By</div>
-              <div class="q-block-value">
-                <strong>Tim Barnett</strong><br>
-                Rock City Lighting<br>
-                Little Rock, AR<br>
-                timothybarnett94@gmail.com
-              </div>
-            </div>
+        <!-- Client / Project -->
+        <div class="q-info-block">
+          <div class="q-info-col">
+            <div class="q-info-label">Prepared For</div>
+            <div class="q-info-name" id="q-client-name">—</div>
+            <div class="q-info-detail" id="q-client-detail">—</div>
           </div>
-
-          <div class="q-section-title">Project Overview</div>
-          <div class="q-narrative" id="q-narrative">—</div>
-
-          <div class="q-section-title">Scope of Work</div>
-          <div class="q-zones" id="q-zones"></div>
-
-          <div class="q-pricing">
-            <div class="q-pricing-left">
-              <div class="label">Investment</div>
-              <div class="includes">Includes all fixtures, wiring,<br>installation & programming</div>
-            </div>
-            <div class="q-pricing-right">
-              <div class="total-label">Total</div>
-              <div class="total-amount" id="q-total">—</div>
-            </div>
+          <div class="q-info-divider"></div>
+          <div class="q-info-col">
+            <div class="q-info-label">Project</div>
+            <div class="q-info-name" id="q-project-name">—</div>
           </div>
-
-          <div class="q-guarantee">
-            <div class="q-guarantee-icon">✦</div>
-            <div class="q-guarantee-text">
-              <strong>90-Day Make-It-Right Guarantee</strong>
-              <p>If anything about the installation isn't right — a fixture placement, brightness, color temperature, or anything else — we'll come back and fix it at no charge within 90 days. No questions asked.</p>
-            </div>
-          </div>
-
-          <div class="q-sig">
-            <div class="q-sig-block">
-              <div class="sig-line"></div>
-              <div class="sig-label">Client Signature &amp; Date</div>
-            </div>
-            <div class="q-sig-block">
-              <div class="sig-line"></div>
-              <div class="sig-label">Tim Barnett — Rock City Lighting</div>
-            </div>
-          </div>
-
         </div>
 
-        <div class="q-footer">
-          <div class="contact">
-            Rock City Lighting · Little Rock, AR<br>
-            timothybarnett94@gmail.com
+        <!-- Quote # / Date -->
+        <div class="q-meta-row">
+          <div class="q-meta-item">
+            <span class="q-meta-label">Quote #</span>
+            <span class="q-meta-value" id="q-num">RC-2026-0001</span>
           </div>
-          <div class="website">rockcitylighting.com</div>
+          <div class="q-meta-item">
+            <span class="q-meta-label">Date</span>
+            <span class="q-meta-value" id="q-date"></span>
+          </div>
+        </div>
+
+        <!-- Project Overview Paragraph -->
+        <div id="q-narrative-wrap" style="display:none; margin: 32px 60px 0; padding-bottom: 32px; border-bottom: 1px solid rgba(184,115,56,0.2);">
+          <div style="font-size:0.62rem;text-transform:uppercase;letter-spacing:0.2em;color:#b87338;font-weight:700;margin-bottom:12px;">Project Overview</div>
+          <div id="q-narrative" style="font-size:0.92rem;color:rgba(245,240,232,0.82);line-height:1.85;"></div>
+        </div>
+
+        <!-- Line Items Table -->
+        <div class="q-table-wrap">
+          <table class="q-table">
+            <thead>
+              <tr>
+                <th>Description</th>
+                <th>Qty</th>
+                <th>Unit Price</th>
+                <th>Total</th>
+              </tr>
+            </thead>
+            <tbody id="q-table-body"></tbody>
+          </table>
+        </div>
+
+        <!-- Total -->
+        <div class="q-total-wrap">
+          <div class="q-total-box">
+            <span class="q-total-label">Total Investment</span>
+            <span class="q-total-amount" id="q-total">$0.00</span>
+          </div>
+        </div>
+
+        <!-- Deposit notice -->
+        <div class="q-deposit">
+          <div class="q-deposit-icon">✦</div>
+          <div>
+            <div class="q-deposit-label">50% Deposit Due to Secure Your Project</div>
+            <div class="q-deposit-text">Remaining balance due upon completion.</div>
+          </div>
+        </div>
+
+        <!-- Guarantee + Notes -->
+        <div class="q-bottom-row">
+          <div class="q-bottom-col">
+            <div class="q-bottom-label">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#b87338" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10" stroke="#b87338" stroke-width="2"/></svg>
+              Our Guarantee
+            </div>
+            <div class="q-bottom-text">We stand behind our work with premium materials, expert installation, and a commitment to your complete satisfaction. If anything isn't right within 90 days, we'll make it right — no questions asked.</div>
+          </div>
+          <div class="q-bottom-divider"></div>
+          <div class="q-bottom-col">
+            <div class="q-bottom-label">Notes</div>
+            <div class="q-bottom-text" id="q-notes" style="display:none;"></div>
+            <div class="q-notes-lines">
+              <div class="q-notes-line"></div>
+              <div class="q-notes-line"></div>
+              <div class="q-notes-line"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Signature -->
+        <div class="q-sig-row">
+          <div class="q-sig-col">
+            <div class="q-sig-label">Approved By</div>
+            <div class="q-sig-line"></div>
+            <div class="q-sig-sublabel">Client Signature</div>
+          </div>
+          <div class="q-sig-col">
+            <div class="q-sig-label">Date</div>
+            <div class="q-sig-line"></div>
+          </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="q-doc-footer">
+          <div class="q-footer-text">Thank you for choosing Rock City Lighting</div>
         </div>
 
       </div>
@@ -479,7 +594,7 @@
 
 <script>
   // ── PASSWORD ──────────────────────────────────────────────
-  const PASSWORD = 'rockcity2024';
+  const PASSWORD = 'batmanmuffins2026';
 
   function checkPassword() {
     const val = document.getElementById('pw-input').value;
@@ -491,9 +606,49 @@
       document.getElementById('pw-input').value = '';
     }
   }
-
   document.getElementById('pw-input').addEventListener('keydown', e => {
     if (e.key === 'Enter') checkPassword();
+  });
+
+  // ── INPUT FORMATTING ─────────────────────────────────────
+
+  function formatCurrency(input) {
+    // Strip everything except digits and one decimal
+    let raw = input.value.replace(/[^0-9.]/g, '');
+    const parts = raw.split('.');
+    if (parts.length > 2) raw = parts[0] + '.' + parts.slice(1).join('');
+    input.value = raw ? '$' + raw : '';
+  }
+
+  function finalizeCurrency(input) {
+    const num = parseFloat(input.value.replace(/[^0-9.]/g, ''));
+    if (!isNaN(num) && num > 0) {
+      input.value = '$' + num.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+    } else {
+      input.value = '';
+    }
+  }
+
+  function formatPhone(input) {
+    let digits = input.value.replace(/\D/g, '').slice(0, 10);
+    if (digits.length === 0) { input.value = ''; return; }
+    if (digits.length <= 3)       input.value = '(' + digits;
+    else if (digits.length <= 6)  input.value = '(' + digits.slice(0,3) + ') ' + digits.slice(3);
+    else                          input.value = '(' + digits.slice(0,3) + ') ' + digits.slice(3,6) + '-' + digits.slice(6);
+  }
+
+  // Wire up formatters after DOM is ready
+  document.addEventListener('DOMContentLoaded', () => {
+    // Phone
+    const phoneEl = document.getElementById('client-phone');
+    phoneEl.addEventListener('input', () => formatPhone(phoneEl));
+
+    // Price fields
+    ['z-entry-price','z-pathway-price','z-porch-price','z-landscape-price','z-other-price'].forEach(id => {
+      const el = document.getElementById(id);
+      el.addEventListener('input', () => formatCurrency(el));
+      el.addEventListener('blur',  () => finalizeCurrency(el));
+    });
   });
 
   // ── ZONE TOGGLE ───────────────────────────────────────────
@@ -508,68 +663,119 @@
     }
   }
 
-  // ── ZONE DEFINITIONS ──────────────────────────────────────
-  const ZONE_DEFS = {
-    entry:   { label: 'Front Entry & Driveway',      narrative: 'The front entry and driveway will be illuminated to create an inviting first impression — guiding visitors toward the home with warm, welcoming light.' },
-    trees:   { label: 'Trees & Landscaping',          narrative: 'Uplighting will be installed throughout the landscape to highlight the natural beauty of the trees and plantings, adding depth and drama after dark.' },
-    facade:  { label: 'Facade & Architectural Detail', narrative: 'Architectural wash lighting will accentuate the home\'s facade and structural features, bringing out texture and dimension that disappears in the dark.' },
-    pathway: { label: 'Pathways & Steps',             narrative: 'Step and pathway lighting will be installed to ensure safe, comfortable movement around the property while adding a refined finishing touch.' },
-    patio:   { label: 'Back Patio & Outdoor Living',  narrative: 'The outdoor living area will be lit for entertaining and relaxation — creating an extension of the home\'s interior warmth into the backyard.' },
-    other:   { label: 'Custom Work',                  narrative: 'Additional custom lighting elements will be incorporated as detailed in the scope below.' },
+  // ── ZONE NARRATIVE SENTENCES ──────────────────────────────
+  const ZONE_NARRATIVES = {
+    entry:     'Architectural uplighting will highlight the home\'s key features — trees, columns, facades, and rooflines — bringing depth and drama after dark.',
+    pathway:   'Pathway lighting will guide visitors safely along walkways and steps while adding a refined, finished look to the property.',
+    porch:     'Porch and entry lighting will create a warm, welcoming first impression at the front door.',
+    landscape: 'Landscape lighting will accent garden beds, plantings, and natural features throughout the yard.',
+    other:     'Additional custom lighting elements will be incorporated as detailed in the scope below.',
   };
+
+  function autogenNarrative() {
+    const active = ZONES.filter(z => document.getElementById(`z-${z.id}`).checked);
+    if (!active.length) {
+      alert('Check at least one line item first so I know what to write about.');
+      return;
+    }
+    const sentences = active.map(z => ZONE_NARRATIVES[z.id]).filter(Boolean);
+    document.getElementById('narrative-field').value = sentences.join(' ');
+  }
+
+  // ── ZONE DEFINITIONS ──────────────────────────────────────
+  const ZONES = [
+    { id: 'entry',     label: 'Architectural Uplighting' },
+    { id: 'pathway',   label: 'Pathway Lighting' },
+    { id: 'porch',     label: 'Porch & Entry Lighting' },
+    { id: 'landscape', label: 'Landscape Lighting' },
+    { id: 'other',     label: 'Additional Services / Notes' },
+  ];
+
+  function parsePrice(str) {
+    return parseFloat(str.replace(/[^0-9.]/g, '')) || 0;
+  }
+  function formatPrice(n) {
+    return '$' + n.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+  }
 
   // ── GENERATE QUOTE ────────────────────────────────────────
   function generateQuote() {
-    const name     = document.getElementById('client-name').value.trim()    || '—';
-    const address  = document.getElementById('client-address').value.trim() || '—';
-    const phone    = document.getElementById('client-phone').value.trim()   || '';
-    const email    = document.getElementById('client-email').value.trim()   || '';
-    const price    = document.getElementById('total-price').value.trim()    || '—';
-    const timeline = document.getElementById('est-completion').value.trim() || '';
-    const extra    = document.getElementById('extra-notes').value.trim();
+    const name        = document.getElementById('client-name').value.trim();
+    const address     = document.getElementById('client-address').value.trim();
+    const phone       = document.getElementById('client-phone').value.trim();
+    const email       = document.getElementById('client-email').value.trim();
+    const projectName = document.getElementById('project-name').value.trim();
+    const extraNotes  = document.getElementById('extra-notes').value.trim();
+    const narrative   = document.getElementById('narrative-field').value.trim();
 
-    // Quote number: date-based
-    const now = new Date();
-    const qNum = `#RCL-${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}`;
+    // Quote number & date
+    const now    = new Date();
+    const qNum   = `RC-${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}`;
     const dateStr = now.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 
-    document.getElementById('q-num').textContent   = qNum;
-    document.getElementById('q-date').textContent  = dateStr;
-    document.getElementById('q-client-name').textContent    = name;
-    document.getElementById('q-client-address').textContent = address;
-    document.getElementById('q-client-phone').textContent   = phone;
-    document.getElementById('q-client-email').textContent   = email;
-    document.getElementById('q-total').textContent = price;
+    document.getElementById('q-num').textContent  = qNum;
+    document.getElementById('q-date').textContent = dateStr;
 
-    // Collect active zones
-    const zones = ['entry','trees','facade','pathway','patio','other'].filter(z =>
-      document.getElementById(`z-${z}`).checked
-    );
+    // Client info
+    document.getElementById('q-client-name').textContent = name || '—';
+    const details = [address, phone, email].filter(Boolean).join('\n');
+    const detailEl = document.getElementById('q-client-detail');
+    detailEl.style.whiteSpace = 'pre-line';
+    detailEl.textContent = details || '—';
 
-    // Build narrative
-    const narrativeParts = zones.map(z => ZONE_DEFS[z].narrative);
-    let narrative = narrativeParts.join(' ');
-    if (timeline) narrative += ` Installation is estimated to be completed ${timeline.toLowerCase()}.`;
-    if (extra)    narrative += ' ' + extra;
-    if (!narrative) narrative = 'Please see the scope of work below for full project details.';
-    document.getElementById('q-narrative').textContent = narrative;
+    // Project
+    document.getElementById('q-project-name').textContent = projectName || '—';
 
-    // Build zones
-    const zonesEl = document.getElementById('q-zones');
-    zonesEl.innerHTML = '';
-    zones.forEach(z => {
-      const notes = document.getElementById(`z-${z}-notes`).value.trim();
-      const div = document.createElement('div');
-      div.className = 'q-zone';
-      div.innerHTML = `
-        <div class="q-zone-name">${ZONE_DEFS[z].label}</div>
-        ${notes ? `<div class="q-zone-fixtures">${notes}</div>` : ''}
+    // Line items
+    const tbody = document.getElementById('q-table-body');
+    tbody.innerHTML = '';
+    let grandTotal = 0;
+
+    ZONES.forEach(z => {
+      if (!document.getElementById(`z-${z.id}`).checked) return;
+      const qty   = parseInt(document.getElementById(`z-${z.id}-qty`).value) || 1;
+      const price = parsePrice(document.getElementById(`z-${z.id}-price`).value);
+      const notes = document.getElementById(`z-${z.id}-notes`).value.trim();
+      const line  = qty * price;
+      grandTotal += line;
+
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>
+          <div class="q-table-desc">${z.label}</div>
+          ${notes ? `<div class="q-table-notes">${notes}</div>` : ''}
+        </td>
+        <td>${qty}</td>
+        <td>${formatPrice(price)}</td>
+        <td>${formatPrice(line)}</td>
       `;
-      zonesEl.appendChild(div);
+      tbody.appendChild(tr);
     });
 
+    document.getElementById('q-total').textContent = formatPrice(grandTotal);
+
+    // Narrative paragraph
+    const narrativeWrap = document.getElementById('q-narrative-wrap');
+    const narrativeEl   = document.getElementById('q-narrative');
+    if (narrative) {
+      narrativeEl.textContent = narrative;
+      narrativeWrap.style.display = 'block';
+    } else {
+      narrativeWrap.style.display = 'none';
+    }
+
+    // Notes
+    const notesEl = document.getElementById('q-notes');
+    if (extraNotes) {
+      notesEl.textContent = extraNotes;
+      notesEl.style.display = 'block';
+    } else {
+      notesEl.style.display = 'none';
+    }
+
     document.getElementById('quote-doc').style.display = 'block';
-    document.querySelector('.hint') && (document.querySelector('.hint').style.display = 'none');
+    const hint = document.querySelector('.hint');
+    if (hint) hint.style.display = 'none';
     document.getElementById('quote-doc').scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
@@ -577,13 +783,13 @@
   function downloadPDF() {
     generateQuote();
     const el   = document.getElementById('quote-doc');
-    const name = document.getElementById('client-name').value.trim().replace(/\s+/g,'-') || 'Quote';
+    const name = document.getElementById('client-name').value.trim().replace(/\s+/g, '-') || 'Quote';
     const opts = {
       margin:      0,
       filename:    `RCL-Quote-${name}.pdf`,
       image:       { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2, useCORS: true },
-      jsPDF:       { unit: 'px', format: [800, 1130], orientation: 'portrait' },
+      html2canvas: { scale: 2, useCORS: true, backgroundColor: '#0f1f38' },
+      jsPDF:       { unit: 'px', format: [800, 1200], orientation: 'portrait' },
     };
     html2pdf().set(opts).from(el).save();
   }
