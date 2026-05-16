@@ -85,13 +85,10 @@ const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwNarhgPjLV86aeos486
 
 // ── MULTI-STEP FORM NAVIGATION ─────────────────────────────────
 let _lfCurrentStep = 1;
-const LF_TOTAL = 3;
 
-function lfUpdateProgress(step) {
-  const fill  = document.getElementById('lf-progress-fill');
-  const label = document.getElementById('lf-progress-label');
-  if (fill)  fill.style.width = `${(step / LF_TOTAL) * 100}%`;
-  if (label) label.textContent = `Step ${step} of ${LF_TOTAL}`;
+function lfUpdateDots(step) {
+  const dots = document.getElementById('lf-dots');
+  if (dots) dots.dataset.step = step;
 }
 
 function showStep(step, direction = 'forward') {
@@ -113,7 +110,7 @@ function showStep(step, direction = 'forward') {
   next.classList.add('active');
 
   _lfCurrentStep = step;
-  lfUpdateProgress(step);
+  lfUpdateDots(step);
 }
 
 function formNext(currentStep) {
@@ -135,8 +132,8 @@ function formBack(currentStep) {
   showStep(currentStep - 1, 'back');
 }
 
-// Init progress on load
-lfUpdateProgress(1);
+// Init dots on load
+lfUpdateDots(1);
 
 // Lead form submission
 document.getElementById('lead-form')?.addEventListener('submit', async e => {
@@ -167,7 +164,7 @@ document.getElementById('lead-form')?.addEventListener('submit', async e => {
     btn.textContent = "Sent! We'll be in touch soon.";
     btn.style.opacity = '0.7';
     form.reset();
-    showStep(1, 'back'); // animate back to step 1
+    showStep(1, 'back');
     setTimeout(() => {
       btn.textContent  = 'Request a Consultation';
       btn.disabled     = false;
