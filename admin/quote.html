@@ -25,7 +25,7 @@
 
     /* ── APP ── */
     body { background: #e8e8e8; font-family: var(--font-sans); }
-    #app { display: block; min-height: 100vh; }
+    #app { display: block; min-height: 100vh; min-height: 100dvh; }
 
     .builder-header {
       background: var(--navy); color: var(--cream);
@@ -36,13 +36,13 @@
     .builder-header h1 { font-family: var(--font-serif); font-size: 1.2rem; letter-spacing: 0.06em; }
     .builder-header span { margin-left: auto; color: var(--copper); font-size: 0.8rem; letter-spacing: 0.06em; }
 
-    .workspace { display: grid; grid-template-columns: 440px 1fr; min-height: calc(100vh - 58px); }
+    .workspace { display: grid; grid-template-columns: 440px 1fr; min-height: calc(100vh - 58px); min-height: calc(100dvh - 58px); }
 
     /* ── FORM PANEL ── */
     .form-panel {
       background: white; padding: 28px 24px;
       border-right: 1px solid #ddd;
-      overflow-y: auto; height: calc(100vh - 58px);
+      overflow-y: auto; height: calc(100vh - 58px); height: calc(100dvh - 58px);
       position: sticky; top: 58px;
     }
     .form-panel h3 {
@@ -143,7 +143,7 @@
     /* ── PREVIEW PANEL ── */
     .preview-panel {
       display: flex; flex-direction: column; overflow: hidden;
-      background: #d8d8d8; height: calc(100vh - 58px);
+      background: #d8d8d8; height: calc(100vh - 58px); height: calc(100dvh - 58px);
       position: sticky; top: 58px; align-self: start;
     }
     .zoom-bar {

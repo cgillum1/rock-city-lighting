@@ -201,6 +201,7 @@ h3 { font-size: 1.1rem; letter-spacing: 0.01em; }
 #hero {
   position: relative;
   height: 100vh;
+  height: 100dvh;
   min-height: 680px;
   display: flex;
   align-items: center;
