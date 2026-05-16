@@ -1,3 +1,97 @@
+// ── TESTIMONIAL STACKED CAROUSEL ──────────────────────────────
+(function () {
+  const stack = document.getElementById('tc-stack');
+  if (!stack) return;
+
+  const cards  = Array.from(stack.querySelectorAll('.tc-card'));
+  const dotsEl = document.getElementById('tc-dots');
+  const total  = cards.length;
+  let current  = 0;
+  let dragging = false;
+  let startX   = 0;
+  let dragX    = 0;
+
+  // Build dots to match card count
+  if (dotsEl && total > 1) {
+    dotsEl.innerHTML = cards.map((_, i) =>
+      `<span class="tc-dot${i === 0 ? ' active' : ''}"></span>`
+    ).join('');
+  }
+
+  function setPositions() {
+    cards.forEach((card, i) => {
+      const pos = (i - current + total) % total;
+      card.dataset.pos = pos < 3 ? pos : 'hidden';
+      if (pos >= 3) card.dataset.pos = '2'; // collapse remaining behind back
+    });
+    if (dotsEl) {
+      dotsEl.querySelectorAll('.tc-dot').forEach((d, i) => {
+        d.classList.toggle('active', i === current);
+      });
+    }
+  }
+
+  function advance(dir) {
+    const front = cards[current];
+    front.dataset.pos = dir === 'left' ? 'out-left' : 'out-right';
+
+    setTimeout(() => {
+      front.dataset.pos = '2'; // reset to back of stack silently
+      current = (current + 1) % total;
+      setPositions();
+    }, 400);
+  }
+
+  // Arrow button handlers (global so onclick= works)
+  window.tcNext = () => advance('left');
+  window.tcPrev = () => advance('right');
+
+  // Drag / swipe on front card
+  function getFrontCard() { return cards[current]; }
+
+  function onPointerDown(e) {
+    if (e.target.closest('.tc-arrow')) return;
+    dragging = true;
+    startX = e.clientX ?? e.touches?.[0]?.clientX ?? 0;
+    dragX = 0;
+    getFrontCard().style.transition = 'none';
+  }
+
+  function onPointerMove(e) {
+    if (!dragging) return;
+    const x = e.clientX ?? e.touches?.[0]?.clientX ?? 0;
+    dragX = x - startX;
+    const rotate = dragX / 18;
+    getFrontCard().style.transform = `scale(1) translateX(${dragX}px) rotate(${rotate}deg)`;
+  }
+
+  function onPointerUp() {
+    if (!dragging) return;
+    dragging = false;
+    const card = getFrontCard();
+    card.style.transition = '';
+    card.style.transform  = '';
+
+    if (Math.abs(dragX) > 90) {
+      advance(dragX < 0 ? 'left' : 'right');
+    } else {
+      // snap back
+      card.dataset.pos = '0';
+    }
+    dragX = 0;
+  }
+
+  stack.addEventListener('mousedown',   onPointerDown);
+  stack.addEventListener('touchstart',  onPointerDown, { passive: true });
+  window.addEventListener('mousemove',  onPointerMove);
+  window.addEventListener('touchmove',  onPointerMove, { passive: true });
+  window.addEventListener('mouseup',    onPointerUp);
+  window.addEventListener('touchend',   onPointerUp);
+
+  // Init
+  setPositions();
+})();
+
 // Scroll reveal
 const revealObserver = new IntersectionObserver((entries) => {
   entries.forEach(entry => {
