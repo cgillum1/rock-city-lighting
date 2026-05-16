@@ -82,13 +82,63 @@
   </div>
 </section>
 
-<!-- ===== HERO SHOWCASE ===== -->
-<section id="hero-showcase" aria-label="Example project">
-  <div class="showcase-img-wrap">
-    <img src="pics/IMG_3420.jpeg" alt="Front entry and facade lighting — Little Rock, AR" />
-    <div class="showcase-caption">
-      <span class="showcase-tag">Recent Work</span>
-      <p>Front entry &amp; facade lighting — Little Rock, AR</p>
+<!-- ===== HERO INTRO ===== -->
+<section id="hero-intro">
+  <div class="hero-intro-inner">
+    <div class="hero-intro-form reveal">
+      <div class="section-label" style="justify-content:flex-start;margin-bottom:24px;"><span>Get started</span></div>
+      <h2 class="reveal reveal-delay-1">Get a Free<br><span class="quote-word">Quote</span></h2>
+      <p class="hero-intro-sub reveal reveal-delay-2">Tell us about your property and what you're hoping to achieve. We'll get back to you quickly to schedule a complimentary consultation.</p>
+      <div class="contact-form" style="margin-top:32px;">
+        <form novalidate>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="hi-name">Your Name</label>
+              <input type="text" id="hi-name" name="name" placeholder="Tim Smith" required />
+            </div>
+            <div class="form-group">
+              <label for="hi-phone">Phone Number</label>
+              <input type="tel" id="hi-phone" name="phone" placeholder="(501) 555-0000" required />
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="hi-email">Email Address</label>
+            <input type="email" id="hi-email" name="email" placeholder="you@email.com" required />
+          </div>
+          <div class="form-group">
+            <label for="hi-address">Property Address</label>
+            <input type="text" id="hi-address" name="address" placeholder="123 Main St, Little Rock, AR" />
+          </div>
+          <div class="form-group">
+            <label for="hi-project">Tell Us About Your Project</label>
+            <textarea id="hi-project" name="project" placeholder="What areas would you like lit? Any specific goals — curb appeal, safety, outdoor living..."></textarea>
+          </div>
+          <div class="form-group">
+            <label for="hi-timing">Best Time to Reach You</label>
+            <select id="hi-timing" name="timing">
+              <option value="" disabled selected>Select a time...</option>
+              <option>Morning (8am – 12pm)</option>
+              <option>Afternoon (12pm – 5pm)</option>
+              <option>Evening (5pm – 8pm)</option>
+              <option>Anytime</option>
+            </select>
+          </div>
+          <button type="submit" class="btn btn-primary form-submit">Send My Request</button>
+        </form>
+      </div>
+    </div>
+    <div class="hero-intro-about reveal reveal-delay-2">
+      <div class="about-image">
+        <img src="assets/bw pic of tim.png" alt="Tim Barnett — Rock City Lighting" />
+      </div>
+      <div class="hero-intro-bio">
+        <h3>Tim Barnett</h3>
+        <p>A Little Rock native, husband, and father of two with over 10 years of hands-on experience in the lighting and landscaping industry. Tim started Rock City Lighting with one goal: to give Central Arkansas homeowners access to the kind of exterior lighting that used to be reserved for high-end custom builds.</p>
+        <p>Every project is handled personally — no franchise, no national chain. Just real attention to your home and your goals.</p>
+        <div class="about-quote" style="margin-top:28px;">
+          <p>Dedicated to one thing: a satisfied customer, every single time.</p>
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -392,43 +442,6 @@
   </div>
 </section>
 
-<!-- ===== ABOUT ===== -->
-<section id="about" aria-labelledby="about-heading">
-  <div class="about-inner">
-    <div class="about-image-wrap reveal">
-      <div class="about-image">
-        <img src="assets/Pic of Tim.jpeg" alt="Tim Barnett — Rock City Lighting" />
-      </div>
-      <div class="about-badge">
-        <img src="assets/brand/logo-badge.png" alt="Rock City Lighting — Est. 2026" />
-      </div>
-    </div>
-    <div class="about-content">
-      <div class="section-label reveal" style="justify-content:flex-start;"><span>About us</span></div>
-      <h2 id="about-heading" class="reveal reveal-delay-1">Local, Family-Run,<br>and <em>Built to Last</em></h2>
-      <p class="reveal reveal-delay-2">Rock City Lighting is owned and operated by Tim Barnett, a Little Rock native with over 10 years of hands-on experience in the lighting and landscaping industry. Tim started Rock City Lighting with one goal: to give Central Arkansas homeowners access to the kind of exterior lighting that used to be reserved for high-end custom builds.</p>
-      <p class="reveal reveal-delay-3">We're not a franchise, not a national chain. Every project is handled personally, with real attention to your home and your goals. Whether you're lighting a lakefront property, a new construction, or simply want your front entry to finally look the way it should — we treat your home like our own.</p>
-      <div class="about-quote reveal reveal-delay-4">
-        <p>Dedicated to one thing: a satisfied customer, every single time.</p>
-      </div>
-      <div class="about-stats reveal reveal-delay-5">
-        <div>
-          <div class="about-stat-num">10+</div>
-          <div class="about-stat-label">Years Experience</div>
-        </div>
-        <div>
-          <div class="about-stat-num">90</div>
-          <div class="about-stat-label">Day Make-It-Right Guarantee</div>
-        </div>
-        <div>
-          <div class="about-stat-num">Local</div>
-          <div class="about-stat-label">Family Run</div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
 <!-- ===== TESTIMONIALS ===== -->
 <section id="testimonials" aria-labelledby="testimonials-heading">
   <div class="section-header">
@@ -486,43 +499,6 @@
           <span>Little Rock &amp; Central Arkansas</span>
         </div>
       </div>
-    </div>
-    <div class="contact-form reveal reveal-delay-2">
-      <form novalidate>
-        <div class="form-row">
-          <div class="form-group">
-            <label for="name">Your Name</label>
-            <input type="text" id="name" name="name" placeholder="Tim Smith" required />
-          </div>
-          <div class="form-group">
-            <label for="phone">Phone Number</label>
-            <input type="tel" id="phone" name="phone" placeholder="(501) 555-0000" required />
-          </div>
-        </div>
-        <div class="form-group">
-          <label for="email">Email Address</label>
-          <input type="email" id="email" name="email" placeholder="you@email.com" required />
-        </div>
-        <div class="form-group">
-          <label for="address">Property Address</label>
-          <input type="text" id="address" name="address" placeholder="123 Main St, Little Rock, AR" />
-        </div>
-        <div class="form-group">
-          <label for="project">Tell Us About Your Project</label>
-          <textarea id="project" name="project" placeholder="What areas would you like lit? Any specific goals — curb appeal, safety, outdoor living..."></textarea>
-        </div>
-        <div class="form-group">
-          <label for="timing">Best Time to Reach You</label>
-          <select id="timing" name="timing">
-            <option value="" disabled selected>Select a time...</option>
-            <option>Morning (8am – 12pm)</option>
-            <option>Afternoon (12pm – 5pm)</option>
-            <option>Evening (5pm – 8pm)</option>
-            <option>Anytime</option>
-          </select>
-        </div>
-        <button type="submit" class="btn btn-primary form-submit">Send My Request</button>
-      </form>
     </div>
   </div>
 </section>
