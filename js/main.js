@@ -237,6 +237,10 @@ document.querySelectorAll('#project-type-grid input[type="radio"]').forEach(inpu
   });
 });
 
+// Clear error state on input
+document.getElementById('hi-name')?.addEventListener('input', e => e.target.classList.remove('lf-field-error'));
+document.getElementById('hi-phone')?.addEventListener('input', e => e.target.classList.remove('lf-field-error'));
+
 // Phone formatter — formats as (501) 412-5972 while typing
 function formatPhone(input) {
   let v = input.value.replace(/\D/g, '');
@@ -254,6 +258,25 @@ document.getElementById('lead-form')?.addEventListener('submit', async e => {
   e.preventDefault();
   const form = e.target;
   const btn  = form.querySelector('.form-submit');
+
+  // Validate required fields
+  const nameEl  = document.getElementById('hi-name');
+  const phoneEl = document.getElementById('hi-phone');
+  let valid = true;
+
+  [nameEl, phoneEl].forEach(el => {
+    const empty = !el?.value.trim() || (el === phoneEl && el.value.replace(/\D/g,'').length < 7);
+    el?.classList.toggle('lf-field-error', empty);
+    if (empty) valid = false;
+  });
+
+  if (!valid) {
+    nameEl?.previousElementSibling; // no-op, just ensure focus lands right
+    phoneEl?.focus();
+    if (!nameEl?.value.trim()) nameEl?.focus();
+    return;
+  }
+
   btn.textContent = 'Sending…';
   btn.disabled = true;
 

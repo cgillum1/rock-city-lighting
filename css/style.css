@@ -1765,6 +1765,18 @@ footer::before {
   transform: rotate(45deg) scale(1);
 }
 
+/* Field validation error */
+.lf-field-error {
+  border-color: #e05c5c !important;
+  box-shadow: 0 0 0 2px rgba(224,92,92,0.2) !important;
+  animation: shake 0.3s ease;
+}
+@keyframes shake {
+  0%,100% { transform: translateX(0); }
+  25%      { transform: translateX(-6px); }
+  75%      { transform: translateX(6px); }
+}
+
 /* Field microcopy */
 .lf-field-note {
   display: block;
