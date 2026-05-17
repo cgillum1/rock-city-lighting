@@ -175,7 +175,7 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 // 3-step form: project type → optional description → contact info.
 // Submissions email tim@rockcitylighting.com and log to Google Sheet.
 // Handled by the Google Apps Script — see Rock City Lighting Form in Drive.
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwNarhgPjLV86aeos486Vhkb6Uf-yJ2KsbtyZLYna8QGY1qxKcuyfN4k4720kM6n67uoQ/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxRkDWsVXAY8G4SPuGE-vYjU3jhbxaldP30HGFGUNBqIJ9aZEJDqbLq8oyhytfDcSncQ/exec';
 
 // ── MULTI-STEP FORM NAVIGATION ─────────────────────────────────
 let _lfCurrentStep = 1;
